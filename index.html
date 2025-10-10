@@ -374,39 +374,52 @@
         
         async function fetchCurrency() {
             try {
+                // Get threshold parameters from URL (defaults: low=1.1, high=1.2)
+                const params = new URLSearchParams(window.location.search);
+                const lowThreshold = parseFloat(params.get('low')) || 1.1;
+                const highThreshold = parseFloat(params.get('high')) || 1.2;
+                
                 // Try primary API (European Central Bank data via Frankfurter)
                 let response = await fetch('https://api.frankfurter.app/latest?from=EUR&to=USD');
                 let data = await response.json();
                 let rate = data.rates.USD.toFixed(5);
+                let rateNum = parseFloat(rate);
                 
                 // Add indicator based on rate
-                let indicator = '';
-                if (parseFloat(rate) < 1.1) {
-                    indicator = '✅ ';
-                } else if (parseFloat(rate) > 1.2) {
-                    indicator = ' ❌';
+                let leftIcon = '';
+                let rightIcon = '';
+                if (rateNum < lowThreshold) {
+                    leftIcon = '✅ ';
+                } else if (rateNum > highThreshold) {
+                    rightIcon = ' ❌';
                 }
                 
                 document.getElementById('currency-content').innerHTML = `
-                    <div class="card-title">${indicator}EUR → USD - ${rate}${indicator && parseFloat(rate) > 1.2 ? indicator : ''}</div>
+                    <div class="card-title">${leftIcon}EUR → USD - $${rate}${rightIcon}</div>
                 `;
             } catch (error) {
                 // Fallback to secondary API
                 try {
+                    const params = new URLSearchParams(window.location.search);
+                    const lowThreshold = parseFloat(params.get('low')) || 1.1;
+                    const highThreshold = parseFloat(params.get('high')) || 1.2;
+                    
                     const response = await fetch('https://api.exchangerate-api.com/v4/latest/EUR');
                     const data = await response.json();
                     const rate = data.rates.USD.toFixed(5);
+                    let rateNum = parseFloat(rate);
                     
                     // Add indicator based on rate
-                    let indicator = '';
-                    if (parseFloat(rate) < 1.1) {
-                        indicator = '✅ ';
-                    } else if (parseFloat(rate) > 1.2) {
-                        indicator = ' ❌';
+                    let leftIcon = '';
+                    let rightIcon = '';
+                    if (rateNum < lowThreshold) {
+                        leftIcon = '✅ ';
+                    } else if (rateNum > highThreshold) {
+                        rightIcon = ' ❌';
                     }
                     
                     document.getElementById('currency-content').innerHTML = `
-                        <div class="card-title">${indicator}EUR → USD - ${rate}${indicator && parseFloat(rate) > 1.2 ? indicator : ''}</div>
+                        <div class="card-title">${leftIcon}EUR → USD - $${rate}${rightIcon}</div>
                     `;
                 } catch (error2) {
                     document.getElementById('currency-content').innerHTML = '<div class="error">Rate unavailable</div>';

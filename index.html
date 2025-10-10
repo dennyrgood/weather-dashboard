@@ -313,8 +313,8 @@
                 const sunriseMinutes = String(sunrise.getMinutes()).padStart(2, '0');
                 const sunsetHours = String(sunset.getHours()).padStart(2, '0');
                 const sunsetMinutes = String(sunset.getMinutes()).padStart(2, '0');
-                const sunriseTime = `${sunriseHours}${sunriseMinutes}`;
-                const sunsetTime = `${sunsetHours}${sunsetMinutes}`;
+                const sunriseTime = `${sunriseHours}:${sunriseMinutes}`;
+                const sunsetTime = `${sunsetHours}:${sunsetMinutes}`;
                 
                 const weatherCode = data.current.weather_code;
                 let condition = 'Clear';

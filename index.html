@@ -374,16 +374,27 @@
         
         async function fetchCurrency() {
             try {
-                const response = await fetch('https://api.exchangerate-api.com/v4/latest/EUR');
-                const data = await response.json();
-                
-                const rate = data.rates.USD.toFixed(3);
+                // Try primary API (European Central Bank data via Frankfurter)
+                let response = await fetch('https://api.frankfurter.app/latest?from=EUR&to=USD');
+                let data = await response.json();
+                let rate = data.rates.USD.toFixed(5);
                 
                 document.getElementById('currency-content').innerHTML = `
                     <div class="card-title">EUR → USD - $${rate}</div>
                 `;
             } catch (error) {
-                document.getElementById('currency-content').innerHTML = '<div class="error">Rate unavailable</div>';
+                // Fallback to secondary API
+                try {
+                    const response = await fetch('https://api.exchangerate-api.com/v4/latest/EUR');
+                    const data = await response.json();
+                    const rate = data.rates.USD.toFixed(5);
+                    
+                    document.getElementById('currency-content').innerHTML = `
+                        <div class="card-title">EUR → USD - $${rate}</div>
+                    `;
+                } catch (error2) {
+                    document.getElementById('currency-content').innerHTML = '<div class="error">Rate unavailable</div>';
+                }
             }
         }
         

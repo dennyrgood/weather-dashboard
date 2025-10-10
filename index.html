@@ -339,13 +339,10 @@
                         </div>
                         <div style="font-size: 0.65em; opacity: 0.9; margin-bottom: 8px;">Feels: ${feelsLikeF}°F / ${feelsLikeC}°C</div>
                         <div class="weather-details">
-                            <div>High:<br>${highF}°F / ${highC}°C</div>
-                            <div>Low:<br>${lowF}°F / ${lowC}°C</div>
-                            <div>Tom:<br>${tomorrowHighF}°F / ${tomorrowHighC}°C</div>
-                            <div>${tomorrowLowF}°F / ${tomorrowLowC}°C</div>
+                            <div>High/Tom:<br>${highF}°F / ${tomorrowHighF}°F</div>
+                            <div>Low/Tom:<br>${lowF}°F / ${tomorrowLowF}°F</div>
                             <div>Sun:<br>${sunriseTime}/${sunsetTime}</div>
-                            <div>Humidity:<br>${humidity}%</div>
-                            <div style="grid-column: 1 / -1; text-align: center;">Wind: ${windSpeed} mph</div>
+                            <div>Stats:<br>${humidity}% / ${windSpeed} mph</div>
                         </div>
                     `;
                 } else {

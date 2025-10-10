@@ -379,8 +379,16 @@
                 let data = await response.json();
                 let rate = data.rates.USD.toFixed(5);
                 
+                // Add indicator based on rate
+                let indicator = '';
+                if (parseFloat(rate) < 1.1) {
+                    indicator = '✅ ';
+                } else if (parseFloat(rate) > 1.2) {
+                    indicator = ' ❌';
+                }
+                
                 document.getElementById('currency-content').innerHTML = `
-                    <div class="card-title">EUR → USD - $${rate}</div>
+                    <div class="card-title">${indicator}EUR → USD - ${rate}${indicator && parseFloat(rate) > 1.2 ? indicator : ''}</div>
                 `;
             } catch (error) {
                 // Fallback to secondary API
@@ -389,8 +397,16 @@
                     const data = await response.json();
                     const rate = data.rates.USD.toFixed(5);
                     
+                    // Add indicator based on rate
+                    let indicator = '';
+                    if (parseFloat(rate) < 1.1) {
+                        indicator = '✅ ';
+                    } else if (parseFloat(rate) > 1.2) {
+                        indicator = ' ❌';
+                    }
+                    
                     document.getElementById('currency-content').innerHTML = `
-                        <div class="card-title">EUR → USD - $${rate}</div>
+                        <div class="card-title">${indicator}EUR → USD - ${rate}${indicator && parseFloat(rate) > 1.2 ? indicator : ''}</div>
                     `;
                 } catch (error2) {
                     document.getElementById('currency-content').innerHTML = '<div class="error">Rate unavailable</div>';

@@ -285,7 +285,7 @@
         
         async function fetchWeatherForLocation(elementId, lat, lon) {
             try {
-                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min&temperature_unit=celsius&wind_speed_unit=kmh&timezone=auto`);
+                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto`);
                 const data = await response.json();
                 
                 const tempC = Math.round(data.current.temperature_2m);
@@ -337,7 +337,7 @@
                             <div>Low:<br>${lowF}°F / ${lowC}°C</div>
                             <div>Sun:<br>${sunriseTime}/${sunsetTime}</div>
                             <div>Humidity:<br>${humidity}%</div>
-                            <div style="grid-column: 1 / -1; text-align: center;">Wind: ${windSpeed} km/h</div>
+                            <div style="grid-column: 1 / -1; text-align: center;">Wind: ${windSpeed} mph</div>
                         </div>
                     `;
                 } else {
@@ -356,7 +356,7 @@
                             <div>Feels: ${feelsLikeF}°F / ${feelsLikeC}°C</div>
                             <div>Sun: ${sunriseTime}/${sunsetTime}</div>
                             <div>Humidity: ${humidity}%</div>
-                            <div>Wind: ${windSpeed} km/h</div>
+                            <div>Wind: ${windSpeed} mph</div>
                         </div>
                     `;
                 }
@@ -377,7 +377,7 @@
                 const response = await fetch('https://api.exchangerate-api.com/v4/latest/EUR');
                 const data = await response.json();
                 
-                const rate = data.rates.USD.toFixed(4);
+                const rate = data.rates.USD.toFixed(3);
                 
                 document.getElementById('currency-content').innerHTML = `
                     <div class="card-title">EUR → USD - $${rate}</div>

@@ -200,7 +200,8 @@
         
         .se .weather-details {
             font-size: 0.65em;
-            gap: 5px;
+            gap: 3px;
+            line-height: 1.3;
         }
         
         .loading {
@@ -326,17 +327,17 @@
                         <div class="weather-main">
                             <div>
                                 <div class="temperature">${tempF}°F</div>
-                                <div style="font-size: 0.8em; opacity: 0.8; margin-top: 5px;">${tempC}°C</div>
+                                <div style="font-size: 0.7em; opacity: 0.8; margin-top: 3px;">${tempC}°C</div>
                             </div>
                             <div class="weather-icon">${icon}</div>
                         </div>
+                        <div style="font-size: 0.65em; opacity: 0.9; margin-bottom: 8px;">Feels: ${feelsLikeF}°F / ${feelsLikeC}°C</div>
                         <div class="weather-details">
-                            <div style="grid-column: 1 / -1;">Feels: ${feelsLikeF}°F / ${feelsLikeC}°C</div>
                             <div>High:<br>${highF}°F / ${highC}°C</div>
                             <div>Low:<br>${lowF}°F / ${lowC}°C</div>
                             <div>Sun:<br>${sunriseTime}/${sunsetTime}</div>
                             <div>Humidity:<br>${humidity}%</div>
-                            <div>Wind:<br>${windSpeed} km/h</div>
+                            <div style="grid-column: 1 / -1; text-align: center;">Wind: ${windSpeed} km/h</div>
                         </div>
                     `;
                 } else {

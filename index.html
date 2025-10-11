@@ -104,6 +104,19 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         }
         
+        /* Theme: Amber on Black */
+        body.theme-amberblack {
+            background: #000000;
+            color: #fbbf24;
+        }
+        
+        body.theme-amberblack .card {
+            background: rgba(20, 20, 20, 0.95);
+            color: #fbbf24;
+            border: 2px solid #f59e0b;
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+        }
+        
         .container {
             width: 100%;
             max-width: 400px;
@@ -317,7 +330,7 @@
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const layout = urlParams.get('layout');
+        const layout = urlParams.get('layout') || 'se'; // Default to SE
         const theme = urlParams.get('theme') || 'amber'; // Default to amber
         
         // Apply theme
@@ -418,8 +431,8 @@
                             </div>
                         </div>
                         <div class="weather-details">
-                            <div>High/Tom:<br>${highF}°F / ${tomorrowHighF}°F</div>
                             <div>Low/Tom:<br>${lowF}°F / ${tomorrowLowF}°F</div>
+                            <div>High/Tom:<br>${highF}°F / ${tomorrowHighF}°F</div>
                             <div>Rise/Set:<br>${riseTime} / ${setTime}</div>
                             <div>Humidity/Wind:<br>${humidity}% / ${windSpeed} mph</div>
                         </div>

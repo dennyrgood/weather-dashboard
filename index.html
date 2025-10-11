@@ -372,18 +372,42 @@
             fetchWeatherForLocation('weather-maspalomas', 27.7609, -15.5863);
         }
         
+        function isInActiveWindow() {
+            const now = new Date();
+            const utcDay = now.getUTCDay();
+            const utcHour = now.getUTCHours();
+            
+            // Friday 21:00 UTC to Sunday 21:00 UTC is INACTIVE
+            if (utcDay === 5 && utcHour >= 21) return false; // Friday after 21:00
+            if (utcDay === 6) return false; // All of Saturday
+            if (utcDay === 0 && utcHour < 21) return false; // Sunday before 21:00
+            
+            return true; // Active window
+        }
+        
         async function fetchCurrency() {
+            const params = new URLSearchParams(window.location.search);
+            const lowThreshold = parseFloat(params.get('low')) || 1.1;
+            const highThreshold = parseFloat(params.get('high')) || 1.2;
+            
             try {
-                const params = new URLSearchParams(window.location.search);
-                const lowThreshold = parseFloat(params.get('low')) || 1.1;
-                const highThreshold = parseFloat(params.get('high')) || 1.2;
+                const response = await fetch('https://openexchangerates.org/api/latest.json?app_id=59f0442d524d41608055554519509c57');
+                const data = await response.json();
                 
-                let response = await fetch('https://api.frankfurter.app/latest?from=EUR&to=USD');
-                let data = await response.json();
-                let rate = data.rates.USD.toFixed(5);
-                let rateNum = parseFloat(rate);
-                let rateDate = data.date; // e.g., "2024-10-11"
+                // Get USD/EUR rate and invert it to get EUR/USD
+                const usdEurRate = data.rates.EUR;
+                const eurUsdRate = (1 / usdEurRate).toFixed(5);
+                const rateNum = parseFloat(eurUsdRate);
                 
+                // Format timestamp
+                const updateDate = new Date(data.timestamp * 1000);
+                const month = updateDate.toLocaleString('en-US', { month: 'short' });
+                const day = updateDate.getDate();
+                const hours = String(updateDate.getHours()).padStart(2, '0');
+                const minutes = String(updateDate.getMinutes()).padStart(2, '0');
+                const dateTimeStr = `${month} ${day}, ${hours}:${minutes}`;
+                
+                // Determine icons
                 let leftIcon = '';
                 let rightIcon = '';
                 if (rateNum < lowThreshold) {
@@ -393,42 +417,11 @@
                 }
                 
                 document.getElementById('currency-content').innerHTML = `
-                    <div class="card-title">${leftIcon}EUR → USD - ${rate}${rightIcon}</div>
-                    <div style="font-size: 0.7em; opacity: 0.7; margin-top: 5px;">Updated: ${rateDate}</div>
+                    <div class="card-title">${leftIcon}EUR → USD - $${eurUsdRate}${rightIcon}</div>
+                    <div style="font-size: 0.6em; opacity: 0.7; margin-top: 3px;">Updated: ${dateTimeStr}</div>
                 `;
             } catch (error) {
-                try {
-                    const params = new URLSearchParams(window.location.search);
-                    const lowThreshold = parseFloat(params.get('low')) || 1.1;
-                    const highThreshold = parseFloat(params.get('high')) || 1.2;
-                    
-                    const response = await fetch('https://api.exchangerate-api.com/v4/latest/EUR');
-                    const data = await response.json();
-                    const rate = data.rates.USD.toFixed(5);
-                    let rateNum = parseFloat(rate);
-                    
-                    // Parse the update time
-                    let rateDate = 'N/A';
-                    if (data.time_last_update_utc) {
-                        const updateDate = new Date(data.time_last_update_utc);
-                        rateDate = updateDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                    }
-                    
-                    let leftIcon = '';
-                    let rightIcon = '';
-                    if (rateNum < lowThreshold) {
-                        leftIcon = '✅ ';
-                    } else if (rateNum > highThreshold) {
-                        rightIcon = ' ❌';
-                    }
-                    
-                    document.getElementById('currency-content').innerHTML = `
-                        <div class="card-title">${leftIcon}EUR → USD - ${rate}${rightIcon}</div>
-                        <div style="font-size: 0.7em; opacity: 0.7; margin-top: 5px;">Updated: ${rateDate}</div>
-                    `;
-                } catch (error2) {
-                    document.getElementById('currency-content').innerHTML = '<div class="error">Rate unavailable</div>';
-                }
+                document.getElementById('currency-content').innerHTML = '<div class="error">Rate unavailable</div>';
             }
         }
         
@@ -438,8 +431,16 @@
         fetchAllWeather();
         fetchCurrency();
         
+        // Weather updates every 10 minutes
         setInterval(fetchAllWeather, 600000);
-        setInterval(fetchCurrency, 300000);
+        
+        // Currency updates every hour, but only during active window
+        setInterval(() => {
+            if (isInActiveWindow()) {
+                fetchCurrency();
+            }
+        }, 3600000); // 1 hour
+        
     </script>
 </body>
 </html>

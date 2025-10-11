@@ -325,14 +325,14 @@
                 
                 if (isSE) {
                     document.getElementById(elementId).innerHTML = `
-                        <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+                        <div class="weather-main">
+                            <div>
+                                <div class="temperature">${tempF}°F</div>
+                                <div style="font-size: 0.7em; opacity: 0.8; margin-top: 3px;">Feels: ${feelsLikeF}°F</div>
+                            </div>
                             <div style="display: flex; flex-direction: column; align-items: center;">
                                 <div class="weather-icon">${icon}</div>
                                 <div style="font-size: 0.6em; opacity: 0.8;">💧${rainChance}%</div>
-                            </div>
-                            <div style="flex: 1;">
-                                <div class="temperature">${tempF}°F</div>
-                                <div style="font-size: 0.7em; opacity: 0.8; margin-top: 3px;">Feels: ${feelsLikeF}°F</div>
                             </div>
                         </div>
                         <div class="weather-details">

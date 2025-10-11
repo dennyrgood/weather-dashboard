@@ -391,26 +391,43 @@
             }
             
             // Fetch from ExchangeRate-API
+            let debugInfo = '';
             try {
                 const resp2 = await fetch('https://api.exchangerate-api.com/v4/latest/EUR');
                 const data2 = await resp2.json();
                 exchangeRate = data2.rates.USD.toFixed(5);
-                if (data2.time_last_update_utc) {
-                    const updateDate = new Date(data2.time_last_update_utc);
-                    if (!isNaN(updateDate.getTime())) {
+                
+                // Debug: show what fields are available
+                debugInfo = `Fields: ${Object.keys(data2).join(', ')} | `;
+                
+                // Try different timestamp fields
+                let timeStr = data2.time_last_update_utc || data2.time_last_updated || data2.date || data2.time_last_update_unix;
+                debugInfo += `TimeStr: ${timeStr} | `;
+                
+                if (timeStr) {
+                    // If it's a unix timestamp (number)
+                    if (typeof timeStr === 'number') {
+                        const updateDate = new Date(timeStr * 1000);
                         const month = updateDate.toLocaleString('en-US', { month: 'short' });
                         const day = updateDate.getDate();
                         const hours = String(updateDate.getHours()).padStart(2, '0');
                         const minutes = String(updateDate.getMinutes()).padStart(2, '0');
                         exchangeDateTime = `${month} ${day}, ${hours}:${minutes}`;
                     } else {
-                        exchangeDateTime = 'N/A';
+                        const updateDate = new Date(timeStr);
+                        if (!isNaN(updateDate.getTime())) {
+                            const month = updateDate.toLocaleString('en-US', { month: 'short' });
+                            const day = updateDate.getDate();
+                            const hours = String(updateDate.getHours()).padStart(2, '0');
+                            const minutes = String(updateDate.getMinutes()).padStart(2, '0');
+                            exchangeDateTime = `${month} ${day}, ${hours}:${minutes}`;
+                        } else {
+                            exchangeDateTime = timeStr;
+                        }
                     }
-                } else {
-                    exchangeDateTime = 'N/A';
                 }
             } catch (e) {
-                console.log('ExchangeRate API failed:', e);
+                debugInfo += `Error: ${e.message}`;
             }
             
             // Use Frankfurter as primary display
@@ -427,16 +444,17 @@
             
             // Build the info line
             let infoLine = '';
+            let debugInfo = ''; // Add debug display
             if (frankfurterRate && exchangeRate) {
-                infoLine = `ECB $${frankfurterRate} (${frankfurterDate}) • Alt $${exchangeRate} (${exchangeDateTime})`;
+                infoLine = `ECB ${frankfurterRate} (${frankfurterDate}) • Alt ${exchangeRate} (${exchangeDateTime || 'N/A'})`;
             } else if (frankfurterRate) {
                 infoLine = `ECB: ${frankfurterDate}`;
             } else if (exchangeRate) {
-                infoLine = `Alt: ${exchangeDateTime}`;
+                infoLine = `Alt: ${exchangeDateTime || 'N/A'}`;
             }
             
             document.getElementById('currency-content').innerHTML = `
-                <div class="card-title">${leftIcon}EUR → USD - $${displayRate}${rightIcon}</div>
+                <div class="card-title">${leftIcon}EUR → USD - ${displayRate}${rightIcon}</div>
                 <div style="font-size: 0.6em; opacity: 0.7; margin-top: 3px; white-space: nowrap;">${infoLine}</div>
             `;
         }

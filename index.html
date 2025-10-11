@@ -285,7 +285,7 @@
         
         async function fetchWeatherForLocation(elementId, lat, lon) {
             try {
-                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto`);
+                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation_probability&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto`);
                 const data = await response.json();
                 
                 const tempC = Math.round(data.current.temperature_2m);
@@ -305,6 +305,8 @@
                 const tomorrowHighF = Math.round(tomorrowHighC * 9/5 + 32);
                 const tomorrowLowC = Math.round(data.daily.temperature_2m_min[1]);
                 const tomorrowLowF = Math.round(tomorrowLowC * 9/5 + 32);
+                
+                const rainChance = data.daily.precipitation_probability_max[0] || 0;
                 
                 // Parse sunrise and sunset times
                 const sunrise = new Date(data.daily.sunrise[0]);

@@ -397,11 +397,17 @@
                 exchangeRate = data2.rates.USD.toFixed(5);
                 if (data2.time_last_update_utc) {
                     const updateDate = new Date(data2.time_last_update_utc);
-                    const month = updateDate.toLocaleString('en-US', { month: 'short' });
-                    const day = updateDate.getDate();
-                    const hours = String(updateDate.getHours()).padStart(2, '0');
-                    const minutes = String(updateDate.getMinutes()).padStart(2, '0');
-                    exchangeDateTime = `${month} ${day}, ${hours}:${minutes}`;
+                    if (!isNaN(updateDate.getTime())) {
+                        const month = updateDate.toLocaleString('en-US', { month: 'short' });
+                        const day = updateDate.getDate();
+                        const hours = String(updateDate.getHours()).padStart(2, '0');
+                        const minutes = String(updateDate.getMinutes()).padStart(2, '0');
+                        exchangeDateTime = `${month} ${day}, ${hours}:${minutes}`;
+                    } else {
+                        exchangeDateTime = 'N/A';
+                    }
+                } else {
+                    exchangeDateTime = 'N/A';
                 }
             } catch (e) {
                 console.log('ExchangeRate API failed:', e);

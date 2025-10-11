@@ -373,90 +373,63 @@
         }
         
         async function fetchCurrency() {
-            const params = new URLSearchParams(window.location.search);
-            const lowThreshold = parseFloat(params.get('low')) || 1.1;
-            const highThreshold = parseFloat(params.get('high')) || 1.2;
-            
-            let frankfurterRate = null, frankfurterDate = null;
-            let exchangeRate = null, exchangeDateTime = null;
-            
-            // Fetch from Frankfurter (ECB)
             try {
-                const resp1 = await fetch('https://api.frankfurter.app/latest?from=EUR&to=USD');
-                const data1 = await resp1.json();
-                frankfurterRate = data1.rates.USD.toFixed(5);
-                frankfurterDate = data1.date;
-            } catch (e) {
-                console.log('Frankfurter API failed:', e);
-            }
-            
-            // Fetch from ExchangeRate-API
-            let debugInfo = '';
-            try {
-                const resp2 = await fetch('https://api.exchangerate-api.com/v4/latest/EUR');
-                const data2 = await resp2.json();
-                exchangeRate = data2.rates.USD.toFixed(5);
+                const params = new URLSearchParams(window.location.search);
+                const lowThreshold = parseFloat(params.get('low')) || 1.1;
+                const highThreshold = parseFloat(params.get('high')) || 1.2;
                 
-                // Debug: show what fields are available
-                debugInfo = `Fields: ${Object.keys(data2).join(', ')} | `;
+                let response = await fetch('https://api.frankfurter.app/latest?from=EUR&to=USD');
+                let data = await response.json();
+                let rate = data.rates.USD.toFixed(5);
+                let rateNum = parseFloat(rate);
+                let rateDate = data.date; // e.g., "2024-10-11"
                 
-                // Try different timestamp fields
-                let timeStr = data2.time_last_update_utc || data2.time_last_updated || data2.date || data2.time_last_update_unix;
-                debugInfo += `TimeStr: ${timeStr} | `;
-                
-                if (timeStr) {
-                    // If it's a unix timestamp (number)
-                    if (typeof timeStr === 'number') {
-                        const updateDate = new Date(timeStr * 1000);
-                        const month = updateDate.toLocaleString('en-US', { month: 'short' });
-                        const day = updateDate.getDate();
-                        const hours = String(updateDate.getHours()).padStart(2, '0');
-                        const minutes = String(updateDate.getMinutes()).padStart(2, '0');
-                        exchangeDateTime = `${month} ${day}, ${hours}:${minutes}`;
-                    } else {
-                        const updateDate = new Date(timeStr);
-                        if (!isNaN(updateDate.getTime())) {
-                            const month = updateDate.toLocaleString('en-US', { month: 'short' });
-                            const day = updateDate.getDate();
-                            const hours = String(updateDate.getHours()).padStart(2, '0');
-                            const minutes = String(updateDate.getMinutes()).padStart(2, '0');
-                            exchangeDateTime = `${month} ${day}, ${hours}:${minutes}`;
-                        } else {
-                            exchangeDateTime = timeStr;
-                        }
-                    }
+                let leftIcon = '';
+                let rightIcon = '';
+                if (rateNum < lowThreshold) {
+                    leftIcon = '✅ ';
+                } else if (rateNum > highThreshold) {
+                    rightIcon = ' ❌';
                 }
-            } catch (e) {
-                debugInfo += `Error: ${e.message}`;
+                
+                document.getElementById('currency-content').innerHTML = `
+                    <div class="card-title">${leftIcon}EUR → USD - ${rate}${rightIcon}</div>
+                    <div style="font-size: 0.7em; opacity: 0.7; margin-top: 5px;">Updated: ${rateDate}</div>
+                `;
+            } catch (error) {
+                try {
+                    const params = new URLSearchParams(window.location.search);
+                    const lowThreshold = parseFloat(params.get('low')) || 1.1;
+                    const highThreshold = parseFloat(params.get('high')) || 1.2;
+                    
+                    const response = await fetch('https://api.exchangerate-api.com/v4/latest/EUR');
+                    const data = await response.json();
+                    const rate = data.rates.USD.toFixed(5);
+                    let rateNum = parseFloat(rate);
+                    
+                    // Parse the update time
+                    let rateDate = 'N/A';
+                    if (data.time_last_update_utc) {
+                        const updateDate = new Date(data.time_last_update_utc);
+                        rateDate = updateDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    }
+                    
+                    let leftIcon = '';
+                    let rightIcon = '';
+                    if (rateNum < lowThreshold) {
+                        leftIcon = '✅ ';
+                    } else if (rateNum > highThreshold) {
+                        rightIcon = ' ❌';
+                    }
+                    
+                    document.getElementById('currency-content').innerHTML = `
+                        <div class="card-title">${leftIcon}EUR → USD - ${rate}${rightIcon}</div>
+                        <div style="font-size: 0.7em; opacity: 0.7; margin-top: 5px;">Updated: ${rateDate}</div>
+                    `;
+                } catch (error2) {
+                    document.getElementById('currency-content').innerHTML = '<div class="error">Rate unavailable</div>';
+                }
             }
-            
-            // Use Frankfurter as primary display
-            const displayRate = frankfurterRate || exchangeRate || '0.00000';
-            const rateNum = parseFloat(displayRate);
-            
-            let leftIcon = '';
-            let rightIcon = '';
-            if (rateNum < lowThreshold) {
-                leftIcon = '✅ ';
-            } else if (rateNum > highThreshold) {
-                rightIcon = ' ❌';
-            }
-            
-            // Build the info line
-            let infoLine = '';
-            let debugInfo = ''; // Add debug display
-            if (frankfurterRate && exchangeRate) {
-                infoLine = `ECB ${frankfurterRate} (${frankfurterDate}) • Alt ${exchangeRate} (${exchangeDateTime || 'N/A'})`;
-            } else if (frankfurterRate) {
-                infoLine = `ECB: ${frankfurterDate}`;
-            } else if (exchangeRate) {
-                infoLine = `Alt: ${exchangeDateTime || 'N/A'}`;
-            }
-            
-            document.getElementById('currency-content').innerHTML = `
-                <div class="card-title">${leftIcon}EUR → USD - ${displayRate}${rightIcon}</div>
-                <div style="font-size: 0.6em; opacity: 0.7; margin-top: 3px; white-space: nowrap;">${infoLine}</div>
-            `;
         }
         
         updateTime();

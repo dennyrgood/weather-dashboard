@@ -330,8 +330,8 @@
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const layout = urlParams.get('layout') || 'se'; // Default to SE
-        const theme = urlParams.get('theme') || 'amber'; // Default to amber
+        const layout = urlParams.get('layout') || 'sev'; // Default to SEV (SE Vertical)
+        const theme = urlParams.get('theme') || 'blue'; // Default to blue
         
         // Apply theme
         document.body.classList.add(`theme-${theme}`);

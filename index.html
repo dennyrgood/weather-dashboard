@@ -1,4 +1,10 @@
-<!DOCTYPE html>
+.container.sev {
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 10px;
+        }<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -183,6 +189,38 @@
             flex: 1;
         }
         
+        .sev .weather-row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .sev .card-title {
+            font-size: 0.75em;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .sev .weather-details {
+            font-size: 0.65em;
+            gap: 3px;
+            line-height: 1.3;
+        }
+        
+        .sev .temperature {
+            font-size: 2em;
+        }
+        
+        .sev .weather-icon {
+            font-size: 2.5em;
+        }
+        
+        .sev .card {
+            padding: 15px;
+            border-radius: 15px;
+        }
+        
         .weather-row .card {
             flex: 1;
         }
@@ -336,10 +374,10 @@
         // Apply theme
         document.body.classList.add(`theme-${theme}`);
         
-        if (layout === 'horizontal' || layout === 'se') {
-            const containerClass = layout === 'se' ? 'se' : 'horizontal';
-            const cityTitle1 = layout === 'se' ? 'Amsterdam' : 'Weather - Amsterdam';
-            const cityTitle2 = layout === 'se' ? 'Maspalomas' : 'Weather - Maspalomas, GC';
+        if (layout === 'horizontal' || layout === 'se' || layout === 'sev') {
+            let containerClass = layout;
+            const cityTitle1 = (layout === 'se' || layout === 'sev') ? 'Amsterdam' : 'Weather - Amsterdam';
+            const cityTitle2 = (layout === 'se' || layout === 'sev') ? 'Maspalomas' : 'Weather - Maspalomas, GC';
             
             document.getElementById('container').classList.add(containerClass);
             document.getElementById('content-area').innerHTML = `

@@ -204,7 +204,7 @@
             font-size: 0.8em;
         }
 
-        /* --- LAYOUT IMPLEMENTATION FIXES --- */
+        /* --- LAYOUT IMPLEMENTATION FIXES (Reverted layout-se) --- */
 
         /* vertical: Ensures portrait and simple view uses full width cards */
         .container.layout-vertical {
@@ -221,8 +221,7 @@
              min-height: auto;
         }
         
-        /* FIX: Lowered breakpoint to 480px. This ensures the iPhone SE (568px landscape) 
-           and other compact devices trigger the side-by-side layout. */
+        /* Using 480px ensures it works on SE landscape, but we revert the internal style */
         @media (min-width: 480px) {
             
             /* horizontal: Layout for larger screens */
@@ -243,21 +242,22 @@
                 flex: 0.5;
             }
 
-            /* se: Compact side-by-side layout (480px width and up) */
+            /* * se: Reverted to the original tight, non-wrapping, three-column layout.
+             * This forces all three cards into a single row if the space is wide enough.
+             */
             .container.layout-se .weather-row {
                 flex-direction: row;
-                flex-wrap: wrap; 
+                flex-wrap: nowrap; /* CRITICAL: Prevent wrapping back to two rows */
                 align-content: flex-start;
                 flex: 1;
             }
             .container.layout-se .card {
-                /* Two columns, accounting for the 12px gap. */
-                flex: 1 1 calc(50% - 6px); 
-                min-height: 40vh; 
+                flex: 1; /* Equal space distribution for weather cards */
+                min-height: 0; 
             }
             .container.layout-se .currency-card {
-                flex: 1 1 100%;
-                min-height: auto;
+                flex: 0.5; /* Currency card takes half the space of a weather card */
+                min-height: 0;
             }
         }
 

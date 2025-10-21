@@ -221,8 +221,9 @@
              min-height: auto;
         }
         
-        /* Media Query to enable side-by-side layouts only when there is enough space (e.g., larger phones/tablets) */
-        @media (min-width: 600px) {
+        /* FIX: Lowered breakpoint to 480px. This ensures the iPhone SE (568px landscape) 
+           and other compact devices trigger the side-by-side layout. */
+        @media (min-width: 480px) {
             
             /* horizontal: Layout for larger screens */
             .container.layout-horizontal {
@@ -242,7 +243,7 @@
                 flex: 0.5;
             }
 
-            /* se: Compact side-by-side layout (SE landscape size and up) */
+            /* se: Compact side-by-side layout (480px width and up) */
             .container.layout-se .weather-row {
                 flex-direction: row;
                 flex-wrap: wrap; 
@@ -250,7 +251,7 @@
                 flex: 1;
             }
             .container.layout-se .card {
-                /* Two columns, accounting for the 12px gap. Should be safe now due to the 600px min-width. */
+                /* Two columns, accounting for the 12px gap. */
                 flex: 1 1 calc(50% - 6px); 
                 min-height: 40vh; 
             }

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Customizer</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Styles for better visual appeal */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            padding: 32px;
+        }
+        .form-section {
+            margin-bottom: 24px;
+            padding: 16px;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+        }
+        .input-group label {
+            font-weight: 500;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .input-group input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+        .input-group input[type="number"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 8px;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-item:hover {
+            background-color: #f9fafb;
+        }
+        .option-item input[type="radio"] {
+            margin-right: 8px;
+        }
+        .option-item.selected {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        .color-preview {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+            border: 1px solid #d1d5db;
+        }
+
+        /* Specific Color Previews */
+        .color-amber { background-color: #fde68a; }
+        .color-blue { background-color: #bfdbfe; }
+        .color-gray { background-color: #e5e7eb; }
+        .color-cream { background-color: #fef9c3; }
+        .color-green { background-color: #33ff33; }
+        .color-blackgreen { background-color: #4ade80; }
+        .color-amberblack { background-color: #000000; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Dashboard Configuration</h1>
+        <p class="mb-6 text-gray-600">Select your preferred options and launch the customized dashboard.</p>
+
+        <form id="configForm" class="space-y-6">
+
+            <!-- 1. Layout Selection -->
+            <div class="form-section">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">1. Display Layout (`layout`)</h2>
+                <div class="option-grid" id="layout-options">
+                    <!-- Layout options will be inserted here by JS -->
+                </div>
+            </div>
+
+            <!-- 2. Theme Selection -->
+            <div class="form-section">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">2. Color Theme (`theme`)</h2>
+                <div class="option-grid" id="theme-options">
+                    <!-- Theme options will be inserted here by JS -->
+                </div>
+            </div>
+            
+            <!-- 3. Currency Thresholds -->
+            <div class="form-section grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="input-group">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700 col-span-2">3. Currency Thresholds</h2>
+                </div>
+                <div class="input-group">
+                    <label for="low">Low Threshold (Favorable Rate: `low`)</label>
+                    <input type="number" id="low" name="low" value="1.10" step="0.01" min="0.5" required>
+                    <p class="text-sm text-gray-500 mt-1">Green checkmark below this value (Default: 1.10)</p>
+                </div>
+                <div class="input-group">
+                    <label for="high">High Threshold (Unfavorable Rate: `high`)</label>
+                    <input type="number" id="high" name="high" value="1.20" step="0.01" min="0.5" required>
+                    <p class="text-sm text-gray-500 mt-1">Red X above this value (Default: 1.20)</p>
+                </div>
+            </div>
+
+            <button type="submit" id="launchButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition duration-200 shadow-md transform hover:scale-[1.01] active:scale-100">
+                Launch Dashboard with Custom Parameters
+            </button>
+            <div id="url-output" class="mt-4 text-center text-sm text-gray-500 overflow-x-auto"></div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const layoutOptions = [
+                { value: 'se', label: 'Compact (se)', description: 'iPhone SE landscape (Default)' },
+                { value: 'horizontal', label: 'Horizontal', description: 'Tablets, larger phones' },
+                { value: 'vertical', label: 'Vertical', description: 'Portrait mode, standard displays' }
+            ];
+
+            const themeOptions = [
+                { value: 'amber', label: 'Amber (Default)', class: 'color-amber' },
+                { value: 'blue', label: 'Blue', class: 'color-blue' },
+                { value: 'gray', label: 'Gray', class: 'color-gray' },
+                { value: 'cream', label: 'Cream', class: 'color-cream' },
+                { value: 'green', label: 'Retro Green', class: 'color-green' },
+                { value: 'blackgreen', label: 'Black on Green', class: 'color-blackgreen' },
+                { value: 'amberblack', label: 'Amber on Black', class: 'color-amberblack' }
+            ];
+
+            const layoutContainer = document.getElementById('layout-options');
+            const themeContainer = document.getElementById('theme-options');
+            const form = document.getElementById('configForm');
+            const urlOutput = document.getElementById('url-output');
+
+            // --- Function to render radio buttons ---
+            function renderOptions(container, options, name, defaultValue) {
+                container.innerHTML = options.map(option => {
+                    const isChecked = option.value === defaultValue;
+                    return `
+                        <label class="option-item ${isChecked ? 'selected' : ''}" data-value="${option.value}">
+                            <input type="radio" name="${name}" value="${option.value}" ${isChecked ? 'checked' : ''} class="hidden">
+                            ${option.class ? `<span class="color-preview ${option.class}"></span>` : ''}
+                            <span>${option.label}</span>
+                        </label>
+                    `;
+                }).join('');
+
+                // Add click listener to visually update selection
+                container.querySelectorAll('.option-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        container.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected'));
+                        item.classList.add('selected');
+                        item.querySelector('input').checked = true;
+                    });
+                });
+            }
+
+            // --- Render options with defaults ---
+            renderOptions(layoutContainer, layoutOptions, 'layout', 'se');
+            renderOptions(themeContainer, themeOptions, 'theme', 'amber');
+
+
+            // --- Form Submission Handler ---
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(form);
+                const params = [];
+
+                // 1. Layout (always included, even if default)
+                params.push(`layout=${formData.get('layout')}`);
+
+                // 2. Theme (always included, even if default)
+                params.push(`theme=${formData.get('theme')}`);
+
+                // 3. Low Threshold (only include if different from default 1.1)
+                const low = parseFloat(formData.get('low')).toFixed(2);
+                if (low !== '1.10') {
+                    params.push(`low=${low}`);
+                }
+
+                // 4. High Threshold (only include if different from default 1.2)
+                const high = parseFloat(formData.get('high')).toFixed(2);
+                if (high !== '1.20') {
+                    params.push(`high=${high}`);
+                }
+
+                // Construct the final URL (assuming index.html is in the same directory)
+                const queryString = params.join('&');
+                const finalUrl = `index.html?${queryString}`;
+
+                urlOutput.textContent = `Generated URL: ${finalUrl}`;
+
+                // Redirect the user
+                window.location.href = finalUrl;
+            });
+        });
+    </script>
+</body>
+</html>

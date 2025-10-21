@@ -20,12 +20,14 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            padding: 12px; /* Increased padding slightly for aesthetics */
-            overflow: hidden;
+            padding: 12px;
+            /* CRITICAL FIX: Ensure no accidental horizontal scroll */
+            overflow-x: hidden; 
+            overflow-y: auto;
             transition: background 0.5s ease, color 0.5s ease;
         }
         
-        /* --- THEME STYLES --- */
+        /* --- THEME STYLES (No Change) --- */
         body.theme-amber {
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             color: #1c1917;
@@ -68,11 +70,11 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            gap: 12px; /* Increased gap */
+            gap: 12px;
         }
         
         .time {
-            font-size: 2.2em; /* Slightly larger time */
+            font-size: 2.2em;
             font-weight: 300;
             text-align: center;
             margin: 0;
@@ -90,13 +92,13 @@
             gap: 12px;
             flex: 1;
             min-height: 0;
-            /* Default: column (for small screens / vertical layout) */
+            /* Default: always column for maximum safety on small screens */
             flex-direction: column; 
         }
         
         .card {
             border-radius: 15px;
-            padding: 15px; /* Increased padding in cards */
+            padding: 15px;
             display: flex;
             flex-direction: column;
             flex: 1;
@@ -104,7 +106,7 @@
             transition: all 0.3s ease;
         }
         
-        /* Card Theming */
+        /* Card Theming (No Change) */
         body.theme-amber .card {
             background: rgba(255, 255, 255, 0.8);
             color: #1c1917;
@@ -152,7 +154,7 @@
             box-shadow: 0 0 25px rgba(251, 191, 36, 0.3);
         }
         
-        /* Card Content Styling */
+        /* Card Content Styling (No Change) */
         .card-title {
             font-size: 0.75em;
             margin-bottom: 8px;
@@ -197,21 +199,21 @@
         }
         
         .error {
-            color: #dc2626; /* Adjusted error color for visibility */
+            color: #dc2626;
             text-align: center;
             font-size: 0.8em;
         }
 
-        /* --- LAYOUT IMPLEMENTATION --- */
+        /* --- LAYOUT IMPLEMENTATION FIXES --- */
 
-        /* vertical: Traditional stacked layout (Portrait mode, standard displays) */
+        /* vertical: Ensures portrait and simple view uses full width cards */
         .container.layout-vertical {
-            max-width: 500px; /* Constrain width for a better vertical flow */
+            max-width: 500px;
             height: auto;
         }
         .container.layout-vertical .weather-row {
             flex-direction: column;
-            flex: none; /* Let content define height */
+            flex: none;
             gap: 12px;
         }
         .container.layout-vertical .card {
@@ -219,47 +221,53 @@
              min-height: auto;
         }
         
-        /* horizontal: Larger horizontal layout (Tablets, larger phones) */
-        .container.layout-horizontal {
-            height: 100vh;
-        }
-        .container.layout-horizontal .weather-row {
-            flex-direction: row;
-            gap: 12px;
-            flex: 1;
-        }
-        .container.layout-horizontal .card {
-            flex: 1;
-            min-width: 250px;
-        }
-        .container.layout-horizontal .currency-card {
-            flex: 0.5;
+        /* Media Query to enable side-by-side layouts only when there is enough space (e.g., larger phones/tablets) */
+        @media (min-width: 600px) {
+            
+            /* horizontal: Layout for larger screens */
+            .container.layout-horizontal {
+                height: 100vh;
+                max-width: 100%;
+            }
+            .container.layout-horizontal .weather-row {
+                flex-direction: row;
+                gap: 12px;
+                flex: 1;
+            }
+            .container.layout-horizontal .card {
+                flex: 1;
+                min-width: 250px;
+            }
+            .container.layout-horizontal .currency-card {
+                flex: 0.5;
+            }
+
+            /* se: Compact side-by-side layout (SE landscape size and up) */
+            .container.layout-se .weather-row {
+                flex-direction: row;
+                flex-wrap: wrap; 
+                align-content: flex-start;
+                flex: 1;
+            }
+            .container.layout-se .card {
+                /* Two columns, accounting for the 12px gap. Should be safe now due to the 600px min-width. */
+                flex: 1 1 calc(50% - 6px); 
+                min-height: 40vh; 
+            }
+            .container.layout-se .currency-card {
+                flex: 1 1 100%;
+                min-height: auto;
+            }
         }
 
-        /* se: Compact side-by-side layout (Default, iPhone SE landscape) */
-        .container.layout-se .weather-row {
-            flex-direction: row;
-            flex-wrap: wrap; /* Allow elements to wrap */
-            align-content: flex-start;
-            flex: 1;
-        }
-        .container.layout-se .card {
-            /* Two columns, accounting for the 12px gap */
-            flex: 1 1 calc(50% - 6px); 
-            min-height: 40vh; 
-        }
-        .container.layout-se .currency-card {
-            flex: 1 1 100%; /* Currency spans full width below */
-            min-height: auto;
-        }
-
-        /* Media Query for larger screens to ensure horizontal is dominant on desktop */
+        /* Ensure large screens also use the row layout by default */
         @media (min-width: 1024px) {
             .container {
                 max-width: 1200px;
             }
             .weather-row {
-                flex-direction: row; /* Defaulting to row on large screens for space efficiency */
+                /* Overrides the 'column' default set at the top, if not already set by layout-horizontal/se */
+                flex-direction: row; 
                 flex-wrap: nowrap;
             }
             .card {
@@ -369,13 +377,17 @@
                 const tempF = Math.round(tempC * 9/5 + 32);
                 const feelsLikeF = Math.round(Math.round(data.current.apparent_temperature) * 9/5 + 32);
                 const humidity = data.current.relative_humidity_2m;
-                const windSpeed = Math.round(data.current.wind_speed_10m);
+                const windSpeed = data.current.wind_speed_10m ? Math.round(data.current.wind_speed_10m) : 0;
                 
-                const highF = Math.round(Math.round(data.daily.temperature_2m_max[0]) * 9/5 + 32);
-                const lowF = Math.round(Math.round(data.daily.temperature_2m_min[0]) * 9/5 + 32);
+                const highC = data.daily.temperature_2m_max[0];
+                const lowC = data.daily.temperature_2m_min[0];
+                const highF = Math.round(highC * 9/5 + 32);
+                const lowF = Math.round(lowC * 9/5 + 32);
                 
-                const tomorrowHighF = Math.round(Math.round(data.daily.temperature_2m_max[1]) * 9/5 + 32);
-                const tomorrowLowF = Math.round(Math.round(data.daily.temperature_2m_min[1]) * 9/5 + 32);
+                const tomorrowHighC = data.daily.temperature_2m_max[1];
+                const tomorrowLowC = data.daily.temperature_2m_min[1];
+                const tomorrowHighF = Math.round(tomorrowHighC * 9/5 + 32);
+                const tomorrowLowF = Math.round(tomorrowLowC * 9/5 + 32);
                 
                 const rainChance = data.daily.precipitation_probability_max[0] || 0;
                 

@@ -237,24 +237,41 @@
         .forecast-day {
             float: left;
             width: 33.333%;
-            text-align: center;
             padding: 8px 4px;
         }
         
+        .forecast-day-inner {
+            overflow: hidden;
+        }
+        
         .forecast-day-name {
-            font-size: 0.8em;
+            font-size: 0.9em;
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        
+        .forecast-icon-col {
+            float: left;
+            width: 45%;
+            text-align: center;
         }
         
         .forecast-icon {
-            font-size: 2em;
-            margin: 4px 0;
+            font-size: 3.5em;
+            line-height: 1;
+        }
+        
+        .forecast-info-col {
+            float: right;
+            width: 55%;
+            text-align: left;
+            padding-left: 4px;
         }
         
         .forecast-temps {
-            font-size: 0.9em;
-            margin-top: 4px;
+            font-size: 1em;
+            line-height: 1.4;
         }
         
         .forecast-high {
@@ -266,9 +283,9 @@
         }
         
         .forecast-rain {
-            font-size: 0.7em;
+            font-size: 0.8em;
             opacity: 0.7;
-            margin-top: 2px;
+            margin-top: 4px;
         }
         
         .currency-card {
@@ -437,12 +454,18 @@
                             
                             html += '<div class="forecast-day">' +
                                 '<div class="forecast-day-name">' + dayName + '</div>' +
+                                '<div class="forecast-day-inner">' +
+                                '<div class="forecast-icon-col">' +
                                 '<div class="forecast-icon">' + dayIcon + '</div>' +
+                                '</div>' +
+                                '<div class="forecast-info-col">' +
                                 '<div class="forecast-temps">' +
                                 '<div class="forecast-high">' + highF + '°F</div>' +
                                 '<div class="forecast-low">' + lowF + '°F</div>' +
                                 '</div>' +
                                 '<div class="forecast-rain">💧 ' + dayRain + '%</div>' +
+                                '</div>' +
+                                '</div>' +
                                 '</div>';
                         }
                         

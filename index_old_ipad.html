@@ -204,6 +204,7 @@
         .error {
             color: #fca5a5;
             text-align: center;
+            font-size: 0.8em;
         }
     </style>
 </head>
@@ -264,75 +265,88 @@
         }
         
         function fetchWeatherForLocation(elementId, lat, lon) {
-            var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
+            // Try HTTP version first (may work on iOS 9)
+            var url = 'http://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
                       '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
                       '&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max' +
                       '&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto';
             
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, true);
+            xhr.timeout = 15000;
+            
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    var data = JSON.parse(xhr.responseText);
-                    
-                    var tempC = Math.round(data.current.temperature_2m);
-                    var tempF = Math.round(tempC * 9/5 + 32);
-                    var feelsLikeC = Math.round(data.current.apparent_temperature);
-                    var feelsLikeF = Math.round(feelsLikeC * 9/5 + 32);
-                    var humidity = data.current.relative_humidity_2m;
-                    var windSpeed = Math.round(data.current.wind_speed_10m);
-                    
-                    var highC = Math.round(data.daily.temperature_2m_max[0]);
-                    var highF = Math.round(highC * 9/5 + 32);
-                    var lowC = Math.round(data.daily.temperature_2m_min[0]);
-                    var lowF = Math.round(lowC * 9/5 + 32);
-                    
-                    var tomorrowHighC = Math.round(data.daily.temperature_2m_max[1]);
-                    var tomorrowHighF = Math.round(tomorrowHighC * 9/5 + 32);
-                    var tomorrowLowC = Math.round(data.daily.temperature_2m_min[1]);
-                    var tomorrowLowF = Math.round(tomorrowLowC * 9/5 + 32);
-                    
-                    var rainChance = data.daily.precipitation_probability_max[0] || 0;
-                    
-                    var sunrise = new Date(data.daily.sunrise[0]);
-                    var sunset = new Date(data.daily.sunset[0]);
-                    var riseTime = padZero(sunrise.getHours()) + ':' + padZero(sunrise.getMinutes());
-                    var setTime = padZero(sunset.getHours()) + ':' + padZero(sunset.getMinutes());
-                    
-                    var weatherCode = data.current.weather_code;
-                    var icon = '☀️';
-                    
-                    if (weatherCode === 0) { icon = '☀️'; }
-                    else if (weatherCode <= 3) { icon = '☁️'; }
-                    else if (weatherCode <= 67) { icon = '🌧️'; }
-                    else if (weatherCode <= 77) { icon = '❄️'; }
-                    else if (weatherCode <= 99) { icon = '⛈️'; }
-                    
-                    var html = '<div class="weather-main">' +
-                        '<div class="weather-main-left">' +
-                        '<div class="temperature">' + tempF + '°F<span style="font-size: 0.4em; opacity: 0.7; margin-left: 3px;">' + tempC + '°C</span></div>' +
-                        '<div style="font-size: 0.65em; opacity: 0.8;">Feels: ' + feelsLikeF + '°F</div>' +
-                        '</div>' +
-                        '<div class="weather-main-right">' +
-                        '<div class="weather-icon">' + icon + '</div>' +
-                        '<div style="font-size: 0.55em; opacity: 0.8;">💧' + rainChance + '%</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '<div class="weather-details">' +
-                        '<div class="weather-detail-item">Low/Tom:<br>' + lowF + '°F / ' + tomorrowLowF + '°F</div>' +
-                        '<div class="weather-detail-item">High/Tom:<br>' + highF + '°F / ' + tomorrowHighF + '°F</div>' +
-                        '<div class="weather-detail-item">Rise/Set:<br>' + riseTime + ' / ' + setTime + '</div>' +
-                        '<div class="weather-detail-item">Humidity/Wind:<br>' + humidity + '% / ' + windSpeed + ' mph</div>' +
-                        '</div>';
-                    
-                    document.getElementById(elementId).innerHTML = html;
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        
+                        var tempC = Math.round(data.current.temperature_2m);
+                        var tempF = Math.round(tempC * 9/5 + 32);
+                        var feelsLikeC = Math.round(data.current.apparent_temperature);
+                        var feelsLikeF = Math.round(feelsLikeC * 9/5 + 32);
+                        var humidity = data.current.relative_humidity_2m;
+                        var windSpeed = Math.round(data.current.wind_speed_10m);
+                        
+                        var highC = Math.round(data.daily.temperature_2m_max[0]);
+                        var highF = Math.round(highC * 9/5 + 32);
+                        var lowC = Math.round(data.daily.temperature_2m_min[0]);
+                        var lowF = Math.round(lowC * 9/5 + 32);
+                        
+                        var tomorrowHighC = Math.round(data.daily.temperature_2m_max[1]);
+                        var tomorrowHighF = Math.round(tomorrowHighC * 9/5 + 32);
+                        var tomorrowLowC = Math.round(data.daily.temperature_2m_min[1]);
+                        var tomorrowLowF = Math.round(tomorrowLowC * 9/5 + 32);
+                        
+                        var rainChance = data.daily.precipitation_probability_max[0] || 0;
+                        
+                        var sunrise = new Date(data.daily.sunrise[0]);
+                        var sunset = new Date(data.daily.sunset[0]);
+                        var riseTime = padZero(sunrise.getHours()) + ':' + padZero(sunrise.getMinutes());
+                        var setTime = padZero(sunset.getHours()) + ':' + padZero(sunset.getMinutes());
+                        
+                        var weatherCode = data.current.weather_code;
+                        var icon = '☀️';
+                        
+                        if (weatherCode === 0) { icon = '☀️'; }
+                        else if (weatherCode <= 3) { icon = '☁️'; }
+                        else if (weatherCode <= 67) { icon = '🌧️'; }
+                        else if (weatherCode <= 77) { icon = '❄️'; }
+                        else if (weatherCode <= 99) { icon = '⛈️'; }
+                        
+                        var html = '<div class="weather-main">' +
+                            '<div class="weather-main-left">' +
+                            '<div class="temperature">' + tempF + '°F<span style="font-size: 0.4em; opacity: 0.7; margin-left: 3px;">' + tempC + '°C</span></div>' +
+                            '<div style="font-size: 0.65em; opacity: 0.8;">Feels: ' + feelsLikeF + '°F</div>' +
+                            '</div>' +
+                            '<div class="weather-main-right">' +
+                            '<div class="weather-icon">' + icon + '</div>' +
+                            '<div style="font-size: 0.55em; opacity: 0.8;">💧' + rainChance + '%</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="weather-details">' +
+                            '<div class="weather-detail-item">Low/Tom:<br>' + lowF + '°F / ' + tomorrowLowF + '°F</div>' +
+                            '<div class="weather-detail-item">High/Tom:<br>' + highF + '°F / ' + tomorrowHighF + '°F</div>' +
+                            '<div class="weather-detail-item">Rise/Set:<br>' + riseTime + ' / ' + setTime + '</div>' +
+                            '<div class="weather-detail-item">Humidity/Wind:<br>' + humidity + '% / ' + windSpeed + ' mph</div>' +
+                            '</div>';
+                        
+                        document.getElementById(elementId).innerHTML = html;
+                    } catch (e) {
+                        document.getElementById(elementId).innerHTML = '<div class="error">Error parsing weather data</div>';
+                    }
                 } else {
-                    document.getElementById(elementId).innerHTML = '<div class="error">Weather unavailable</div>';
+                    document.getElementById(elementId).innerHTML = '<div class="error">Weather API error (HTTP ' + xhr.status + ')</div>';
                 }
             };
+            
             xhr.onerror = function() {
-                document.getElementById(elementId).innerHTML = '<div class="error">Weather unavailable</div>';
+                document.getElementById(elementId).innerHTML = '<div class="error">Network error - TLS not supported on iOS 9. Need proxy server.</div>';
             };
+            
+            xhr.ontimeout = function() {
+                document.getElementById(elementId).innerHTML = '<div class="error">Request timeout</div>';
+            };
+            
             xhr.send();
         }
         
@@ -357,99 +371,16 @@
             var lowThreshold = parseFloat(getUrlParameter('low')) || 1.1;
             var highThreshold = parseFloat(getUrlParameter('high')) || 1.2;
             
-            var oxrRate = null, oxrDateTime = null;
-            var ecbRate = null, ecbDate = null;
-            var altRate = null, altDateTime = null;
-            var completed = 0;
+            // Try HTTP versions of currency APIs
+            var displayRate = '0.00000';
+            var infoLine = 'Currency APIs require HTTPS (TLS 1.2+) not supported on iOS 9';
             
-            function checkComplete() {
-                completed++;
-                if (completed >= 3) {
-                    displayCurrency();
-                }
-            }
+            var leftIcon = '';
+            var rightIcon = '';
             
-            function displayCurrency() {
-                var displayRate = oxrRate || ecbRate || altRate || '0.00000';
-                var rateNum = parseFloat(displayRate);
-                
-                var leftIcon = '';
-                var rightIcon = '';
-                if (rateNum < lowThreshold) {
-                    leftIcon = '✅ ';
-                } else if (rateNum > highThreshold) {
-                    rightIcon = ' ❌';
-                }
-                
-                var infoLine = '';
-                var parts = [];
-                if (oxrRate) parts.push('OXR $' + oxrRate + ' (' + oxrDateTime + ')');
-                if (ecbRate) parts.push('ECB $' + ecbRate + ' (' + ecbDate + ')');
-                if (altRate) parts.push('Alt $' + altRate + (altDateTime ? ' (' + altDateTime + ')' : ''));
-                infoLine = parts.join(' • ');
-                
-                document.getElementById('currency-content').innerHTML = 
-                    '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate + rightIcon + '</div>' +
-                    '<div style="font-size: 0.6em; opacity: 0.7; margin-top: 2px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
-            }
-            
-            var xhr1 = new XMLHttpRequest();
-            xhr1.open('GET', 'https://openexchangerates.org/api/latest.json?app_id=59f0442d524d41608055554519509c57', true);
-            xhr1.onload = function() {
-                if (xhr1.status === 200) {
-                    var data = JSON.parse(xhr1.responseText);
-                    var usdEurRate = data.rates.EUR;
-                    oxrRate = (1 / usdEurRate).toFixed(5);
-                    
-                    var updateDate = new Date(data.timestamp * 1000);
-                    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                    var month = months[updateDate.getMonth()];
-                    var day = updateDate.getDate();
-                    var hours = padZero(updateDate.getHours());
-                    var minutes = padZero(updateDate.getMinutes());
-                    oxrDateTime = month + ' ' + day + ', ' + hours + ':' + minutes;
-                }
-                checkComplete();
-            };
-            xhr1.onerror = function() { checkComplete(); };
-            xhr1.send();
-            
-            var xhr2 = new XMLHttpRequest();
-            xhr2.open('GET', 'https://api.frankfurter.app/latest?from=EUR&to=USD', true);
-            xhr2.onload = function() {
-                if (xhr2.status === 200) {
-                    var data = JSON.parse(xhr2.responseText);
-                    ecbRate = data.rates.USD.toFixed(5);
-                    ecbDate = data.date;
-                }
-                checkComplete();
-            };
-            xhr2.onerror = function() { checkComplete(); };
-            xhr2.send();
-            
-            var xhr3 = new XMLHttpRequest();
-            xhr3.open('GET', 'https://api.exchangerate-api.com/v4/latest/EUR', true);
-            xhr3.onload = function() {
-                if (xhr3.status === 200) {
-                    var data = JSON.parse(xhr3.responseText);
-                    altRate = data.rates.USD.toFixed(5);
-                    
-                    if (data.time_last_update_utc) {
-                        var updateDate = new Date(data.time_last_update_utc);
-                        if (!isNaN(updateDate.getTime())) {
-                            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                            var month = months[updateDate.getMonth()];
-                            var day = updateDate.getDate();
-                            var hours = padZero(updateDate.getHours());
-                            var minutes = padZero(updateDate.getMinutes());
-                            altDateTime = month + ' ' + day + ', ' + hours + ':' + minutes;
-                        }
-                    }
-                }
-                checkComplete();
-            };
-            xhr3.onerror = function() { checkComplete(); };
-            xhr3.send();
+            document.getElementById('currency-content').innerHTML = 
+                '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate + rightIcon + '</div>' +
+                '<div style="font-size: 0.6em; opacity: 0.7; margin-top: 2px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
         }
         
         updateTime();

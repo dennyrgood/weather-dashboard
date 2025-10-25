@@ -233,12 +233,21 @@
     </div>
 
     <script>
+        // CHANGE THIS to your Cloudflare Worker URL
+        var PROXY_URL = 'https://weather-worker.dennyrgood.workers.dev/';
+        
         function getUrlParameter(name) {
             var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
             if (results == null) {
                 return null;
             }
             return decodeURIComponent(results[1]) || null;
+        }
+        
+        // Check if proxy is configured
+        var proxyParam = getUrlParameter('proxy');
+        if (proxyParam) {
+            PROXY_URL = proxyParam;
         }
         
         var theme = getUrlParameter('theme') || 'blue';
@@ -265,15 +274,21 @@
         }
         
         function fetchWeatherForLocation(elementId, lat, lon) {
-            // Try HTTP version first (may work on iOS 9)
-            var url = 'http://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
-                      '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
-                      '&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max' +
-                      '&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto';
+            if (PROXY_URL === 'YOUR_WORKER_URL_HERE') {
+                document.getElementById(elementId).innerHTML = '<div class="error">Set PROXY_URL in script or use ?proxy=YOUR_URL</div>';
+                return;
+            }
+            
+            var apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
+                         '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
+                         '&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max' +
+                         '&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto';
+            
+            var url = PROXY_URL + '?url=' + encodeURIComponent(apiUrl);
             
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, true);
-            xhr.timeout = 15000;
+            xhr.timeout = 20000;
             
             xhr.onload = function() {
                 if (xhr.status === 200) {
@@ -340,7 +355,7 @@
             };
             
             xhr.onerror = function() {
-                document.getElementById(elementId).innerHTML = '<div class="error">Network error - TLS not supported on iOS 9. Need proxy server.</div>';
+                document.getElementById(elementId).innerHTML = '<div class="error">Network error</div>';
             };
             
             xhr.ontimeout = function() {
@@ -368,19 +383,116 @@
         }
         
         function fetchCurrency() {
+            if (PROXY_URL === 'YOUR_WORKER_URL_HERE') {
+                document.getElementById('currency-content').innerHTML = '<div class="error">Set PROXY_URL in script</div>';
+                return;
+            }
+            
             var lowThreshold = parseFloat(getUrlParameter('low')) || 1.1;
             var highThreshold = parseFloat(getUrlParameter('high')) || 1.2;
             
-            // Try HTTP versions of currency APIs
-            var displayRate = '0.00000';
-            var infoLine = 'Currency APIs require HTTPS (TLS 1.2+) not supported on iOS 9';
+            var oxrRate = null, oxrDateTime = null;
+            var ecbRate = null, ecbDate = null;
+            var altRate = null, altDateTime = null;
+            var completed = 0;
             
-            var leftIcon = '';
-            var rightIcon = '';
+            function checkComplete() {
+                completed++;
+                if (completed >= 3) {
+                    displayCurrency();
+                }
+            }
             
-            document.getElementById('currency-content').innerHTML = 
-                '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate + rightIcon + '</div>' +
-                '<div style="font-size: 0.6em; opacity: 0.7; margin-top: 2px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
+            function displayCurrency() {
+                var displayRate = oxrRate || ecbRate || altRate || '0.00000';
+                var rateNum = parseFloat(displayRate);
+                
+                var leftIcon = '';
+                var rightIcon = '';
+                if (rateNum < lowThreshold) {
+                    leftIcon = '✅ ';
+                } else if (rateNum > highThreshold) {
+                    rightIcon = ' ❌';
+                }
+                
+                var infoLine = '';
+                var parts = [];
+                if (oxrRate) parts.push('OXR $' + oxrRate + ' (' + oxrDateTime + ')');
+                if (ecbRate) parts.push('ECB $' + ecbRate + ' (' + ecbDate + ')');
+                if (altRate) parts.push('Alt $' + altRate + (altDateTime ? ' (' + altDateTime + ')' : ''));
+                infoLine = parts.join(' • ');
+                
+                document.getElementById('currency-content').innerHTML = 
+                    '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate + rightIcon + '</div>' +
+                    '<div style="font-size: 0.6em; opacity: 0.7; margin-top: 2px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
+            }
+            
+            var xhr1 = new XMLHttpRequest();
+            var apiUrl1 = 'https://openexchangerates.org/api/latest.json?app_id=59f0442d524d41608055554519509c57';
+            xhr1.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl1), true);
+            xhr1.onload = function() {
+                if (xhr1.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr1.responseText);
+                        var usdEurRate = data.rates.EUR;
+                        oxrRate = (1 / usdEurRate).toFixed(5);
+                        
+                        var updateDate = new Date(data.timestamp * 1000);
+                        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        var month = months[updateDate.getMonth()];
+                        var day = updateDate.getDate();
+                        var hours = padZero(updateDate.getHours());
+                        var minutes = padZero(updateDate.getMinutes());
+                        oxrDateTime = month + ' ' + day + ', ' + hours + ':' + minutes;
+                    } catch (e) {}
+                }
+                checkComplete();
+            };
+            xhr1.onerror = function() { checkComplete(); };
+            xhr1.send();
+            
+            var xhr2 = new XMLHttpRequest();
+            var apiUrl2 = 'https://api.frankfurter.app/latest?from=EUR&to=USD';
+            xhr2.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl2), true);
+            xhr2.onload = function() {
+                if (xhr2.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr2.responseText);
+                        ecbRate = data.rates.USD.toFixed(5);
+                        ecbDate = data.date;
+                    } catch (e) {}
+                }
+                checkComplete();
+            };
+            xhr2.onerror = function() { checkComplete(); };
+            xhr2.send();
+            
+            var xhr3 = new XMLHttpRequest();
+            var apiUrl3 = 'https://api.exchangerate-api.com/v4/latest/EUR';
+            xhr3.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl3), true);
+            xhr3.onload = function() {
+                if (xhr3.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr3.responseText);
+                        altRate = data.rates.USD.toFixed(5);
+                        
+                        if (data.time_last_update_utc) {
+                            var updateDate = new Date(data.time_last_update_utc);
+                            if (!isNaN(updateDate.getTime())) {
+                                var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                                var month = months[updateDate.getMonth()];
+                                var day = updateDate.getDate();
+                                var hours = padZero(updateDate.getHours());
+                                var minutes = padZero(updateDate.getMinutes());
+                                altDateTime = month + ' ' + day + ', ' + hours + ':' + minutes;
+                            }
+                        }
+                    } catch (e) {}
+                }
+                checkComplete();
+            };
+            xhr3.onerror = function() { checkComplete(); };
+            xhr3.send();
         }
         
         updateTime();

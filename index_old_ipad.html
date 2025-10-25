@@ -190,7 +190,7 @@
         }
         
         .weather-icon {
-            font-size: 7em;
+            font-size: 120px;
             line-height: 1;
             margin: 0;
         }
@@ -209,8 +209,8 @@
         .current-details {
             clear: both;
             overflow: hidden;
-            font-size: 0.8em;
-            line-height: 1.4;
+            font-size: 0.85em;
+            line-height: 1.5;
             margin-bottom: 6px;
             padding-bottom: 6px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -450,6 +450,8 @@
                         html += '<div class="current-details">' +
                             '<div class="detail-col"><strong>Low/Tom:</strong> ' + todayLowF + '°F / ' + tomorrowLowF + '°F</div>' +
                             '<div class="detail-col"><strong>High/Tom:</strong> ' + todayHighF + '°F / ' + tomorrowHighF + '°F</div>' +
+                            '<div class="detail-col"><strong>Rise/Set:</strong> ' + riseTime + ' / ' + setTime + '</div>' +
+                            '<div class="detail-col"><strong>Humidity/Wind:</strong> ' + humidity + '% / ' + windSpeed + ' mph</div>' +
                             '</div>';
                         
                         html += '<div class="forecast-days">';

@@ -612,18 +612,12 @@
                         
                         html += '</div>';
                         
-                        if (errorMsg) {
-                            html += '<div class="last-update cache-warning">⚠️ Cached from ' + updateTime + ' - ' + errorMsg + '</div>';
-                        } else {
-                            html += '<div class="last-update">Updated: ' + updateTime + '</div>';
-                        }
-                        
                         document.getElementById(elementId).innerHTML = html;
                     } catch (e) {
                         document.getElementById(elementId).innerHTML = '<div class="error">Parse error: ' + e.message + '</div>';
                     }
                 } else {
-                    document.getElementById(elementId).innerHTML = '<div class="error">HTTP ' + xhr.status + '</div>';
+                    document.getElementById(elementId).innerHTML = '<div class="error">HTTP Error ' + xhr.status + '</div>';
                 }
             };
             
@@ -632,7 +626,7 @@
             };
             
             xhr.ontimeout = function() {
-                document.getElementById(elementId).innerHTML = '<div class="error">Timeout</div>';
+                document.getElementById(elementId).innerHTML = '<div class="error">Request timeout</div>';
             };
             
             xhr.send();

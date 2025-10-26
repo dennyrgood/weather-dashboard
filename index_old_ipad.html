@@ -1,13 +1,4 @@
-var html = '<div class="weather-main">' +
-                            '<div class="main-left">' +
-                            '<div class="temperature">' + tempF + '°<span style="font-size: 0.4em; opacity: 0.7;">' + tempC + '°C</span></div>' +
-                            '<div class="feels-like">Feels ' + feelsLikeF + '°F</div>' +
-                            '<div class="side-info">☀️ ' + riseTime + '<br>🌙 ' + setTime + '</div>' +
-                            '</div>' +
-                            '<div class="main-right">' +
-                            '<div style="font-size: 120px; -webkit-transform: scale(3); transform: scale(3); display: inline-block; margin: 180px 180px 0 0;">' + icon + '</div>' +
-                            '</div>' +
-                            '</div<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -180,6 +171,7 @@ var html = '<div class="weather-main">' +
             overflow: hidden;
             margin-bottom: 8px;
             position: relative;
+            min-height: 200px;
         }
         
         .main-left {
@@ -191,7 +183,6 @@ var html = '<div class="weather-main">' +
             position: absolute;
             top: 0;
             right: 0;
-            text-align: right;
         }
         
         .temperature {
@@ -207,24 +198,12 @@ var html = '<div class="weather-main">' +
             margin-top: 8px;
         }
         
-        .weather-icon {
-            font-size: 120px;
-            line-height: 1;
-            margin: 0;
-        }
-        
-        .rain-chance {
-            font-size: 1.1em;
-            font-weight: 700;
-            opacity: 0.85;
-            margin-top: 4px;
-        }
-        
         .side-info {
             font-size: 2em;
             font-weight: 600;
             line-height: 1.6;
             overflow: hidden;
+            margin-top: 8px;
         }
         
         .side-info-left {
@@ -453,11 +432,6 @@ var html = '<div class="weather-main">' +
                         var todayHighF = Math.round(todayHighC * 9/5 + 32);
                         var todayLowC = Math.round(data.daily.temperature_2m_min[0]);
                         var todayLowF = Math.round(todayLowC * 9/5 + 32);
-                        
-                        var tomorrowHighC = Math.round(data.daily.temperature_2m_max[1]);
-                        var tomorrowHighF = Math.round(tomorrowHighC * 9/5 + 32);
-                        var tomorrowLowC = Math.round(data.daily.temperature_2m_min[1]);
-                        var tomorrowLowF = Math.round(tomorrowLowC * 9/5 + 32);
                         
                         var rainChance = data.daily.precipitation_probability_max[0] || 0;
                         

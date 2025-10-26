@@ -1,0 +1,19 @@
+Instructions for Deployment
+
+    Update the Worker: Replace the contents of your existing worker.js with the code above and deploy it to Cloudflare.
+
+    Set the Secret Key: After receiving your key from Open-Meteo, go to the Settings > 
+
+               Environment Variables section of your worker in the Cloudflare Dashboard and add a new secret named:
+
+
+
+        Variable Name: OPENMETEO_API_KEY
+
+        Variable Value: [Paste your Open-Meteo key here]
+
+
+
+The worker will now check for that key. If it exists, it will automatically append it to the Open-Meteo URL, 
+
+        resolving the rate-limiting issue without exposing the key in the code.

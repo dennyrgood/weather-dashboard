@@ -420,7 +420,7 @@
             }
             
             var cacheKey = 'weather_' + elementId;
-            var lastUpdateKey = 'weather_update_' + elementId;
+            var lastUpdateKey = 'lastupdate_' + elementId;
             
             var apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
                          '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
@@ -439,73 +439,89 @@
                         var data = JSON.parse(xhr.responseText);
                         
                         if (data.error) {
-                            var cachedData = sessionStorage.getItem(cacheKey);
-                            if (cachedData) {
-                                data = JSON.parse(cachedData);
-                                var lastUpdate = sessionStorage.getItem(lastUpdateKey);
-                                renderWeather(elementId, data, lastUpdate, 'API Error: ' + data.error);
-                            } else {
-                                document.getElementById(elementId).innerHTML = '<div class="error">API Error: ' + data.error + '</div>';
-                            }
+                            try {
+                                var cached = window.sessionStorage.getItem(cacheKey);
+                                if (cached) {
+                                    var cachedData = JSON.parse(cached);
+                                    var lastUpdate = window.sessionStorage.getItem(lastUpdateKey) || 'unknown';
+                                    renderWeather(elementId, cachedData, lastUpdate, data.error);
+                                    return;
+                                }
+                            } catch (storageErr) {}
+                            document.getElementById(elementId).innerHTML = '<div class="error">API Error: ' + data.error + '</div>';
                             return;
                         }
                         
                         var now = new Date();
-                        var updateTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                        sessionStorage.setItem(cacheKey, JSON.stringify(data));
-                        sessionStorage.setItem(lastUpdateKey, updateTime);
+                        var hours = now.getHours();
+                        var minutes = now.getMinutes();
+                        var ampm = hours >= 12 ? 'PM' : 'AM';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12;
+                        var timeStr = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
                         
-                        renderWeather(elementId, data, updateTime, null);
+                        try {
+                            window.sessionStorage.setItem(cacheKey, JSON.stringify(data));
+                            window.sessionStorage.setItem(lastUpdateKey, timeStr);
+                        } catch (storageErr) {}
+                        
+                        renderWeather(elementId, data, timeStr, null);
                     } catch (e) {
-                        var cachedData = sessionStorage.getItem(cacheKey);
-                        if (cachedData) {
-                            var data = JSON.parse(cachedData);
-                            var lastUpdate = sessionStorage.getItem(lastUpdateKey);
-                            renderWeather(elementId, data, lastUpdate, 'Parse error: ' + e.message);
-                        } else {
-                            document.getElementById(elementId).innerHTML = '<div class="error">Error parsing data: ' + e.message + '</div>';
-                        }
+                        try {
+                            var cached = window.sessionStorage.getItem(cacheKey);
+                            if (cached) {
+                                var cachedData = JSON.parse(cached);
+                                var lastUpdate = window.sessionStorage.getItem(lastUpdateKey) || 'unknown';
+                                renderWeather(elementId, cachedData, lastUpdate, 'Parse error');
+                                return;
+                            }
+                        } catch (storageErr) {}
+                        document.getElementById(elementId).innerHTML = '<div class="error">Parse error: ' + e.message + '</div>';
                     }
                 } else {
-                    var cachedData = sessionStorage.getItem(cacheKey);
-                    if (cachedData) {
-                        var data = JSON.parse(cachedData);
-                        var lastUpdate = sessionStorage.getItem(lastUpdateKey);
-                        renderWeather(elementId, data, lastUpdate, 'HTTP ' + xhr.status);
-                    } else {
-                        document.getElementById(elementId).innerHTML = '<div class="error">Weather API error (HTTP ' + xhr.status + ')</div>';
-                    }
+                    try {
+                        var cached = window.sessionStorage.getItem(cacheKey);
+                        if (cached) {
+                            var cachedData = JSON.parse(cached);
+                            var lastUpdate = window.sessionStorage.getItem(lastUpdateKey) || 'unknown';
+                            renderWeather(elementId, cachedData, lastUpdate, 'HTTP ' + xhr.status);
+                            return;
+                        }
+                    } catch (storageErr) {}
+                    document.getElementById(elementId).innerHTML = '<div class="error">HTTP ' + xhr.status + '</div>';
                 }
             };
             
             xhr.onerror = function() {
-                var cachedData = sessionStorage.getItem(cacheKey);
-                if (cachedData) {
-                    var data = JSON.parse(cachedData);
-                    var lastUpdate = sessionStorage.getItem(lastUpdateKey);
-                    renderWeather(elementId, data, lastUpdate, 'Network error');
-                } else {
-                    document.getElementById(elementId).innerHTML = '<div class="error">Network error</div>';
-                }
+                try {
+                    var cached = window.sessionStorage.getItem(cacheKey);
+                    if (cached) {
+                        var cachedData = JSON.parse(cached);
+                        var lastUpdate = window.sessionStorage.getItem(lastUpdateKey) || 'unknown';
+                        renderWeather(elementId, cachedData, lastUpdate, 'Network error');
+                        return;
+                    }
+                } catch (storageErr) {}
+                document.getElementById(elementId).innerHTML = '<div class="error">Network error</div>';
             };
             
             xhr.ontimeout = function() {
-                var cachedData = sessionStorage.getItem(cacheKey);
-                if (cachedData) {
-                    var data = JSON.parse(cachedData);
-                    var lastUpdate = sessionStorage.getItem(lastUpdateKey);
-                    renderWeather(elementId, data, lastUpdate, 'Request timeout');
-                } else {
-                    document.getElementById(elementId).innerHTML = '<div class="error">Request timeout</div>';
-                }
+                try {
+                    var cached = window.sessionStorage.getItem(cacheKey);
+                    if (cached) {
+                        var cachedData = JSON.parse(cached);
+                        var lastUpdate = window.sessionStorage.getItem(lastUpdateKey) || 'unknown';
+                        renderWeather(elementId, cachedData, lastUpdate, 'Timeout');
+                        return;
+                    }
+                } catch (storageErr) {}
+                document.getElementById(elementId).innerHTML = '<div class="error">Timeout</div>';
             };
             
             xhr.send();
         }
         
         function renderWeather(elementId, data, lastUpdate, errorMsg) {
-                        
-                        var tempC = Math.round(data.current.temperature_2m);
                         var tempF = Math.round(tempC * 9/5 + 32);
                         var feelsLikeC = Math.round(data.current.apparent_temperature);
                         var feelsLikeF = Math.round(feelsLikeC * 9/5 + 32);

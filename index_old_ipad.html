@@ -1,4 +1,13 @@
-<!DOCTYPE html>
+var html = '<div class="weather-main">' +
+                            '<div class="main-left">' +
+                            '<div class="temperature">' + tempF + '°<span style="font-size: 0.4em; opacity: 0.7;">' + tempC + '°C</span></div>' +
+                            '<div class="feels-like">Feels ' + feelsLikeF + '°F</div>' +
+                            '<div class="side-info">☀️ ' + riseTime + '<br>🌙 ' + setTime + '</div>' +
+                            '</div>' +
+                            '<div class="main-right">' +
+                            '<div style="font-size: 120px; -webkit-transform: scale(3); transform: scale(3); display: inline-block; margin: 180px 180px 0 0;">' + icon + '</div>' +
+                            '</div>' +
+                            '</div<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -170,23 +179,19 @@
         .weather-main {
             overflow: hidden;
             margin-bottom: 8px;
+            position: relative;
         }
         
         .main-left {
             float: left;
-            width: 26%;
-        }
-        
-        .main-center {
-            float: left;
-            width: 48%;
-            text-align: center;
-            padding-left: 4%;
+            width: 50%;
         }
         
         .main-right {
-            float: right;
-            width: 26%;
+            position: absolute;
+            top: 0;
+            right: 0;
+            text-align: right;
         }
         
         .temperature {
@@ -216,15 +221,29 @@
         }
         
         .side-info {
-            font-size: 1.7em;
+            font-size: 2em;
             font-weight: 600;
             line-height: 1.6;
+            overflow: hidden;
+        }
+        
+        .side-info-left {
+            float: left;
+        }
+        
+        .side-info-center {
+            float: left;
+            margin: 0 20px;
+        }
+        
+        .side-info-right {
+            float: left;
         }
         
         .current-details {
             clear: both;
             overflow: hidden;
-            font-size: 1em;
+            font-size: 1.15em;
             font-weight: 600;
             line-height: 1.6;
             margin-bottom: 8px;
@@ -242,7 +261,7 @@
         
         .detail-col {
             float: left;
-            width: 50%;
+            width: 33.333%;
         }
         
         .forecast-days {
@@ -454,24 +473,21 @@
                             '<div class="main-left">' +
                             '<div class="temperature">' + tempF + '°<span style="font-size: 0.4em; opacity: 0.7;">' + tempC + '°C</span></div>' +
                             '<div class="feels-like">Feels ' + feelsLikeF + '°F</div>' +
-                            '<div class="side-info">☀️ ' + riseTime + '<br>🌙 ' + setTime + '</div>' +
+                            '<div class="side-info">' +
+                            '<span class="side-info-left">☀️ ' + riseTime + '</span>' +
+                            '<span class="side-info-center">💧 ' + rainChance + '%</span>' +
+                            '<span class="side-info-right">🌙 ' + setTime + '</span>' +
                             '</div>' +
-                            '<div class="main-center">' +
-                            '<div style="font-size: 40px; -webkit-transform: scale(3); transform: scale(3); display: inline-block; margin: 60px 0;">' + icon + '</div>' +
-                            '<div class="rain-chance" style="clear: both;">💧 ' + rainChance + '%</div>' +
                             '</div>' +
                             '<div class="main-right">' +
-                            '<div style="height: 2.5em;"></div>' +
-                            '<div style="height: 1em;"></div>' +
-                            '<div class="side-info">💧 ' + humidity + '%<br>💨 ' + windSpeed + ' mph</div>' +
+                            '<div style="font-size: 120px; -webkit-transform: scale(3); transform: scale(3); display: inline-block; margin: 180px 180px 0 0;">' + icon + '</div>' +
                             '</div>' +
                             '</div>';
                         
                         html += '<div class="current-details">' +
-                            '<div class="detail-col"><strong>Low/Tom:</strong> ' + todayLowF + '°F / ' + tomorrowLowF + '°F</div>' +
-                            '<div class="detail-col"><strong>High/Tom:</strong> ' + todayHighF + '°F / ' + tomorrowHighF + '°F</div>' +
-                            '<div class="detail-col"><strong>Rise/Set:</strong> ' + riseTime + ' / ' + setTime + '</div>' +
-                            '<div class="detail-col"><strong>Humidity/Wind:</strong> ' + humidity + '% / ' + windSpeed + ' mph</div>' +
+                            '<div class="detail-col"><strong>Low:</strong> ' + todayLowF + '°F</div>' +
+                            '<div class="detail-col"><strong>High:</strong> ' + todayHighF + '°F</div>' +
+                            '<div class="detail-col" style="text-align: center;"><strong>Humidity/Wind:</strong> ' + humidity + '% / ' + windSpeed + ' mph</div>' +
                             '</div>';
                         
                         html += '<div class="forecast-days">';

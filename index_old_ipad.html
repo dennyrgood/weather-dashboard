@@ -437,7 +437,13 @@
                         var data = JSON.parse(xhr.responseText);
                         
                         if (data.error) {
-                            document.getElementById(elementId).innerHTML = '<div class="error">API Error: ' + data.error + '</div>';
+                            var errorMsg = typeof data.error === 'string' ? data.error : (data.reason || 'Unknown error');
+                            document.getElementById(elementId).innerHTML = '<div class="error">API Error: ' + errorMsg + '</div>';
+                            return;
+                        }
+                        
+                        if (data.reason) {
+                            document.getElementById(elementId).innerHTML = '<div class="error">API Error: ' + data.reason + '</div>';
                             return;
                         }
                         

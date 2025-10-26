@@ -334,19 +334,6 @@
             text-align: center;
             font-size: 0.8em;
         }
-        
-        .last-update {
-            font-size: 0.7em;
-            opacity: 0.6;
-            margin-top: 6px;
-            text-align: center;
-            font-style: italic;
-        }
-        
-        .cache-warning {
-            color: #ef4444;
-            font-weight: 600;
-        }
     </style>
 </head>
 <body>
@@ -428,14 +415,6 @@
         }
         
         function fetchWeatherForLocation(elementId, lat, lon) {
-            if (PROXY_URL === 'YOUR_WORKER_URL_HERE') {
-                document.getElementById(elementId).innerHTML = '<div class="error">Set PROXY_URL in script or use ?proxy=YOUR_URL</div>';
-                return;
-            }
-            
-            var cacheKey = 'weather_cache_' + elementId;
-            var timeKey = 'weather_time_' + elementId;
-            
             var apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
                          '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
                          '&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code' +
@@ -454,90 +433,9 @@
                         
                         if (data.error || data.reason) {
                             var errorMsg = data.reason || (typeof data.error === 'string' ? data.error : 'Unknown error');
-                            
-                            try {
-                                var cachedData = window.sessionStorage.getItem(cacheKey);
-                                var cachedTime = window.sessionStorage.getItem(timeKey);
-                                if (cachedData && cachedTime) {
-                                    renderWeather(elementId, JSON.parse(cachedData), cachedTime, errorMsg);
-                                    return;
-                                }
-                            } catch (e) {}
-                            
-                            document.getElementById(elementId).innerHTML = '<div class="error">API Error: ' + errorMsg + '<br><br>(No cached data available)</div>';
+                            document.getElementById(elementId).innerHTML = '<div class="error">API Error: ' + errorMsg + '</div>';
                             return;
                         }
-                        
-                        var now = new Date();
-                        var hours = now.getHours();
-                        var minutes = now.getMinutes();
-                        var ampm = hours >= 12 ? 'PM' : 'AM';
-                        hours = hours % 12;
-                        hours = hours ? hours : 12;
-                        var timeStr = hours + ':' + padZero(minutes) + ' ' + ampm;
-                        
-                        try {
-                            window.sessionStorage.setItem(cacheKey, JSON.stringify(data));
-                            window.sessionStorage.setItem(timeKey, timeStr);
-                        } catch (e) {}
-                        
-                        renderWeather(elementId, data, timeStr, null);
-                    } catch (e) {
-                        try {
-                            var cachedData = window.sessionStorage.getItem(cacheKey);
-                            var cachedTime = window.sessionStorage.getItem(timeKey);
-                            if (cachedData && cachedTime) {
-                                renderWeather(elementId, JSON.parse(cachedData), cachedTime, 'Parse error');
-                                return;
-                            }
-                        } catch (storageErr) {}
-                        
-                        document.getElementById(elementId).innerHTML = '<div class="error">Parse error: ' + e.message + '</div>';
-                    }
-                } else {
-                    try {
-                        var cachedData = window.sessionStorage.getItem(cacheKey);
-                        var cachedTime = window.sessionStorage.getItem(timeKey);
-                        if (cachedData && cachedTime) {
-                            renderWeather(elementId, JSON.parse(cachedData), cachedTime, 'HTTP ' + xhr.status);
-                            return;
-                        }
-                    } catch (e) {}
-                    
-                    document.getElementById(elementId).innerHTML = '<div class="error">HTTP Error ' + xhr.status + '<br><br>(No cached data available)</div>';
-                }
-            };
-            
-            xhr.onerror = function() {
-                try {
-                    var cachedData = window.sessionStorage.getItem(cacheKey);
-                    var cachedTime = window.sessionStorage.getItem(timeKey);
-                    if (cachedData && cachedTime) {
-                        renderWeather(elementId, JSON.parse(cachedData), cachedTime, 'Network error');
-                        return;
-                    }
-                } catch (e) {}
-                
-                document.getElementById(elementId).innerHTML = '<div class="error">Network error<br><br>(No cached data available)</div>';
-            };
-            
-            xhr.ontimeout = function() {
-                try {
-                    var cachedData = window.sessionStorage.getItem(cacheKey);
-                    var cachedTime = window.sessionStorage.getItem(timeKey);
-                    if (cachedData && cachedTime) {
-                        renderWeather(elementId, JSON.parse(cachedData), cachedTime, 'Timeout');
-                        return;
-                    }
-                } catch (e) {}
-                
-                document.getElementById(elementId).innerHTML = '<div class="error">Request timeout<br><br>(No cached data available)</div>';
-            };
-            
-            xhr.send();
-        }
-        
-        function renderWeather(elementId, data, updateTime, errorMsg) {
                         
                         var tempC = Math.round(data.current.temperature_2m);
                         var tempF = Math.round(tempC * 9/5 + 32);
@@ -650,11 +548,6 @@
         }
         
         function fetchCurrency() {
-            if (PROXY_URL === 'YOUR_WORKER_URL_HERE') {
-                document.getElementById('currency-content').innerHTML = '<div class="error">Set PROXY_URL in script</div>';
-                return;
-            }
-            
             var lowThreshold = parseFloat(getUrlParameter('low')) || 1.1;
             var highThreshold = parseFloat(getUrlParameter('high')) || 1.2;
             

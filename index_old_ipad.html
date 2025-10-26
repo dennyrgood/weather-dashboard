@@ -452,8 +452,8 @@
                     try {
                         var data = JSON.parse(xhr.responseText);
                         
-                        if (data.error) {
-                            var errorMsg = typeof data.error === 'string' ? data.error : (data.reason || 'Unknown error');
+                        if (data.error || data.reason) {
+                            var errorMsg = data.reason || (typeof data.error === 'string' ? data.error : 'Unknown error');
                             
                             try {
                                 var cachedData = window.sessionStorage.getItem(cacheKey);
@@ -464,21 +464,7 @@
                                 }
                             } catch (e) {}
                             
-                            document.getElementById(elementId).innerHTML = '<div class="error">API Error: ' + errorMsg + '</div>';
-                            return;
-                        }
-                        
-                        if (data.reason) {
-                            try {
-                                var cachedData = window.sessionStorage.getItem(cacheKey);
-                                var cachedTime = window.sessionStorage.getItem(timeKey);
-                                if (cachedData && cachedTime) {
-                                    renderWeather(elementId, JSON.parse(cachedData), cachedTime, data.reason);
-                                    return;
-                                }
-                            } catch (e) {}
-                            
-                            document.getElementById(elementId).innerHTML = '<div class="error">API Error: ' + data.reason + '</div>';
+                            document.getElementById(elementId).innerHTML = '<div class="error">API Error: ' + errorMsg + '<br><br>(No cached data available)</div>';
                             return;
                         }
                         
@@ -518,7 +504,7 @@
                         }
                     } catch (e) {}
                     
-                    document.getElementById(elementId).innerHTML = '<div class="error">HTTP ' + xhr.status + '</div>';
+                    document.getElementById(elementId).innerHTML = '<div class="error">HTTP Error ' + xhr.status + '<br><br>(No cached data available)</div>';
                 }
             };
             
@@ -532,7 +518,7 @@
                     }
                 } catch (e) {}
                 
-                document.getElementById(elementId).innerHTML = '<div class="error">Network error</div>';
+                document.getElementById(elementId).innerHTML = '<div class="error">Network error<br><br>(No cached data available)</div>';
             };
             
             xhr.ontimeout = function() {
@@ -545,7 +531,7 @@
                     }
                 } catch (e) {}
                 
-                document.getElementById(elementId).innerHTML = '<div class="error">Timeout</div>';
+                document.getElementById(elementId).innerHTML = '<div class="error">Request timeout<br><br>(No cached data available)</div>';
             };
             
             xhr.send();

@@ -190,6 +190,15 @@
             font-weight: 700;
             line-height: 1;
         }
+
+        .temperature .temp-unit {
+            font-size: 0.2em; /* Much smaller F */
+            vertical-align: top;
+            display: inline-block;
+            line-height: 1;
+            font-weight: 400;
+            margin-left: 2px;
+        }
         
         .feels-like {
             font-size: 2.1em;
@@ -207,31 +216,32 @@
             margin: 100px 100px 0 0;
         }
         
-        .side-info {
+        .sun-precept-info { /* NEW CLASS for single-line info */
             font-size: 1.8em;
             font-weight: 600;
             line-height: 1.6;
             overflow: hidden;
             margin-top: 8px;
             width: 100%;
+            display: -webkit-box; /* For old iOS */
+            display: flex;
+            -webkit-box-pack: justify;
+            justify-content: space-between;
         }
-        
-        .side-info-left {
-            float: left;
-            width: 33%;
-            text-align: left;
-        }
-        
-        .side-info-center {
-            float: left;
-            width: 34%;
+
+        .sun-precept-info > span {
+            /* Force equal spacing, especially important for old browsers */
+            -webkit-box-flex: 1;
+            flex-grow: 1;
             text-align: center;
         }
+
+        .sun-precept-info > span:first-child {
+             text-align: left;
+        }
         
-        .side-info-right {
-            float: left;
-            width: 33%;
-            text-align: right;
+        .sun-precept-info > span:last-child {
+             text-align: right;
         }
         
         .current-details {
@@ -324,6 +334,14 @@
             opacity: 0.7;
             font-size: 0.9em; /* Added for better readability of long URL */
             word-break: break-all; /* Added to wrap long URL */
+        }
+
+        .debug-url-display { /* Subtle display for long-term use */
+            text-align: left;
+            font-size: 0.6em;
+            opacity: 0.2;
+            word-break: break-all;
+            margin-bottom: 4px;
         }
         
         .error {
@@ -424,126 +442,124 @@
         // 2. Wrap the API call inside the 'url' parameter and send it to the Flask Tunnel.
         var url = PROXY_URL + '?url=' + encodeURIComponent(apiUrl);
 
-        // --- START DEBUG LINES (Temporarily display URL on screen) ---
+        // --- START DEBUG LINES (Integrated and persistent) ---
         var debugUrlDisplay = document.getElementById(elementId);
-        debugUrlDisplay.innerHTML = '<div style="font-size:0.8em; color: gray;">DEBUG URL: ' + url + '</div>';
+        // Temporarily display and log the URL immediately
+        debugUrlDisplay.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + 'Loading...';
+        console.log("Weather Proxy URL (" + elementId + "):", url);
+        // --- END DEBUG LINES ---
         
-        // Use a timeout to ensure the user can read the URL before the real fetch starts
-        setTimeout(function() {
-            // Restore the loading message before the actual fetch starts
-            debugUrlDisplay.innerHTML = 'Loading...';
-
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, true);
-            xhr.timeout = 20000;
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.timeout = 20000;
         
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    try {
-                        var data = JSON.parse(xhr.responseText);
-                        
-                        if (data.error || data.reason) {
-                            var errorMsg = data.reason || (typeof data.error === 'string' ? data.error : 'Unknown error');
-                            document.getElementById(elementId).innerHTML = '<div class="error">API Error: ' + errorMsg + '</div>';
-                            return;
-                        }
-                        
-                        var tempC = Math.round(data.current.temperature_2m);
-                        var tempF = Math.round(tempC * 9/5 + 32);
-                        var feelsLikeC = Math.round(data.current.apparent_temperature);
-                        var feelsLikeF = Math.round(feelsLikeC * 9/5 + 32);
-                        var humidity = data.current.relative_humidity_2m;
-                        var windSpeed = Math.round(data.current.wind_speed_10m);
-                        
-                        var todayHighC = Math.round(data.daily.temperature_2m_max[0]);
-                        var todayHighF = Math.round(todayHighC * 9/5 + 32);
-                        var todayLowC = Math.round(data.daily.temperature_2m_min[0]);
-                        var todayLowF = Math.round(todayLowC * 9/5 + 32);
-                        
-                        var rainChance = data.daily.precipitation_probability_max[0] || 0;
-                        
-                        var sunrise = new Date(data.daily.sunrise[0]);
-                        var sunset = new Date(data.daily.sunset[0]);
-                        var riseTime = padZero(sunrise.getHours()) + ':' + padZero(sunrise.getMinutes());
-                        var setTime = padZero(sunset.getHours()) + ':' + padZero(sunset.getMinutes());
-                        
-                        var weatherCode = data.current.weather_code;
-                        var icon = getWeatherIcon(weatherCode);
-                        
-                        var html = '<div class="weather-main">' +
-                            '<div class="main-left">' +
-                            '<div class="temperature">' + tempF + '°F</div>' +
-                            '<div style="font-size: 4.75em; font-weight: 700; opacity: 0.7; line-height: 1;">' + tempC + '°C</div>' +
-                            '<div class="feels-like">Feels ' + feelsLikeF + '°F</div>' +
-                            '<div class="side-info">' +
-                            '<span class="side-info-left">☀️ ' + riseTime + '</span>' +
-                            '<span class="side-info-center">💧 ' + rainChance + '%</span>' +
-                            '<span class="side-info-right">🌙 ' + setTime + '</span>' +
-                            '</div>' +
-                            '</div>' +
-                            '<div class="main-right">' +
-                            '<div class="weather-icon">' + icon + '</div>' +
-                            '</div>' +
-                            '</div>';
-                        
-                        html += '<div class="current-details">' +
-                            '<div class="detail-left"><strong>Low/High:</strong> ' + todayLowF + '°F / ' + todayHighF + '°F</div>' +
-                            '<div class="detail-right"><strong>Humidity/Wind:</strong> ' + humidity + '% / ' + windSpeed + '</div>' +
-                            '</div>';
-                        
-                        html += '<div class="forecast-days">';
-                        
-                        for (var i = 1; i <= 3; i++) {
-                            var dayName = getDayName(data.daily.time[i]);
-                            var highC = Math.round(data.daily.temperature_2m_max[i]);
-                            var highF = Math.round(highC * 9/5 + 32);
-                            var lowC = Math.round(data.daily.temperature_2m_min[i]);
-                            var lowF = Math.round(lowC * 9/5 + 32);
-                            var dayIcon = getWeatherIcon(data.daily.weather_code[i]);
-                            var dayRain = data.daily.precipitation_probability_max[i] || 0;
-                            
-                            html += '<div class="forecast-day">' +
-                                '<div class="forecast-day-name">' + dayName + '</div>' +
-                                '<div class="forecast-day-inner">' +
-                                '<div class="forecast-icon-col">' +
-                                '<div class="forecast-icon">' + dayIcon + '</div>' +
-                                '</div>' +
-                                '<div class="forecast-info-col">' +
-                                '<div class="forecast-temps">' +
-                                '<div class="forecast-high">' + highF + '°F</div>' +
-                                '<div class="forecast-low">' + lowF + '°F</div>' +
-                                '</div>' +
-                                '<div class="forecast-rain">💧 ' + dayRain + '%</div>' +
-                                '</div>' +
-                                '</div>' +
-                                '</div>';
-                        }
-                        
-                        html += '</div>';
-                        
-                        document.getElementById(elementId).innerHTML = html;
-                    } catch (e) {
-                        document.getElementById(elementId).innerHTML = '<div class="error">Parse error: ' + e.message + '</div>';
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    
+                    if (data.error || data.reason) {
+                        var errorMsg = data.reason || (typeof data.error === 'string' ? data.error : 'Unknown error');
+                        document.getElementById(elementId).innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">API Error: ' + errorMsg + '</div>';
+                        return;
                     }
-                } else {
-                    document.getElementById(elementId).innerHTML = '<div class="error">HTTP Error ' + xhr.status + '</div>';
+                    
+                    var tempC = Math.round(data.current.temperature_2m);
+                    var tempF = Math.round(tempC * 9/5 + 32);
+                    var feelsLikeC = Math.round(data.current.apparent_temperature);
+                    var feelsLikeF = Math.round(feelsLikeC * 9/5 + 32);
+                    var humidity = data.current.relative_humidity_2m;
+                    var windSpeed = Math.round(data.current.wind_speed_10m);
+                    
+                    var todayHighC = Math.round(data.daily.temperature_2m_max[0]);
+                    var todayHighF = Math.round(todayHighC * 9/5 + 32);
+                    var todayLowC = Math.round(data.daily.temperature_2m_min[0]);
+                    var todayLowF = Math.round(todayLowC * 9/5 + 32);
+                    
+                    var rainChance = data.daily.precipitation_probability_max[0] || 0;
+                    
+                    var sunrise = new Date(data.daily.sunrise[0]);
+                    var sunset = new Date(data.daily.sunset[0]);
+                    var riseTime = padZero(sunrise.getHours()) + ':' + padZero(sunrise.getMinutes());
+                    var setTime = padZero(sunset.getHours()) + ':' + padZero(sunset.getMinutes());
+                    
+                    var weatherCode = data.current.weather_code;
+                    var icon = getWeatherIcon(weatherCode);
+                    
+                    var html = '<div class="debug-url-display">URL: ' + url + '</div>' + 
+                        '<div class="weather-main">' +
+                        '<div class="main-left">' +
+                        // --- F temperature and unit update ---
+                        '<div class="temperature">' + tempF + '<span class="temp-unit">°F</span></div>' +
+                        '<div style="font-size: 4.75em; font-weight: 700; opacity: 0.7; line-height: 1;">' + tempC + '°C</div>' +
+                        '<div class="feels-like">Feels ' + feelsLikeF + '°F</div>' +
+                        // --- Unified Info Line ---
+                        '<div class="sun-precept-info">' +
+                        '<span>☀️ ' + riseTime + '</span>' +
+                        '<span>💧 ' + rainChance + '%</span>' +
+                        '<span>🌙 ' + setTime + '</span>' +
+                        '</div>' +
+                        // ----------------------------
+                        '</div>' +
+                        '<div class="main-right">' +
+                        '<div class="weather-icon">' + icon + '</div>' +
+                        '</div>' +
+                        '</div>';
+                    
+                    html += '<div class="current-details">' +
+                        '<div class="detail-left"><strong>Low/High:</strong> ' + todayLowF + '°F / ' + todayHighF + '°F</div>' +
+                        '<div class="detail-right"><strong>Humidity/Wind:</strong> ' + humidity + '% / ' + windSpeed + '</div>' +
+                        '</div>';
+                    
+                    html += '<div class="forecast-days">';
+                    
+                    for (var i = 1; i <= 3; i++) {
+                        var dayName = getDayName(data.daily.time[i]);
+                        var highC = Math.round(data.daily.temperature_2m_max[i]);
+                        var highF = Math.round(highC * 9/5 + 32);
+                        var lowC = Math.round(data.daily.temperature_2m_min[i]);
+                        var lowF = Math.round(lowC * 9/5 + 32);
+                        var dayIcon = getWeatherIcon(data.daily.weather_code[i]);
+                        var dayRain = data.daily.precipitation_probability_max[i] || 0;
+                        
+                        html += '<div class="forecast-day">' +
+                            '<div class="forecast-day-name">' + dayName + '</div>' +
+                            '<div class="forecast-day-inner">' +
+                            '<div class="forecast-icon-col">' +
+                            '<div class="forecast-icon">' + dayIcon + '</div>' +
+                            '</div>' +
+                            '<div class="forecast-info-col">' +
+                            '<div class="forecast-temps">' +
+                            '<div class="forecast-high">' + highF + '°F</div>' +
+                            '<div class="forecast-low">' + lowF + '°F</div>' +
+                            '</div>' +
+                            '<div class="forecast-rain">💧 ' + dayRain + '%</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>';
+                    }
+                    
+                    html += '</div>';
+                    
+                    document.getElementById(elementId).innerHTML = html;
+                } catch (e) {
+                    document.getElementById(elementId).innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Parse error: ' + e.message + '</div>';
                 }
-            };
-            
-            xhr.onerror = function() {
-                document.getElementById(elementId).innerHTML = '<div class="error">Network error</div>';
-            };
-            
-            xhr.ontimeout = function() {
-                document.getElementById(elementId).innerHTML = '<div class="error">Request timeout</div>';
-            };
-            
-            xhr.send();
-        }, 3000); // Wait 3 seconds to allow user to read the URL
-
-    }
+            } else {
+                document.getElementById(elementId).innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">HTTP Error ' + xhr.status + '</div>';
+            }
+        };
         
-    // --- END DEBUG LINES ---
+        xhr.onerror = function() {
+            document.getElementById(elementId).innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Network error</div>';
+        };
+        
+        xhr.ontimeout = function() {
+            document.getElementById(elementId).innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Request timeout</div>';
+        };
+        
+        xhr.send();
+    }
         
         function fetchAllWeather() {
             fetchWeatherForLocation('weather-amsterdam', 52.3676, 4.9041);

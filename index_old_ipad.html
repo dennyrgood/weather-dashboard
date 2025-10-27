@@ -446,7 +446,9 @@ This single change removes the `workers.dev` dependency completely.
     // 2. Wrap the API call inside the 'url' parameter and send it to the Flask Tunnel.
     // This entirely bypasses the original Cloudflare Worker.
     var url = PROXY_URL + '?url=' + encodeURIComponent(apiUrl);
-    
+
+    console.log("Generated Proxy URL:", url);
+        
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.timeout = 20000;

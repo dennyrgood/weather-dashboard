@@ -253,17 +253,6 @@
             border-bottom-color: rgba(251, 191, 36, 0.3);
         }
         
-        .detail-left {
-            float: left;
-            width: 50%;
-        }
-        
-        .detail-right {
-            float: right;
-            width: 50%;
-            text-align: right;
-        }
-        
         .forecast-days {
             overflow: hidden;
         }
@@ -333,6 +322,8 @@
         .loading {
             text-align: center;
             opacity: 0.7;
+            font-size: 0.9em; /* Added for better readability of long URL */
+            word-break: break-all; /* Added to wrap long URL */
         }
         
         .error {
@@ -367,10 +358,10 @@
     </div>
 
     <script>
-        //var PROXY_URL = 'https://weather-worker.dennyrgood.workers.dev';
+        // var PROXY_URL = 'https://weather-worker.dennyrgood.workers.dev';
         var PROXY_URL = 'https://weatherproxy.ldmathes.cc/';
 
-This single change removes the `workers.dev` dependency completely.
+// This single change removes the `workers.dev` dependency completely.
         
         function getUrlParameter(name) {
             var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
@@ -423,36 +414,28 @@ This single change removes the `workers.dev` dependency completely.
             return days[date.getDay()];
         }
        
-//        function fetchWeatherForLocation(elementId, lat, lon) {
-//            var apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
-//                         '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
-//                         '&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code' +
-//                         '&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto&forecast_days=4';
-//            
-//            var url = PROXY_URL + '?url=' + encodeURIComponent(apiUrl);
-//            
-//            var xhr = new XMLHttpRequest();
-//            xhr.open('GET', url, true);
-//            xhr.timeout = 20000;
-//       
-
     function fetchWeatherForLocation(elementId, lat, lon) {
-    // 1. Define the original Open-Meteo API call (must be HTTP according to their suggestion)
-    var apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
-                 '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
-                 '&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code' +
-                 '&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto&forecast_days=4';
-    
-    // 2. Wrap the API call inside the 'url' parameter and send it to the Flask Tunnel.
-    // This entirely bypasses the original Cloudflare Worker.
-    var url = PROXY_URL + '?url=' + encodeURIComponent(apiUrl);
-
-    console.log("Generated Proxy URL:", url);
+        // 1. Define the original Open-Meteo API call (must be HTTP according to their suggestion)
+        var apiUrl = 'http://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
+                     '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
+                     '&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code' +
+                     '&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto&forecast_days=4';
         
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.timeout = 20000;
+        // 2. Wrap the API call inside the 'url' parameter and send it to the Flask Tunnel.
+        var url = PROXY_URL + '?url=' + encodeURIComponent(apiUrl);
 
+        // --- START DEBUG LINES (Temporarily display URL on screen) ---
+        var debugUrlDisplay = document.getElementById(elementId);
+        debugUrlDisplay.innerHTML = '<div style="font-size:0.8em; color: gray;">DEBUG URL: ' + url + '</div>';
+        
+        // Use a timeout to ensure the user can read the URL before the real fetch starts
+        setTimeout(function() {
+            // Restore the loading message before the actual fetch starts
+            debugUrlDisplay.innerHTML = 'Loading...';
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.timeout = 20000;
         
             xhr.onload = function() {
                 if (xhr.status === 200) {
@@ -556,7 +539,11 @@ This single change removes the `workers.dev` dependency completely.
             };
             
             xhr.send();
-        }
+        }, 3000); // Wait 3 seconds to allow user to read the URL
+
+    }
+        
+    // --- END DEBUG LINES ---
         
         function fetchAllWeather() {
             fetchWeatherForLocation('weather-amsterdam', 52.3676, 4.9041);

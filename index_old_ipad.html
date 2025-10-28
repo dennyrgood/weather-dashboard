@@ -34,659 +34,459 @@
         body.theme-gray {
             background: -webkit-linear-gradient(315deg, #f3f4f6 0%, #e5e7eb 100%);
             background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            color: #111827;
+            color: #1f2937;
         }
-        
-        body.theme-cream {
-            background: -webkit-linear-gradient(315deg, #fefce8 0%, #fef9c3 100%);
-            background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
-            color: #292524;
-        }
-        
-        body.theme-green {
-            background: #0d1b0d;
-            color: #33ff33;
-            font-family: 'Courier New', monospace;
-        }
-        
-        body.theme-blackgreen {
-            background: -webkit-linear-gradient(315deg, #86efac 0%, #4ade80 100%);
-            background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
-            color: #000000;
-        }
-        
-        body.theme-amberblack {
-            background: #000000;
-            color: #fbbf24;
-        }
-        
+
+        /* --- Global Layout --- */
         .container {
-            width: 100%;
             max-width: 100%;
+            height: 100vh;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            gap: 16px;
         }
-        
-        .time {
-            font-size: 2em;
-            font-weight: 300;
-            text-align: center;
-            margin: 0;
-        }
-        
-        .date {
-            font-size: 0.85em;
-            text-align: center;
-            opacity: 0.9;
-            margin: 0 0 8px 0;
-        }
-        
-        .weather-row {
-            margin-top: 8px;
-            overflow: hidden;
-        }
-        
+
+        /* --- Weather Card Styling --- */
         .weather-card {
+            background-color: rgba(255, 255, 255, 0.85);
+            -webkit-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            width: 100%;
+            min-height: 220px;
+            
+            /* Responsive layout: 2 columns on larger screens */
             float: left;
-            width: 48.5%;
-            margin-right: 1.5%;
+        }
+
+        @media (min-width: 768px) {
+            .weather-card {
+                width: calc(50% - 8px); /* Two cards with 16px gap */
+            }
         }
         
-        .weather-card:last-of-type {
-            margin-right: 0;
-        }
-        
-        .card {
-            -webkit-border-radius: 15px;
-            border-radius: 15px;
-            padding: 12px;
+        .card-header {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
             margin-bottom: 8px;
         }
-        
-        body.theme-amber .card {
-            background: rgba(255, 255, 255, 0.8);
-            color: #1c1917;
-            -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+
+        .location {
+            font-size: 1.25em;
+            font-weight: bold;
         }
-        
-        body.theme-blue .card {
-            background: rgba(255, 255, 255, 0.9);
-            color: #1e3a8a;
-            -webkit-box-shadow: 0 4px 16px rgba(30, 58, 138, 0.1);
-            box-shadow: 0 4px 16px rgba(30, 58, 138, 0.1);
+
+        .last-update {
+            font-size: 0.8em;
+            opacity: 0.7;
         }
-        
-        body.theme-gray .card {
-            background: #ffffff;
-            color: #111827;
-            -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+        /* --- Main Content Layout --- */
+        .main-content {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: row;
+            flex-direction: row;
+            margin-bottom: 15px;
         }
-        
-        body.theme-cream .card {
-            background: rgba(255, 255, 255, 0.7);
-            color: #292524;
-            border: 1px solid rgba(41, 37, 36, 0.1);
-            -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        body.theme-green .card {
-            background: rgba(0, 20, 0, 0.6);
-            color: #33ff33;
-            border: 2px solid #33ff33;
-            -webkit-box-shadow: 0 0 20px rgba(51, 255, 51, 0.3), inset 0 0 20px rgba(51, 255, 51, 0.1);
-            box-shadow: 0 0 20px rgba(51, 255, 51, 0.3), inset 0 0 20px rgba(51, 255, 51, 0.1);
-            text-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
-        }
-        
-        body.theme-blackgreen .card {
-            background: rgba(220, 252, 231, 0.9);
-            color: #000000;
-            border: 2px solid #166534;
-            -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-        }
-        
-        body.theme-amberblack .card {
-            background: rgba(20, 20, 20, 0.95);
-            color: #fbbf24;
-            border: 2px solid #f59e0b;
-            -webkit-box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
-        }
-        
-        body.theme-green .card-title {
-            text-shadow: 0 0 8px rgba(51, 255, 51, 0.8);
-        }
-        
-        .card-title {
-            font-size: 1.1em;
-            margin-bottom: 6px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            font-weight: 700;
-        }
-        
-        .weather-main {
-            overflow: hidden;
-            margin-bottom: 8px;
-            position: relative;
-            min-height: 200px;
-        }
-        
+
         .main-left {
-            float: left;
-            width: 50%;
+            -webkit-box-flex: 1;
+            -ms-flex: 1;
+            flex: 1;
         }
         
         .main-right {
-            position: absolute;
-            top: 0;
-            right: 0;
+            -webkit-box-flex: 1;
+            -ms-flex: 1;
+            flex: 1;
         }
-        
-        .temperature {
-            font-size: 9.5em;
-            font-weight: 700;
+
+        .current-temp {
+            font-size: 4em;
+            font-weight: 300;
             line-height: 1;
         }
 
-        .temperature .temp-unit {
-            font-size: 0.2em; /* Much smaller F */
+        .temp-unit-small {
+            font-size: 0.35em; /* Smaller font size for °F */
             vertical-align: top;
-            display: inline-block;
-            line-height: 1;
-            font-weight: 400;
-            margin-left: 2px;
+            opacity: 0.8;
+            margin-left: -5px;
         }
-        
-        .feels-like {
-            font-size: 2.1em;
-            font-weight: 600;
-            opacity: 0.85;
-            margin-top: 8px;
+
+        .wind-humidity {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 5px;
         }
-        
-        .weather-icon {
-            font-size: 40px;
-            -webkit-transform: scale(5);
-            transform: scale(5);
-            display: inline-block;
-            line-height: 1;
-            margin: 100px 100px 0 0;
-        }
-        
-        .sun-precept-info { 
-            font-size: 1.8em;
-            font-weight: 600;
-            line-height: 1.6;
-            overflow: hidden;
-            margin-top: 8px;
-            width: 100%;
-            padding: 0 2px; /* Small padding for visual separation from card edge */
-            display: -webkit-box; /* For old iOS */
+
+        /* --- Layout Fix for Full-Width Details --- */
+        .sun-precept-info {
+            display: -webkit-box;
+            display: -ms-flexbox;
             display: flex;
             -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
             justify-content: space-between;
-            clear: both; /* Ensure it moves below .weather-main floats */
-        }
-
-        .sun-precept-info > span {
-            /* Force equal spacing, especially important for old browsers */
-            -webkit-box-flex: 1;
-            flex-grow: 1;
-            text-align: center;
-        }
-
-        .sun-precept-info > span:first-child {
-             text-align: left;
-        }
-        
-        .sun-precept-info > span:last-child {
-             text-align: right;
-        }
-        
-        .current-details {
-            clear: both;
-            overflow: hidden;
-            font-size: 1.15em;
-            font-weight: 600;
-            line-height: 1.6;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            padding-top: 8px; /* Added padding to separate from sun-precept-info */
+            width: 100%; /* Ensures it spans the full card width */
+            padding: 8px 0;
+            font-size: 0.9em;
+            opacity: 0.9;
             border-top: 1px solid rgba(0, 0, 0, 0.1);
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
         }
         
-        body.theme-green .current-details {
-            border-bottom-color: rgba(51, 255, 51, 0.3);
-            border-top-color: rgba(51, 255, 51, 0.3);
-        }
-        
-        body.theme-amberblack .current-details {
-            border-bottom-color: rgba(251, 191, 36, 0.3);
-            border-top-color: rgba(251, 191, 36, 0.3);
-        }
-        
-        .forecast-days {
-            overflow: hidden;
-        }
-        
-        .forecast-day {
-            float: left;
-            width: 33.333%;
-            padding: 4px;
-        }
-        
-        .forecast-day-inner {
-            overflow: hidden;
-        }
-        
-        .forecast-day-name {
-            font-size: 1.05em;
-            font-weight: 700;
-            margin-bottom: 4px;
+        .sun-precept-info > div {
             text-align: center;
-        }
-        
-        .forecast-icon-col {
-            float: left;
-            width: 45%;
-            text-align: center;
-        }
-        
-        .forecast-icon {
-            font-size: 3.5em;
-            line-height: 1;
-        }
-        
-        .forecast-info-col {
-            float: right;
-            width: 55%;
-            text-align: left;
-            padding-left: 4px;
-        }
-        
-        .forecast-temps {
-            font-size: 1.2em;
-            font-weight: 700;
-            line-height: 1.4;
-        }
-        
-        .forecast-high {
-            font-weight: 700;
-        }
-        
-        .forecast-low {
-            opacity: 0.8;
-            font-weight: 600;
-        }
-        
-        .forecast-rain {
-            font-size: 0.9em;
-            font-weight: 600;
-            opacity: 0.8;
-            margin-top: 2px;
-        }
-        
-        .currency-card {
-            padding: 10px;
-            clear: both;
-        }
-        
-        .loading {
-            text-align: center;
-            opacity: 0.7;
-            font-size: 0.9em;
-            word-break: break-all;
+            -webkit-box-flex: 1;
+            -ms-flex: 1;
+            flex: 1;
         }
 
-        .debug-url-display { /* Subtle display for long-term use */
-            text-align: left;
-            font-size: 0.6em;
-            opacity: 0.2;
-            word-break: break-all;
+        /* --- Daily Forecast --- */
+        .daily-forecast {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            font-size: 0.9em;
+        }
+
+        .day-box {
+            text-align: center;
+            padding: 0 5px;
+        }
+
+        .day-name {
+            font-weight: bold;
             margin-bottom: 4px;
         }
+
+        .day-temp {
+            opacity: 0.9;
+        }
         
-        .error {
-            color: #fca5a5;
+        /* --- Footer --- */
+        .footer {
+            clear: both;
+            padding: 16px 0 0;
             text-align: center;
             font-size: 0.8em;
+            opacity: 0.6;
+            color: inherit;
+        }
+        
+        .alt-rate, .alt-time {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #dc2626; /* Red for emphasis */
+        }
+        
+        /* --- Debugging Styles --- */
+        .debug-url-display {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 2px;
+            font-size: 0.5em;
+            opacity: 0.1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: left;
+            z-index: 10;
         }
     </style>
 </head>
-<body>
-    <div class="container" id="container">
-        <div>
-            <div class="time" id="time">--:--</div>
-            <div class="date" id="date">Loading...</div>
+<body class="theme-blue">
+    <div class="container">
+        <!-- Weather Card 1: Amsterdam -->
+        <div class="weather-card" id="amsterdam-weather">
+            <div class="debug-url-display" id="amsterdam-debug-url">Loading...</div>
+            <div class="card-header">
+                <div class="location">Amsterdam</div>
+                <div class="last-update">Last Updated: <span id="amsterdam-update-time">--</span></div>
+            </div>
+            <div class="main-content">
+                <div class="main-left">
+                    <div class="current-temp"><span id="amsterdam-temp">--</span><span class="temp-unit-small">°F</span></div>
+                    <div class="wind-humidity">Wind: <span id="amsterdam-wind">--</span> mph | Feels: <span id="amsterdam-apparent">--</span>°F</div>
+                </div>
+                <div class="main-right">
+                    <div id="amsterdam-weather-icon" style="font-size: 4em; text-align: right;">--</div>
+                    <div style="font-size: 0.9em; text-align: right; opacity: 0.8;">Humidity: <span id="amsterdam-humidity">--</span>%</div>
+                </div>
+            </div>
+            
+            <div class="sun-precept-info">
+                <div>Sunrise: <span id="amsterdam-sunrise">--</span></div>
+                <div>Precipitation: <span id="amsterdam-precept-prob">--</span>%</div>
+                <div>Sunset: <span id="amsterdam-sunset">--</span></div>
+            </div>
+
+            <div class="daily-forecast" id="amsterdam-daily-forecast">
+                <!-- Daily forecast injected here -->
+            </div>
         </div>
-        
-        <div id="content-area" class="weather-row">
-            <div class="card weather-card">
-                <div class="card-title">Amsterdam</div>
-                <div id="weather-amsterdam" class="loading">Loading...</div>
+
+        <!-- Weather Card 2: Maspalomas -->
+        <div class="weather-card" id="maspalomas-weather">
+            <div class="debug-url-display" id="maspalomas-debug-url">Loading...</div>
+            <div class="card-header">
+                <div class="location">Maspalomas</div>
+                <div class="last-update">Last Updated: <span id="maspalomas-update-time">--</span></div>
+            </div>
+            <div class="main-content">
+                <div class="main-left">
+                    <div class="current-temp"><span id="maspalomas-temp">--</span><span class="temp-unit-small">°F</span></div>
+                    <div class="wind-humidity">Wind: <span id="maspalomas-wind">--</span> mph | Feels: <span id="maspalomas-apparent">--</span>°F</div>
+                </div>
+                <div class="main-right">
+                    <div id="maspalomas-weather-icon" style="font-size: 4em; text-align: right;">--</div>
+                    <div style="font-size: 0.9em; text-align: right; opacity: 0.8;">Humidity: <span id="maspalomas-humidity">--</span>%</div>
+                </div>
             </div>
             
-            <div class="card weather-card">
-                <div class="card-title">Maspalomas</div>
-                <div id="weather-maspalomas" class="loading">Loading...</div>
+            <div class="sun-precept-info">
+                <div>Sunrise: <span id="maspalomas-sunrise">--</span></div>
+                <div>Precipitation: <span id="maspalomas-precept-prob">--</span>%</div>
+                <div>Sunset: <span id="maspalomas-sunset">--</span></div>
             </div>
-            
-            <div class="card currency-card">
-                <div id="currency-content" class="loading">Loading rate...</div>
+
+            <div class="daily-forecast" id="maspalomas-daily-forecast">
+                <!-- Daily forecast injected here -->
             </div>
         </div>
     </div>
+    
+    <div class="footer">
+        Current Time: <span id="current-time">--</span> | 1 EUR = <span class="alt-rate" id="alt-rate-usd">--</span> USD (Last updated: <span class="alt-time" id="alt-rate-time">--</span>)
+    </div>
 
     <script>
-        // var PROXY_URL = 'https://weather-worker.dennyrgood.workers.dev';
+        // --- GLOBAL CONFIG & STATE ---
         var PROXY_URL = 'https://weatherproxy.ldmathes.cc/';
 
-// This single change removes the `workers.dev` dependency completely.
-        
-        function getUrlParameter(name) {
-            var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
-            if (results == null) {
-                return null;
-            }
-            return decodeURIComponent(results[1]) || null;
-        }
-        
-        var proxyParam = getUrlParameter('proxy');
-        if (proxyParam) {
-            PROXY_URL = proxyParam;
-        }
-        
-        var theme = getUrlParameter('theme') || 'blue';
-        document.body.className = 'theme-' + theme;
-        
+        // Global state for currency (Default to USD as API returns against base)
+        var altRate = 1.0;
+        var altDateTime = '--';
+        var completionCount = 0; // Tracks when all three XHRs have completed (2 weather + 1 currency)
+        var updateTimeout = 15000; // 15 seconds for debug URL to be visible
+
+        // --- UTILITY FUNCTIONS ---
         function padZero(num) {
-            return num < 10 ? '0' + num : '' + num;
+            return num < 10 ? '0' + num : num;
         }
         
+        function isInActiveWindow() {
+            return !document.hidden;
+        }
+        
+        // --- WEATHER CODE MAPPING ---
+        function getWeatherIcon(code) {
+            // Simplified WMO code mapping for basic icons
+            if (code < 3) return '☀️'; // Clear/mainly clear
+            if (code >= 3 && code < 50) return '☁️'; // Overcast, fog
+            if (code >= 51 && code < 60) return '🌧️'; // Drizzle
+            if (code >= 61 && code < 70) return '☔'; // Rain
+            if (code >= 71 && code < 80) return '❄️'; // Snow fall
+            if (code >= 80 && code < 90) return '⛈️'; // Rain showers
+            if (code >= 90) return '🌩️'; // Thunderstorm
+            return '❓';
+        }
+
+        // --- TEMP CONVERSION ---
+        function toFahrenheit(celsius) {
+            return Math.round((celsius * 9 / 5) + 32);
+        }
+
+        // --- DISPLAY FUNCTIONS ---
         function updateTime() {
             var now = new Date();
             var hours = padZero(now.getHours());
             var minutes = padZero(now.getMinutes());
-            var timeStr = hours + ':' + minutes;
-            
-            var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            var months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                          'July', 'August', 'September', 'October', 'November', 'December'];
-            
-            var dateStr = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
-            
-            document.getElementById('time').textContent = timeStr;
-            document.getElementById('date').textContent = dateStr;
+            var seconds = padZero(now.getSeconds());
+            document.getElementById('current-time').innerText = hours + ':' + minutes + ':' + seconds;
         }
-        
-        function getWeatherIcon(code) {
-            if (code === 0) return '☀️';
-            else if (code <= 3) return '☁️';
-            else if (code <= 67) return '🌧️';
-            else if (code <= 77) return '❄️';
-            else if (code <= 99) return '⛈️';
-            return '☀️';
+
+        function updateCurrencyDisplay() {
+            document.getElementById('alt-rate-usd').innerText = altRate;
+            document.getElementById('alt-rate-time').innerText = altDateTime;
         }
-        
-        function getDayName(dateStr) {
-            var date = new Date(dateStr);
-            var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            return days[date.getDay()];
-        }
-       
-    function fetchWeatherForLocation(elementId, lat, lon) {
-        // 1. Define the original Open-Meteo API call (must be HTTP according to their suggestion)
-        var apiUrl = 'http://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
-                     '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
-                     '&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code' +
-                     '&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto&forecast_days=4';
-        
-        // 2. Wrap the API call inside the 'url' parameter and send it to the Flask Tunnel.
-        var url = PROXY_URL + '?url=' + encodeURIComponent(apiUrl);
 
-        // --- START DEBUG LINES (Temporary 15s display) ---
-        var debugContainer = document.getElementById(elementId);
-        var timeoutId; 
+        function displayWeather(elementId, data) {
+            var card = document.getElementById(elementId + '-weather');
+            var debugUrlDisplay = document.getElementById(elementId + '-debug-url');
 
-        // Show loading and the URL immediately
-        debugContainer.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + 'Loading...';
-        console.log("Weather Proxy URL (" + elementId + "):", url);
-
-        // Schedule removal of the URL display after 15 seconds
-        timeoutId = setTimeout(function() {
-            // Only clear the display if the card is still showing the 'Loading...' state.
-            // This prevents clearing the URL if an error has already occurred.
-            if (debugContainer.innerHTML.includes(url) && debugContainer.innerHTML.includes('Loading...')) {
-                debugContainer.innerHTML = 'Loading...';
-            }
-        }, 15000); // 15 seconds
-        // --- END DEBUG LINES ---
-        
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.timeout = 20000;
-        
-        xhr.onload = function() {
-            clearTimeout(timeoutId); // *** Always clear timeout on response ***
-
-            if (xhr.status === 200) {
-                try {
-                    var data = JSON.parse(xhr.responseText);
-                    
-                    if (data.error || data.reason) {
-                        var errorMsg = data.reason || (typeof data.error === 'string' ? data.error : 'Unknown error');
-                        // Error path: re-add URL for persistent debug and display error message
-                        document.getElementById(elementId).innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">API Error: ' + errorMsg + '</div>';
-                        return;
-                    }
-                    
-                    var tempC = Math.round(data.current.temperature_2m);
-                    var tempF = Math.round(tempC * 9/5 + 32);
-                    var feelsLikeC = Math.round(data.current.apparent_temperature);
-                    var feelsLikeF = Math.round(feelsLikeC * 9/5 + 32);
-                    var humidity = data.current.relative_humidity_2m;
-                    var windSpeed = Math.round(data.current.wind_speed_10m);
-                    
-                    var todayHighC = Math.round(data.daily.temperature_2m_max[0]);
-                    var todayHighF = Math.round(todayHighC * 9/5 + 32);
-                    var todayLowC = Math.round(data.daily.temperature_2m_min[0]);
-                    var todayLowF = Math.round(todayLowC * 9/5 + 32);
-                    
-                    var rainChance = data.daily.precipitation_probability_max[0] || 0;
-                    
-                    var sunrise = new Date(data.daily.sunrise[0]);
-                    var sunset = new Date(data.daily.sunset[0]);
-                    var riseTime = padZero(sunrise.getHours()) + ':' + padZero(sunrise.getMinutes());
-                    var setTime = padZero(sunset.getHours()) + ':' + padZero(sunset.getMinutes());
-                    
-                    var weatherCode = data.current.weather_code;
-                    var icon = getWeatherIcon(weatherCode);
-                    
-                    // Start HTML construction (excluding the debug URL which is handled by timeout/overwrite)
-                    var html = 
-                        '<div class="weather-main">' +
-                        '<div class="main-left">' +
-                        // --- F temperature and unit update ---
-                        '<div class="temperature">' + tempF + '<span class="temp-unit">°F</span></div>' +
-                        '<div style="font-size: 4.75em; font-weight: 700; opacity: 0.7; line-height: 1;">' + tempC + '°C</div>' +
-                        '<div class="feels-like">Feels ' + feelsLikeF + '°F</div>' +
-                        '</div>' +
-                        '<div class="main-right">' +
-                        '<div class="weather-icon">' + icon + '</div>' +
-                        '</div>' +
-                        '</div>';
-
-                    // --- Unified Info Line (MOVED OUTSIDE .main-left to span full width) ---
-                    html += '<div class="sun-precept-info">' +
-                        '<span>☀️ ' + riseTime + '</span>' +
-                        '<span>💧 ' + rainChance + '%</span>' +
-                        '<span>🌙 ' + setTime + '</span>' +
-                        '</div>';
-                    // ----------------------------
-
-                    html += '<div class="current-details">' +
-                        '<div class="detail-left"><strong>Low/High:</strong> ' + todayLowF + '°F / ' + todayHighF + '°F</div>' +
-                        '<div class="detail-right"><strong>Humidity/Wind:</strong> ' + humidity + '% / ' + windSpeed + '</div>' +
-                        '</div>';
-                    
-                    html += '<div class="forecast-days">';
-                    
-                    for (var i = 1; i <= 3; i++) {
-                        var dayName = getDayName(data.daily.time[i]);
-                        var highC = Math.round(data.daily.temperature_2m_max[i]);
-                        var highF = Math.round(highC * 9/5 + 32);
-                        var lowC = Math.round(data.daily.temperature_2m_min[i]);
-                        var lowF = Math.round(lowC * 9/5 + 32);
-                        var dayIcon = getWeatherIcon(data.daily.weather_code[i]);
-                        var dayRain = data.daily.precipitation_probability_max[i] || 0;
-                        
-                        html += '<div class="forecast-day">' +
-                            '<div class="forecast-day-name">' + dayName + '</div>' +
-                            '<div class="forecast-day-inner">' +
-                            '<div class="forecast-icon-col">' +
-                            '<div class="forecast-icon">' + dayIcon + '</div>' +
-                            '</div>' +
-                            '<div class="forecast-info-col">' +
-                            '<div class="forecast-temps">' +
-                            '<div class="forecast-high">' + highF + '°F</div>' +
-                            '<div class="forecast-low">' + lowF + '°F</div>' +
-                            '</div>' +
-                            '<div class="forecast-rain">💧 ' + dayRain + '%</div>' +
-                            '</div>' +
-                            '</div>' +
-                            '</div>';
-                    }
-                    
-                    html += '</div>';
-                    
-                    document.getElementById(elementId).innerHTML = html;
-                } catch (e) {
-                    // Parse error path: re-add URL for persistent debug
-                    document.getElementById(elementId).innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Parse error: ' + e.message + '</div>';
-                }
-            } else {
-                // HTTP Error path: re-add URL for persistent debug
-                document.getElementById(elementId).innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">HTTP Error ' + xhr.status + '</div>';
-            }
-        };
-        
-        xhr.onerror = function() {
-            clearTimeout(timeoutId); // Clear timeout on network error
-            document.getElementById(elementId).innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Network error</div>';
-        };
-        
-        xhr.ontimeout = function() {
-            clearTimeout(timeoutId); // Clear timeout on timeout
-            document.getElementById(elementId).innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Request timeout</div>';
-        };
-        
-        xhr.send();
-    }
-        
-        function fetchAllWeather() {
-            fetchWeatherForLocation('weather-amsterdam', 52.3676, 4.9041);
-            fetchWeatherForLocation('weather-maspalomas', 27.7609, -15.5863);
-        }
-        
-        function isInActiveWindow() {
+            var current = data.current;
+            var daily = data.daily;
+            var timezone = data.timezone;
             var now = new Date();
-            var utcDay = now.getUTCDay();
-            var utcHour = now.getUTCHours();
+
+            // Hide debug URL immediately if successful
+            debugUrlDisplay.style.visibility = 'hidden'; 
+            debugUrlDisplay.style.opacity = '0'; 
+
+            // Current Weather
+            document.getElementById(elementId + '-update-time').innerText = padZero(now.getHours()) + ':' + padZero(now.getMinutes());
+            document.getElementById(elementId + '-temp').innerText = toFahrenheit(current.temperature_2m);
+            document.getElementById(elementId + '-wind').innerText = current.wind_speed_10m.toFixed(1);
+            document.getElementById(elementId + '-humidity').innerText = current.relative_humidity_2m;
+            document.getElementById(elementId + '-apparent').innerText = toFahrenheit(current.apparent_temperature);
+            document.getElementById(elementId + '-weather-icon').innerText = getWeatherIcon(current.weather_code);
+
+            // Sun & Precipitation
+            var sunriseUTC = new Date(daily.sunrise[0]);
+            var sunsetUTC = new Date(daily.sunset[0]);
+
+            // Convert UTC times to local time using the fetched timezone
+            var sunriseTime = new Date(sunriseUTC.toLocaleString('en-US', { timeZone: timezone }));
+            var sunsetTime = new Date(sunsetUTC.toLocaleString('en-US', { timeZone: timezone }));
             
-            if (utcDay === 5 && utcHour >= 21) return false;
-            if (utcDay === 6) return false;
-            if (utcDay === 0 && utcHour < 21) return false;
+            document.getElementById(elementId + '-sunrise').innerText = padZero(sunriseTime.getHours()) + ':' + padZero(sunriseTime.getMinutes());
+            document.getElementById(elementId + '-sunset').innerText = padZero(sunsetTime.getHours()) + ':' + padZero(sunsetTime.getMinutes());
+            document.getElementById(elementId + '-precept-prob').innerText = daily.precipitation_probability_max[0];
+
+
+            // Daily Forecast
+            var forecastHTML = '';
+            for (var i = 1; i < daily.time.length; i++) { // Start from index 1 (tomorrow)
+                var date = new Date(daily.time[i]);
+                var dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                var tempMax = toFahrenheit(daily.temperature_2m_max[i]);
+                var tempMin = toFahrenheit(daily.temperature_2m_min[i]);
+                var icon = getWeatherIcon(daily.weather_code[i]);
+
+                forecastHTML += '<div class="day-box">';
+                forecastHTML += '<div class="day-name">' + dayName + '</div>';
+                forecastHTML += '<div class="day-icon" style="font-size: 1.5em;">' + icon + '</div>';
+                forecastHTML += '<div class="day-temp">' + tempMax + '°/' + tempMin + '°</div>';
+                forecastHTML += '</div>';
+            }
+            document.getElementById(elementId + '-daily-forecast').innerHTML = forecastHTML;
+        }
+
+        function displayError(elementId, message) {
+            var debugUrlDisplay = document.getElementById(elementId + '-debug-url');
             
-            return true;
+            debugUrlDisplay.innerText = 'ERROR: ' + message + ' | URL: ' + debugUrlDisplay.innerText;
+            debugUrlDisplay.style.visibility = 'visible';
+            debugUrlDisplay.style.opacity = '0.9';
+            
+            document.getElementById(elementId + '-temp').innerText = 'Err';
+            document.getElementById(elementId + '-weather-icon').innerText = '❌';
+            document.getElementById(elementId + '-update-time').innerText = '--:--';
+            document.getElementById(elementId + '-daily-forecast').innerHTML = '<div style="padding: 10px;">Failed to load data.</div>';
+        }
+
+        // --- DATA FETCHING ---
+        function fetchWeatherForLocation(elementId, lat, lon) {
+            // A. The original target API URL (using HTTP as suggested by Open-Meteo)
+            var apiUrl = 'http://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
+                         '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
+                         '&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code' +
+                         '&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto&forecast_days=4';
+            
+            // B. Construct the full PROXY URL
+            var url = PROXY_URL + '?url=' + encodeURIComponent(apiUrl);
+            
+            // Debugging: Display the generated URL temporarily
+            var debugUrlDisplay = document.getElementById(elementId + '-debug-url');
+            debugUrlDisplay.innerText = url;
+            debugUrlDisplay.style.visibility = 'visible';
+            debugUrlDisplay.style.opacity = '0.1'; 
+            
+            // Start a timer to hide the URL if it takes too long to load or fails
+            var debugTimeout = setTimeout(function() {
+                debugUrlDisplay.style.visibility = 'hidden';
+                debugUrlDisplay.style.opacity = '0';
+            }, updateTimeout);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.timeout = 20000;
+            
+            xhr.onload = function() {
+                clearTimeout(debugTimeout);
+                if (xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        displayWeather(elementId, data);
+                    } catch (e) {
+                        displayError(elementId, 'JSON Parse Error');
+                    }
+                } else {
+                    displayError(elementId, 'HTTP Status ' + xhr.status);
+                }
+                checkComplete();
+            };
+            
+            xhr.onerror = function() {
+                clearTimeout(debugTimeout);
+                displayError(elementId, 'Network Error');
+                checkComplete();
+            };
+            
+            xhr.ontimeout = function() {
+                clearTimeout(debugTimeout);
+                displayError(elementId, 'Timeout');
+                checkComplete();
+            };
+            
+            xhr.send();
+        }
+
+        function fetchAllWeather() {
+            completionCount = 0;
+            // Amsterdam (Example Lat/Lon)
+            fetchWeatherForLocation('amsterdam', 52.37, 4.89); 
+            // Maspalomas (Example Lat/Lon)
+            fetchWeatherForLocation('maspalomas', 27.76, -15.58);
+        }
+
+        function checkComplete() {
+            completionCount++;
+            if (completionCount >= 3) {
+                // All three requests (2 weather + 1 currency) finished
+                updateCurrencyDisplay();
+            }
         }
         
         function fetchCurrency() {
-            var lowThreshold = parseFloat(getUrlParameter('low')) || 1.1;
-            var highThreshold = parseFloat(getUrlParameter('high')) || 1.2;
+            var currencyApiUrl = 'https://api.exchangerate-api.com/v4/latest/EUR'; // Original external API URL
             
-            var oxrRate = null, oxrDateTime = null;
-            var ecbRate = null, ecbDate = null;
-            var altRate = null, altDateTime = null;
-            var completed = 0;
-            
-            function checkComplete() {
-                completed++;
-                if (completed >= 3) {
-                    displayCurrency();
-                }
-            }
-            
-            function displayCurrency() {
-                var displayRate = oxrRate || ecbRate || altRate || '0.00000';
-                var rateNum = parseFloat(displayRate);
-                
-                var leftIcon = '';
-                var rightIcon = '';
-                if (rateNum < lowThreshold) {
-                    leftIcon = '✅ ';
-                } else if (rateNum > highThreshold) {
-                    rightIcon = ' ❌';
-                }
-                
-                var infoLine = '';
-                var parts = [];
-                if (oxrRate) parts.push('OXR $' + oxrRate + ' (' + oxrDateTime + ')');
-                if (ecbRate) parts.push('ECB $' + ecbRate + ' (' + ecbDate + ')');
-                if (altRate) parts.push('Alt $' + altRate + (altDateTime ? ' (' + altDateTime + ')' : ''));
-                infoLine = parts.join(' • ');
-                
-                document.getElementById('currency-content').innerHTML = 
-                    '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate + rightIcon + '</div>' +
-                    '<div style="font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
-            }
-            
-            var xhr1 = new XMLHttpRequest();
-            var apiUrl1 = 'https://openexchangerates.org/api/latest.json?app_id=59f0442d524d41608055554519509c57';
-            xhr1.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl1), true);
-            xhr1.onload = function() {
-                if (xhr1.status === 200) {
-                    try {
-                        var data = JSON.parse(xhr1.responseText);
-                        var usdEurRate = data.rates.EUR;
-                        oxrRate = (1 / usdEurRate).toFixed(5);
-                        
-                        var updateDate = new Date(data.timestamp * 1000);
-                        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                        var month = months[updateDate.getMonth()];
-                        var day = updateDate.getDate();
-                        var hours = padZero(updateDate.getHours());
-                        var minutes = padZero(updateDate.getMinutes());
-                        oxrDateTime = month + ' ' + day + ', ' + hours + ':' + minutes;
-                    } catch (e) {}
-                }
-                checkComplete();
-            };
-            xhr1.onerror = function() { checkComplete(); };
-            xhr1.send();
-            
-            var xhr2 = new XMLHttpRequest();
-            var apiUrl2 = 'https://api.frankfurter.app/latest?from=EUR&to=USD';
-            xhr2.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl2), true);
-            xhr2.onload = function() {
-                if (xhr2.status === 200) {
-                    try {
-                        var data = JSON.parse(xhr2.responseText);
-                        ecbRate = data.rates.USD.toFixed(5);
-                        ecbDate = data.date;
-                    } catch (e) {}
-                }
-                checkComplete();
-            };
-            xhr2.onerror = function() { checkComplete(); };
-            xhr2.send();
+            // --- NEW PROXY IMPLEMENTATION FOR CURRENCY ---
+            // 1. URL-encode the target API path
+            var currencyTargetUrl = encodeURIComponent(currencyApiUrl);
+            // 2. Construct the full PROXY URL
+            var proxiedCurrencyUrl = PROXY_URL + '?url=' + currencyTargetUrl;
+            // --- END NEW PROXY IMPLEMENTATION ---
             
             var xhr3 = new XMLHttpRequest();
-            var apiUrl3 = 'https://api.exchangerate-api.com/v4/latest/EUR';
-            xhr3.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl3), true);
+            xhr3.open('GET', proxiedCurrencyUrl, true);
+            xhr3.timeout = 20000;
             xhr3.onload = function() {
                 if (xhr3.status === 200) {
                     try {
@@ -712,13 +512,17 @@
             xhr3.send();
         }
         
+        // --- INITIALIZATION ---
         updateTime();
         setInterval(updateTime, 1000);
         
         fetchAllWeather();
         fetchCurrency();
         
-        setInterval(fetchAllWeather, 600000);
+        // Weather updates every 10 minutes (600,000 ms)
+        setInterval(fetchAllWeather, 600000); 
+        
+        // Currency updates every hour (3,600,000 ms), only when the window is active
         setInterval(function() {
             if (isInActiveWindow()) {
                 fetchCurrency();

@@ -8,79 +8,81 @@
         * {
             margin: 0;
             padding: 0;
-            -webkit-box-sizing: border-box;
             box-sizing: border-box;
         }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
             padding: 8px;
             overflow: hidden;
         }
         
         body.theme-amber {
-            background: -webkit-linear-gradient(315deg, #fef3c7 0%, #fde68a 100%);
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             color: #1c1917;
         }
         
         body.theme-blue {
-            background: -webkit-linear-gradient(315deg, #dbeafe 0%, #bfdbfe 100%);
             background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
             color: #1e3a8a;
         }
         
         body.theme-gray {
-            background: -webkit-linear-gradient(315deg, #f3f4f6 0%, #e5e7eb 100%);
             background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            color: #1f2937;
+            color: #111827;
         }
-
+        
+        body.theme-cream {
+            background: linear-gradient(135deg, #fef9c3 0%, #fff7d0 100%);
+            color: #44403c;
+        }
+        
         /* --- Global Layout --- */
         .container {
             max-width: 100%;
-            height: 100vh;
-            display: -webkit-box;
-            display: -ms-flexbox;
             display: flex;
-            -ms-flex-wrap: wrap;
             flex-wrap: wrap;
-            -webkit-box-pack: center;
-            -ms-flex-pack: center;
             justify-content: center;
             gap: 16px;
+            padding-bottom: 70px; /* Space for the fixed footer */
         }
-
-        /* --- Weather Card Styling --- */
+        
+        @media (min-width: 768px) {
+            .container {
+                padding-top: 10px;
+            }
+        }
+        
+        /* --- Card Styling --- */
         .weather-card {
-            background-color: rgba(255, 255, 255, 0.85);
-            -webkit-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.9);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             padding: 15px;
-            border-radius: 12px;
+            border-radius: 16px;
             width: 100%;
             min-height: 220px;
-            
-            /* Responsive layout: 2 columns on larger screens */
-            float: left;
         }
 
         @media (min-width: 768px) {
             .weather-card {
-                width: calc(50% - 8px); /* Two cards with 16px gap */
+                width: calc(50% - 8px); 
             }
         }
         
+        .card-title {
+            font-size: 1.25em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
         .card-header {
-            display: -webkit-box;
-            display: -ms-flexbox;
             display: flex;
-            -webkit-box-pack: justify;
-            -ms-flex-pack: justify;
             justify-content: space-between;
-            -webkit-box-align: center;
-            -ms-flex-align: center;
             align-items: center;
             margin-bottom: 8px;
         }
@@ -95,27 +97,14 @@
             opacity: 0.7;
         }
 
-        /* --- Main Content Layout --- */
+        /* --- Main Weather Content Layout --- */
         .main-content {
-            display: -webkit-box;
-            display: -ms-flexbox;
             display: flex;
-            -webkit-box-orient: horizontal;
-            -webkit-box-direction: normal;
-            -ms-flex-direction: row;
             flex-direction: row;
             margin-bottom: 15px;
         }
 
-        .main-left {
-            -webkit-box-flex: 1;
-            -ms-flex: 1;
-            flex: 1;
-        }
-        
-        .main-right {
-            -webkit-box-flex: 1;
-            -ms-flex: 1;
+        .main-left, .main-right {
             flex: 1;
         }
 
@@ -126,7 +115,7 @@
         }
 
         .temp-unit-small {
-            font-size: 0.35em; /* Smaller font size for °F */
+            font-size: 0.35em; 
             vertical-align: top;
             opacity: 0.8;
             margin-left: -5px;
@@ -138,15 +127,11 @@
             margin-top: 5px;
         }
 
-        /* --- Layout Fix for Full-Width Details --- */
+        /* --- Full-Width Details --- */
         .sun-precept-info {
-            display: -webkit-box;
-            display: -ms-flexbox;
             display: flex;
-            -webkit-box-pack: justify;
-            -ms-flex-pack: justify;
             justify-content: space-between;
-            width: 100%; /* Ensures it spans the full card width */
+            width: 100%; 
             padding: 8px 0;
             font-size: 0.9em;
             opacity: 0.9;
@@ -157,18 +142,12 @@
         
         .sun-precept-info > div {
             text-align: center;
-            -webkit-box-flex: 1;
-            -ms-flex: 1;
             flex: 1;
         }
 
         /* --- Daily Forecast --- */
         .daily-forecast {
-            display: -webkit-box;
-            display: -ms-flexbox;
             display: flex;
-            -webkit-box-pack: justify;
-            -ms-flex-pack: justify;
             justify-content: space-between;
             font-size: 0.9em;
         }
@@ -187,20 +166,36 @@
             opacity: 0.9;
         }
         
-        /* --- Footer --- */
-        .footer {
-            clear: both;
-            padding: 16px 0 0;
-            text-align: center;
+        /* --- Footer/Currency Bar --- */
+        .footer-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            padding: 8px 15px;
             font-size: 0.8em;
-            opacity: 0.6;
-            color: inherit;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
         }
         
-        .alt-rate, .alt-time {
+        .time-display {
             font-size: 1.1em;
             font-weight: bold;
-            color: #dc2626; /* Red for emphasis */
+            opacity: 0.8;
+        }
+
+        .currency-card {
+            flex-grow: 1;
+            margin: 0 10px;
+            text-align: left;
+            padding: 5px 10px;
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.05);
         }
         
         /* --- Debugging Styles --- */
@@ -220,7 +215,7 @@
         }
     </style>
 </head>
-<body class="theme-blue">
+<body class="theme-cream">
     <div class="container">
         <!-- Weather Card 1: Amsterdam -->
         <div class="weather-card" id="amsterdam-weather">
@@ -281,18 +276,33 @@
         </div>
     </div>
     
-    <div class="footer">
-        Current Time: <span id="current-time">--</span> | 1 EUR = <span class="alt-rate" id="alt-rate-usd">--</span> USD (Last updated: <span class="alt-time" id="alt-rate-time">--</span>)
+    <div class="footer-bar">
+        <div class="time-display">
+            Current Time: <span id="current-time">--</span>
+        </div>
+        <div class="currency-card" id="currency-content">
+            <!-- Currency status injected here -->
+            Loading Currency Data...
+        </div>
     </div>
 
     <script>
         // --- GLOBAL CONFIG & STATE ---
         var PROXY_URL = 'https://weatherproxy.ldmathes.cc/';
 
-        // Global state for currency (Default to USD as API returns against base)
-        var altRate = 1.0;
-        var altDateTime = '--';
-        var completionCount = 0; // Tracks when all three XHRs have completed (2 weather + 1 currency)
+        // Currency Data Sources
+        var altRate = null;
+        var altDateTime = null;
+        var oxrRate = null;
+        var oxrDateTime = null;
+        var ecbRate = null;
+        var ecbDate = null;
+        
+        // Currency Thresholds (Example: 1.05000 is 'Good Buy', 1.08000 is 'Bad Buy')
+        var lowThreshold = 1.05000; 
+        var highThreshold = 1.08000; 
+
+        var completionCount = 0; // Tracks when all XHRs have completed (2 weather + 3 currency)
         var updateTimeout = 15000; // 15 seconds for debug URL to be visible
 
         // --- UTILITY FUNCTIONS ---
@@ -332,12 +342,35 @@
         }
 
         function updateCurrencyDisplay() {
-            document.getElementById('alt-rate-usd').innerText = altRate;
-            document.getElementById('alt-rate-time').innerText = altDateTime;
+            // Priority: OXR > ECB > Alt Rate (if available and valid)
+            const displayRate = oxrRate || ecbRate || altRate || '0.00000';
+            const rateNum = parseFloat(displayRate);
+            
+            let leftIcon = '';
+            let rightIcon = '';
+            // Check against thresholds
+            if (rateNum < lowThreshold && rateNum !== 0) { // Check against low threshold (good rate)
+                leftIcon = '✅ ';
+            } else if (rateNum > highThreshold) { // Check against high threshold (bad rate)
+                rightIcon = ' ❌';
+            }
+            
+            // Construct the detailed info line
+            let infoLine = '';
+            const parts = [];
+            if (oxrRate) parts.push(`OXR $${oxrRate} (${oxrDateTime})`);
+            if (ecbRate) parts.push(`ECB $${ecbRate} (${ecbDate})`);
+            if (altRate) parts.push(`Alt $${altRate}${altDateTime ? ' (' + altDateTime + ')' : ''}`);
+            infoLine = parts.join(' • ');
+            
+            // Render the final HTML in the currency card
+            document.getElementById('currency-content').innerHTML = `
+                <div class="card-title">${leftIcon}1 EUR → USD: $${rateNum.toFixed(5)}${rightIcon}</div>
+                <div style="font-size: 0.6em; opacity: 0.7; margin-top: 2px; word-wrap: break-word; white-space: normal;">${infoLine}</div>
+            `;
         }
 
         function displayWeather(elementId, data) {
-            var card = document.getElementById(elementId + '-weather');
             var debugUrlDisplay = document.getElementById(elementId + '-debug-url');
 
             var current = data.current;
@@ -468,29 +501,23 @@
 
         function checkComplete() {
             completionCount++;
-            if (completionCount >= 3) {
-                // All three requests (2 weather + 1 currency) finished
+            // We have 2 weather + 3 currency requests. Total 5
+            if (completionCount >= 5) { 
                 updateCurrencyDisplay();
             }
         }
         
-        function fetchCurrency() {
-            var currencyApiUrl = 'https://api.exchangerate-api.com/v4/latest/EUR'; // Original external API URL
+        function fetchCurrencyAlt() {
+            var currencyApiUrl = 'https://api.exchangerate-api.com/v4/latest/EUR'; 
+            var proxiedCurrencyUrl = PROXY_URL + '?url=' + encodeURIComponent(currencyApiUrl);
             
-            // --- NEW PROXY IMPLEMENTATION FOR CURRENCY ---
-            // 1. URL-encode the target API path
-            var currencyTargetUrl = encodeURIComponent(currencyApiUrl);
-            // 2. Construct the full PROXY URL
-            var proxiedCurrencyUrl = PROXY_URL + '?url=' + currencyTargetUrl;
-            // --- END NEW PROXY IMPLEMENTATION ---
-            
-            var xhr3 = new XMLHttpRequest();
-            xhr3.open('GET', proxiedCurrencyUrl, true);
-            xhr3.timeout = 20000;
-            xhr3.onload = function() {
-                if (xhr3.status === 200) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', proxiedCurrencyUrl, true);
+            xhr.timeout = 20000;
+            xhr.onload = function() {
+                if (xhr.status === 200) {
                     try {
-                        var data = JSON.parse(xhr3.responseText);
+                        var data = JSON.parse(xhr.responseText);
                         altRate = data.rates.USD.toFixed(5);
                         
                         if (data.time_last_update_utc) {
@@ -508,8 +535,68 @@
                 }
                 checkComplete();
             };
-            xhr3.onerror = function() { checkComplete(); };
-            xhr3.send();
+            xhr.onerror = function() { checkComplete(); };
+            xhr.ontimeout = function() { checkComplete(); };
+            xhr.send();
+        }
+
+        function fetchCurrencyECB() {
+            var ecbApiUrl = 'https://api.exchangerate.host/latest?base=EUR&symbols=USD'; 
+            var proxiedEcbUrl = PROXY_URL + '?url=' + encodeURIComponent(ecbApiUrl);
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', proxiedEcbUrl, true);
+            xhr.timeout = 20000;
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        ecbRate = data.rates.USD.toFixed(5);
+                        ecbDate = data.date; 
+                    } catch (e) {}
+                }
+                checkComplete();
+            };
+            xhr.onerror = function() { checkComplete(); };
+            xhr.ontimeout = function() { checkComplete(); };
+            xhr.send();
+        }
+
+        function fetchCurrencyOXR() {
+            var oxrApiUrl = 'https://openexchangerates.org/api/latest.json?app_id=d6235b2069a74a129d4d5e9754f76226&base=EUR';
+            var proxiedOxrUrl = PROXY_URL + '?url=' + encodeURIComponent(oxrApiUrl);
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', proxiedOxrUrl, true);
+            xhr.timeout = 20000;
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        oxrRate = data.rates.USD.toFixed(5);
+                        
+                        if (data.timestamp) {
+                            var updateDate = new Date(data.timestamp * 1000); // Unix timestamp is in seconds
+                            if (!isNaN(updateDate.getTime())) {
+                                var hours = padZero(updateDate.getHours());
+                                var minutes = padZero(updateDate.getMinutes());
+                                oxrDateTime = hours + ':' + minutes;
+                            }
+                        }
+                    } catch (e) {}
+                }
+                checkComplete();
+            };
+            xhr.onerror = function() { checkComplete(); };
+            xhr.ontimeout = function() { checkComplete(); };
+            xhr.send();
+        }
+
+
+        function fetchCurrency() {
+            fetchCurrencyAlt();
+            fetchCurrencyECB();
+            fetchCurrencyOXR();
         }
         
         // --- INITIALIZATION ---
@@ -523,7 +610,7 @@
         setInterval(fetchAllWeather, 600000); 
         
         // Currency updates every hour (3,600,000 ms), only when the window is active
-        setInterval(function() {
+        setInterval(() => {
             if (isInActiveWindow()) {
                 fetchCurrency();
             }

@@ -593,16 +593,32 @@
         }
         
         function isInActiveWindow() {
-            var now = new Date();
-            var utcDay = now.getUTCDay();
-            var utcHour = now.getUTCHours();
-            
-            if (utcDay === 5 && utcHour >= 21) return false;
-            if (utcDay === 6) return false;
-            if (utcDay === 0 && utcHour < 21) return false;
-            
-            return true;
-        }
+            const now = new Date();
+            const utcDay = now.getUTCDay();
+            const utcHour = now.getUTCHours();
+    
+    // 💡 NEW LOGIC: Block out Midnight (00) to 7 AM (07) UTC
+           if (utcHour >= 0 && utcHour <= 7) return false;
+    
+    // Original Logic (Weekend Block-out)
+           if (utcDay === 5 && utcHour >= 21) return false;
+           if (utcDay === 6) return false;
+           if (utcDay === 0 && utcHour < 21) return false;
+    
+           return true;
+         }
+        
+ //       function isInActiveWindow() {
+ //           var now = new Date();
+ //           var utcDay = now.getUTCDay();
+ //           var utcHour = now.getUTCHours();
+ //           
+ //           if (utcDay === 5 && utcHour >= 21) return false;
+ //           if (utcDay === 6) return false;
+ //           if (utcDay === 0 && utcHour < 21) return false;
+ //           
+ //           return true;
+ //       }
         
         function fetchCurrency() {
             var lowThreshold = parseFloat(getUrlParameter('low')) || 1.1;

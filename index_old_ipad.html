@@ -593,9 +593,9 @@
         }
         
         function isInActiveWindow() {
-            const now = new Date();
-            const utcDay = now.getUTCDay();
-            const utcHour = now.getUTCHours();
+            var now = new Date();
+            var utcDay = now.getUTCDay();
+            var utcHour = now.getUTCHours();
     
     // 💡 NEW LOGIC: Block out Midnight (00) to 7 AM (07) UTC
            if (utcHour >= 0 && utcHour <= 7) return false;

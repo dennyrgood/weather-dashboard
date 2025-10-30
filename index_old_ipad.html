@@ -638,6 +638,14 @@
             
             function displayCurrency() {
                 var displayRate = oxrRate || ecbRate || altRate || '0.00000';
+                
+                // Determine which source is being used
+                var source = '';
+                if (oxrRate) source = 'OXR';
+                else if (ecbRate) source = 'ECB';
+                else if (altRate) source = 'Alt';
+                // End Deterimine which source is being used
+                
                 var rateNum = parseFloat(displayRate);
                 
                 var leftIcon = '';
@@ -655,9 +663,16 @@
                 if (altRate) parts.push('Alt $' + altRate + (altDateTime ? ' (' + altDateTime + ')' : ''));
                 infoLine = parts.join(' • ');
                 
+                //document.getElementById('currency-content').innerHTML = 
+                //    '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate + rightIcon + '</div>' +
+                //    '<div style="font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
+                
+                // End Display which source used
                 document.getElementById('currency-content').innerHTML = 
-                    '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate + rightIcon + '</div>' +
+                    '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate + 
+                    (source ? ' (' + source + ')' : '') + rightIcon + '</div>' +
                     '<div style="font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
+                // End Display which source used    
             }
             
             var xhr1 = new XMLHttpRequest();

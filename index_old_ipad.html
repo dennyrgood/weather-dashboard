@@ -662,17 +662,20 @@
                 if (ecbRate) parts.push('ECB $' + ecbRate + ' (' + ecbDate + ')');
                 if (altRate) parts.push('Alt $' + altRate + (altDateTime ? ' (' + altDateTime + ')' : ''));
                 infoLine = parts.join(' • ');
-                
+
+                //Old Display, without source noted
+                //
                 //document.getElementById('currency-content').innerHTML = 
                 //    '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate + rightIcon + '</div>' +
                 //    '<div style="font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
                 
-                // End Display which source used
+                // Display which source used
                 document.getElementById('currency-content').innerHTML = 
                     '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate + 
                     (source ? ' (' + source + ')' : '') + rightIcon + '</div>' +
                     '<div style="font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
                 // End Display which source used    
+                
             }
             
             var xhr1 = new XMLHttpRequest();

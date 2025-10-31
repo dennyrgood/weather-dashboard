@@ -297,11 +297,13 @@
 }
         
 */
+
+/* adjust fonts, probably won't work - ipad 2 issues
         
 .weather-icon {
     font-size: 40px;
     -webkit-transform: scale(2);
-    -webkit-transform-origin: top right;  /* Scale from top-right corner */
+    -webkit-transform-origin: top right;  //* Scale from top-right corner 
     transform: scale(2);
     transform-origin: top right;
     display: inline-block;
@@ -309,11 +311,34 @@
     margin: 20px 50px 0 0;
 }
 
-/* Only apply large scale on iPad 2 sized screens */
+/* Only apply large scale on iPad 2 sized screens 
 @media only screen and (max-width: 1024px) and (max-height: 768px) {
     .weather-icon {
         -webkit-transform: scale(7);
         transform: scale(7);
+    }
+}
+
+*/
+
+.main-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.weather-icon {
+    font-size: 100px;  /* Modern browsers - adjust up if too small */
+    display: inline-block;
+    line-height: 1;
+    margin: 0;  /* Remove margin, let parent position it */
+}
+
+/* Larger for iPad 2 */
+@media only screen and (max-width: 1024px) and (max-height: 768px) {
+    .weather-icon {
+        font-size: 320px;  /* Bigger for old iPad */
+        margin: -40px -40px 0 0;  /* Negative margin to pull it into view */
     }
 }
 

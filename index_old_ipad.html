@@ -371,21 +371,7 @@
     }
 }
 
-/* Where it is/should be, within <style>...</style> */
-/* ... existing CSS rules ... */
 
-/* --- NEW SIMPLE FOOTER STYLES --- */
-.footer-version {
-    font-size: 0.75em;
-    text-align: center;
-    opacity: 0.5;
-    margin-top: 16px;
-    padding-bottom: 8px;
-    clear: both; /* Ensures it drops below the floated weather cards */
-}
-/* --- END NEW SIMPLE FOOTER STYLES --- */
-
-    
 /*
  * iPAD 2 HACK (Targeting 1024x768 and smaller/shorter)
  * * This block is now completely independent and uses only the old, working styles, 
@@ -550,6 +536,18 @@
             text-align: center;
             font-size: 0.8em;
         }
+
+        /* --- NEW SIMPLE FOOTER STYLES --- */
+.footer-version {
+    font-size: 0.75em;
+    text-align: center;
+    opacity: 0.5;
+    margin-top: 16px;
+    padding-bottom: 8px;
+    clear: both; /* Ensures it drops below the floated weather cards */
+}
+/* --- END NEW SIMPLE FOOTER STYLES --- */
+        
     </style>
 </head>
 <body>
@@ -575,10 +573,6 @@
             </div>
         </div>
     </div>
-
-<div id="version-number" class="footer-version">
-    Version 2025.10.31-2300
-</div>
 
     <script>
         // var PROXY_URL = 'https://weather-worker.dennyrgood.workers.dev';

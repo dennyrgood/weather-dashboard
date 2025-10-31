@@ -184,28 +184,74 @@
             top: 0;
             right: 0;
         }
-        
-        .temperature {
-            font-size: 9.5em;
-            font-weight: 700;
-            line-height: 1;
-        }
 
-        .temperature .temp-unit {
-            font-size: 0.2em; /* Much smaller F */
-            vertical-align: top;
-            display: inline-block;
-            line-height: 1;
-            font-weight: 400;
-            margin-left: 2px;
-        }
         
-        .feels-like {
-            font-size: 2.1em;
-            font-weight: 600;
-            opacity: 0.85;
-            margin-top: 8px;
-        }
+.temperature {
+    font-size: 9.5em;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.temperature-secondary {
+    font-size: 4.75em;
+    font-weight: 700;
+    opacity: 0.7;
+    line-height: 1;
+}
+
+.temperature .temp-unit {
+    font-size: 0.2em;
+    vertical-align: top;
+    display: inline-block;
+    line-height: 1;
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+.feels-like {
+    font-size: 2.1em;
+    font-weight: 600;
+    opacity: 0.85;
+    margin-top: 8px;
+}
+
+.temperature-secondary .temp-unit {
+    font-size: 0.2em;
+    vertical-align: top;
+    display: inline-block;
+    line-height: 1;
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+.feels-like .temp-unit {
+    font-size: 0.2em;
+    vertical-align: top;
+    display: inline-block;
+    line-height: 1;
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+.forecast-high .temp-unit,
+.forecast-low .temp-unit {
+    font-size: 0.2em;
+    vertical-align: top;
+    display: inline-block;
+    line-height: 1;
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+.detail-left .temp-unit,
+.detail-right .temp-unit {
+    font-size: 0.2em;
+    vertical-align: top;
+    display: inline-block;
+    line-height: 1;
+    font-weight: 400;
+    margin-left: 2px;
+}
         
         .weather-icon {
             font-size: 40px;
@@ -507,6 +553,9 @@
                     var icon = getWeatherIcon(weatherCode);
                     
                     // Start HTML construction (excluding the debug URL which is handled by timeout/overwrite)
+
+                    /* before small c and f's
+                    
                     var html = 
                         '<div class="weather-main">' +
                         '<div class="main-left">' +
@@ -519,7 +568,24 @@
                         '<div class="weather-icon">' + icon + '</div>' +
                         '</div>' +
                         '</div>';
+                    */
 
+    var html = 
+    '<div class="weather-main">' +
+    '<div class="main-left">' +
+    '<div class="temperature">' + tempF + '<span class="temp-unit">°F</span></div>' +
+    '<div class="temperature-secondary">' + tempC + '<span class="temp-unit">°C</span></div>' +
+    '<div class="feels-like">Feels ' + feelsLikeF + '<span class="temp-unit">°F</span></div>' +
+    '</div>' +
+    '<div class="main-right">' +
+    '<div class="weather-icon">' + icon + '</div>' +
+    '</div>' +
+    '</div>';
+    '<div class="forecast-temps">' +
+    '<div class="forecast-high">' + highF + '<span class="temp-unit">°F</span></div>' +
+    '<div class="forecast-low">' + lowF + '<span class="temp-unit">°F</span></div>' +
+    '</div>'; 
+    
                     // --- Unified Info Line (MOVED OUTSIDE .main-left to span full width) ---
                     html += '<div class="sun-precept-info">' +
                         '<span>☀️ ' + riseTime + '</span>' +
@@ -528,10 +594,18 @@
                         '</div>';
                     // ----------------------------
 
+                    /* pre small c and f's
+                    
                     html += '<div class="current-details">' +
                         '<div class="detail-left"><strong>Low/High:</strong> ' + todayLowF + '°F / ' + todayHighF + '°F</div>' +
                         '<div class="detail-right"><strong>Humidity/Wind:</strong> ' + humidity + '% / ' + windSpeed + '</div>' +
                         '</div>';
+                    */
+                    
+html += '<div class="current-details">' +
+    '<div class="detail-left"><strong>Low/High:</strong> ' + todayLowF + '<span class="temp-unit">°F</span> / ' + todayHighF + '<span class="temp-unit">°F</span></div>' +
+    '<div class="detail-right"><strong>Humidity/Wind:</strong> ' + humidity + '% / ' + windSpeed + '</div>' +
+    '</div>';
                     
                     html += '<div class="forecast-days">';
                     

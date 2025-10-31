@@ -371,7 +371,21 @@
     }
 }
 
+/* Where it is/should be, within <style>...</style> */
+/* ... existing CSS rules ... */
 
+/* --- NEW SIMPLE FOOTER STYLES --- */
+.footer-version {
+    font-size: 0.75em;
+    text-align: center;
+    opacity: 0.5;
+    margin-top: 16px;
+    padding-bottom: 8px;
+    clear: both; /* Ensures it drops below the floated weather cards */
+}
+/* --- END NEW SIMPLE FOOTER STYLES --- */
+
+    
 /*
  * iPAD 2 HACK (Targeting 1024x768 and smaller/shorter)
  * * This block is now completely independent and uses only the old, working styles, 
@@ -780,6 +794,7 @@ html += '<div class="current-details">' +
     '<div class="forecast-rain">💧 ' + dayRain + '%</div>' +
     '</div>' +
     '</div>' +
+    '<div id="version-display" class="footer-version">v. 2025.11.01 (Manual Update)</div>'
     '</div>';
                     }
                     

@@ -574,11 +574,22 @@
         </div>
     </div>
 
-    <div id="version-display" class="footer-version">v. 2025.11.01 (Manual Update)</div>
+<div id="version-display" class="footer-version"></div>
 
     <script>
         // var PROXY_URL = 'https://weather-worker.dennyrgood.workers.dev';
         var PROXY_URL = 'https://weatherproxy.ldmathes.cc/';
+
+      // === GLOBAL VERSION CONTROL ===
+    var APP_VERSION = "v. 2025.10.31 (23:38";
+    // =================================
+
+
+            // Display version in footer (runs even on old browsers)
+    window.onload = function() {
+        var el = document.getElementById("version-display");
+        if (el) el.innerHTML = APP_VERSION;
+    };
 
 // This single change removes the `workers.dev` dependency completely.
         

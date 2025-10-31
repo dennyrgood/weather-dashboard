@@ -580,7 +580,7 @@
     '<div class="main-right">' +
     '<div class="weather-icon">' + icon + '</div>' +
     '</div>' +
-    '</div>';
+
     '<div class="forecast-temps">' +
     '<div class="forecast-high">' + highF + '<span class="temp-unit">°F</span></div>' +
     '<div class="forecast-low">' + lowF + '<span class="temp-unit">°F</span></div>' +
@@ -617,7 +617,7 @@ html += '<div class="current-details">' +
                         var lowF = Math.round(lowC * 9/5 + 32);
                         var dayIcon = getWeatherIcon(data.daily.weather_code[i]);
                         var dayRain = data.daily.precipitation_probability_max[i] || 0;
-                        
+                        /*
                         html += '<div class="forecast-day">' +
                             '<div class="forecast-day-name">' + dayName + '</div>' +
                             '<div class="forecast-day-inner">' +
@@ -633,6 +633,23 @@ html += '<div class="current-details">' +
                             '</div>' +
                             '</div>' +
                             '</div>';
+                            */
+
+    html += '<div class="forecast-day">' +
+    '<div class="forecast-day-name">' + dayName + '</div>' +
+    '<div class="forecast-day-inner">' +
+    '<div class="forecast-icon-col">' +
+    '<div class="forecast-icon">' + dayIcon + '</div>' +
+    '</div>' +
+    '<div class="forecast-info-col">' +
+    '<div class="forecast-temps">' +
+    '<div class="forecast-high">' + highF + '<span class="temp-unit">°F</span></div>' +
+    '<div class="forecast-low">' + lowF + '<span class="temp-unit">°F</span></div>' +
+    '</div>' +
+    '<div class="forecast-rain">💧 ' + dayRain + '%</div>' +
+    '</div>' +
+    '</div>' +
+    '</div>';
                     }
                     
                     html += '</div>';

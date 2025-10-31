@@ -350,54 +350,51 @@
     }
 }
 */
-/*
- * CORE STYLES (For all modern browsers and base positioning)
+/* * CORE STYLES - Only apply absolute positioning and large icon sizing 
+ * for modern/desktop screens (wider than the iPad 2).
  */
-.main-right {
-    /* Ensure this container is positioned relative to its parent 
-       if the parent isn't the body/viewport. 
-       If this is inside a main wrapper, the wrapper should be 'position: relative;'.
-       If it's relative to the viewport, 'position: fixed;' is also an option. 
-       Assuming 'position: absolute;' here is relative to the nearest positioned ancestor. */
-    position: absolute;
-    top: 0;
-    right: 0;
-}
+@media only screen and (min-width: 1025px) {
+    /* The selected code: Pushes the container to the top-right corner. */
+    .main-right {
+        /* Ensure this container is positioned relative to its parent */
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
 
-.weather-icon {
-    /* For modern browsers (Desktop/Newer Tablets), 100px is the final size */
-    font-size: 100px;
-    display: inline-block;
-    line-height: 1;
-    margin: 0;
+    .weather-icon {
+        /* For modern browsers (Desktop/Newer Tablets), 100px is the final size */
+        font-size: 100px;
+        display: inline-block;
+        line-height: 1;
+        margin: 0;
+    }
 }
 
 
 /*
- * iPAD 2 HACK (Targeting 1024x768 - needs transform scale)
+ * iPAD 2 HACK (Targeting 1024x768 and smaller/shorter)
+ * * This block is now completely independent and uses only the old, working styles, 
+ * * relying on the iPad 2's default layout flow since .main-right positioning 
+ * * is NOT applied at this resolution.
  */
 @media only screen and (max-width: 1024px) and (max-height: 768px) {
     .weather-icon {
-        /* Set base size lower, as scale will increase it visually.
-           Your original successful scale was 40px * 7, resulting in a ~280px icon. */
-        font-size: 40px; 
+        /* --- START: Original Working iPad 2 Styles (Cleaned) --- */
+        font-size: 40px;
         
-        /* Using the original scale(7) that worked before */
         -webkit-transform: scale(7);
         transform: scale(7);
         
-        /* Ensure scaling happens from the top-right anchor point */
-        -webkit-transform-origin: top right;
-        transform-origin: top right;
+        /* Using the original simple margins that worked. (Top, Right, Bottom, Left) */
+        margin: 20px 50px 0 0;
         
-        /* This is the crucial fix:
-           (Scale - 1) * Base Size = Visual Displacement
-           (7 - 1) * 40px = 240px. 
-           We use a negative margin of -240px to pull the expanded icon 
-           back up and right to the 0,0 position of its parent container. */
-        margin: -500px -240px 0 0; 
+        display: inline-block;
+        line-height: 1;
+        /* --- END: Original Working iPad 2 Styles --- */
     }
 }
+
 
         
         .sun-precept-info { 

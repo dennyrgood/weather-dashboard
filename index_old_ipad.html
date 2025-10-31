@@ -262,7 +262,7 @@
             margin: 100px 100px 0 0;
         }
         */
-
+/* try to make work with both old ipad and newer browers, see next block
 .weather-icon {
     font-size: 40px;
     -webkit-transform: scale(7);
@@ -271,6 +271,26 @@
     line-height: 1;
     margin: 20px 50px 0 0;  /* Adjust these values to position */
 }
+
+        */
+
+.weather-icon {
+    font-size: 40px;
+    -webkit-transform: scale(2);  /* Default for modern browsers */
+    transform: scale(2);
+    display: inline-block;
+    line-height: 1;
+    margin: 20px 50px 0 0;
+}
+
+/* Only apply large scale on small, old screens */
+@media only screen and (max-width: 1024px) and (max-height: 768px) {
+    .weather-icon {
+        -webkit-transform: scale(7);
+        transform: scale(7);
+    }
+}
+
         
         .sun-precept-info { 
             font-size: 1.8em;

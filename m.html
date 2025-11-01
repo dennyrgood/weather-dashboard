@@ -1281,55 +1281,152 @@ body.theme-green .card-title {
         return false;
       }
 
-      function injectTemplate(name){
-        var tpl = tplMap[name];
-        var root = document.getElementById('root');
+      
 
-        // Remove previous injected nodes
-        var prev = document.querySelectorAll('[data-injected-layout]');
-        prev.forEach(function(n){ if (n && n.parentNode) n.parentNode.removeChild(n); });
 
-        root.innerHTML = '';
 
-        if (!tpl) {
-          root.innerHTML = '<div style="padding:20px;">Requested layout not available: ' + name + '</div>';
-          return;
+/* REPLACE existing injectTemplate(name) with this more robust implementation */
+function injectTemplate(name) {
+  var tpl = tplMap[name];
+  var root = document.getElementById('root');
+
+  // cleanup previously injected nodes (style/script/dom markers)
+  var prev = document.querySelectorAll('[data-injected-layout]');
+  prev.forEach(function(n){ if (n && n.parentNode) n.parentNode.removeChild(n); });
+
+  root.innerHTML = '';
+
+  if (!tpl) {
+    root.innerHTML = '<div style="padding:20px;">Requested layout not available: ' + name + '</div>';
+    return;
+  }
+
+  try {
+    // Obtain template content in a way that works on older browsers
+    var contentSource;
+    if (tpl.content && typeof tpl.content.cloneNode === 'function') {
+      // modern browsers: clone the DocumentFragment
+      contentSource = tpl.content.cloneNode(true);
+    } else {
+      // legacy fallback: <template> not supported; parse innerHTML into a container
+      var wrapper = document.createElement('div');
+      // Use tpl.innerHTML (text inside template) and parse it
+      wrapper.innerHTML = tpl.innerHTML;
+      contentSource = wrapper;
+    }
+
+    // Helper: find first matching element in contentSource (works for fragments and elements)
+    function findFirst(rootNode, selectorTagName, attrName, attrValue) {
+      // If querySelector available, use it
+      try {
+        if (rootNode.querySelector && selectorTagName) {
+          return rootNode.querySelector(selectorTagName);
         }
-
-        // Inject style (do not hide it)
-        var styleEl = tpl.content.querySelector('style');
-        if (styleEl) {
-          var newStyle = document.createElement('style');
-          newStyle.setAttribute('data-injected-layout','style-' + name);
-          newStyle.textContent = styleEl.textContent;
-          document.head.appendChild(newStyle);
+      } catch (e) {
+        /* fall through to manual search */
+      }
+      // Manual search (walk children)
+      var nodes = rootNode.childNodes;
+      for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i];
+        if (node.nodeType === 1) {
+          if (selectorTagName && node.tagName && node.tagName.toLowerCase() === selectorTagName.toLowerCase()) {
+            if (attrName) {
+              if (node.getAttribute && node.getAttribute(attrName) === attrValue) return node;
+            } else {
+              return node;
+            }
+          }
+          // Recurse
+          var found = findFirst(node, selectorTagName, attrName, attrValue);
+          if (found) return found;
         }
+      }
+      return null;
+    }
 
-        // Clone template content, remove script template nodes, append the rest
-        var clone = tpl.content.cloneNode(true);
-        var scripts = clone.querySelectorAll('script[type="text/template"][data-script]');
-        scripts.forEach(function(s){ s.parentNode && s.parentNode.removeChild(s); });
+    // Find a <style> in the content
+    var styleEl = null;
+    try { styleEl = contentSource.querySelector ? contentSource.querySelector('style') : findFirst(contentSource, 'style'); } catch(e){ styleEl = findFirst(contentSource, 'style'); }
 
-        var nodes = Array.prototype.slice.call(clone.childNodes);
-        nodes.forEach(function(n){
-          if (n.nodeType === 1) n.setAttribute('data-injected-layout','node-' + name);
-          root.appendChild(n);
-        });
+    if (styleEl) {
+      var newStyle = document.createElement('style');
+      newStyle.setAttribute('data-injected-layout', 'style-' + name);
+      // copy CSS content. Use textContent for cross-browser safety.
+      newStyle.textContent = styleEl.textContent || styleEl.innerText || '';
+      document.head.appendChild(newStyle);
+    }
 
-        // Execute script text from the original template
-        var origScriptTpl = tpl.content.querySelector('script[type="text/template"][data-script]');
-        if (origScriptTpl) {
-          var code = origScriptTpl.textContent || origScriptTpl.innerText || '';
-          try {
-            var executable = document.createElement('script');
-            executable.setAttribute('data-injected-layout','script-' + name);
-            executable.text = code;
-            document.body.appendChild(executable);
-          } catch (e) {
-            console.error('Failed to run injected layout script', e);
+    // Remove script[type="text/template"][data-script] nodes from the content to prevent them appearing in DOM
+    // We will execute their contents explicitly below.
+    var scriptTpls = [];
+    // If contentSource supports querySelectorAll:
+    if (contentSource.querySelectorAll) {
+      var sList = contentSource.querySelectorAll('script[type="text/template"][data-script]');
+      for (var si = 0; si < sList.length; si++) {
+        scriptTpls.push(sList[si]);
+        if (sList[si].parentNode) sList[si].parentNode.removeChild(sList[si]);
+      }
+    } else {
+      // Manual walk to collect and remove script templates
+      var allNodes = Array.prototype.slice.call(contentSource.childNodes || []);
+      function collectScripts(node) {
+        var nodes = node.childNodes || [];
+        for (var j = 0; j < nodes.length; j++) {
+          var n = nodes[j];
+          if (n.nodeType === 1) {
+            if (n.tagName && n.tagName.toLowerCase() === 'script') {
+              try {
+                var t = (n.getAttribute && n.getAttribute('type')) || '';
+                var ds = (n.getAttribute && n.getAttribute('data-script')) || null;
+                if (t === 'text/template' && ds !== null) {
+                  scriptTpls.push(n);
+                  if (n.parentNode) n.parentNode.removeChild(n);
+                  continue;
+                }
+              } catch (er) {}
+            }
+            collectScripts(n);
           }
         }
       }
+      collectScripts(contentSource);
+    }
+
+    // Append the remaining nodes into root
+    var appendNodes = (contentSource.childNodes && contentSource.childNodes.length) ? Array.prototype.slice.call(contentSource.childNodes) : [];
+    for (var k = 0; k < appendNodes.length; k++) {
+      var node = appendNodes[k];
+      if (node.nodeType === 1) node.setAttribute && node.setAttribute('data-injected-layout', 'node-' + name);
+      // adoptNode may be necessary in some environments, but appendChild from cloned nodes is fine
+      root.appendChild(node);
+    }
+
+    // Execute each script template's text content in order (so initialization runs)
+    for (var m = 0; m < scriptTpls.length; m++) {
+      var scr = scriptTpls[m];
+      var code = scr.textContent || scr.innerText || '';
+      if (!code) continue;
+      try {
+        var executable = document.createElement('script');
+        executable.setAttribute('data-injected-layout', 'script-' + name + (m ? '-' + m : ''));
+        executable.text = code;
+        document.body.appendChild(executable);
+      } catch (ex) {
+        // Fallback: try to use eval in a function scope (less ideal but better than nothing)
+        try { (function(){ eval(code); }).call(window); } catch (e) { console.error('Failed to execute injected script for', name, e); }
+      }
+    }
+  } catch (err) {
+    console.error('injectTemplate error for', name, err);
+    root.innerHTML = '<div style="padding:16px;color:#900;background:#fffbe6;border:1px solid #f1c40f;">Error loading layout. See console for details.</div>';
+  }
+}
+
+
+
+
+      
 
       function setLayout(layout) {
         if (layout === 'auto') {

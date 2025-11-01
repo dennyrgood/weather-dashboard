@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Weather Dashboard — merged (fixed)</title>
+  <title>Weather Dashboard — merged (complete)</title>
 
   <style>
     html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
@@ -17,7 +17,7 @@
     #layout-switcher label{margin-right:6px}
     #layout-switcher select{font-size:12px}
     #layout-hint{font-size:11px;opacity:.7;margin-top:6px}
-    /* .injected-layout-style{display:none} */
+    /* NOTE: no rule hiding injected styles */
   </style>
 </head>
 <body>
@@ -36,11 +36,10 @@
     <div id="layout-hint">Use ?layout=&lt;name&gt; to persist. (localStorage)</div>
   </div>
 
-  <!-- (tpl-ipad2 and tpl-se templates are full copies of your two originals) -->
-  <!-- ---- TPL: iPad2 (index_old_ipad.html) ---- -->
+  <!-- TEMPLATE: iPad2 (index_old_ipad.html) -->
   <template id="tpl-ipad2">
     <style>
-/* (index_old_ipad.html CSS copied verbatim) */
+/* BEGIN index_old_ipad.html CSS (exact) */
 * {
     margin: 0;
     padding: 0;
@@ -48,10 +47,457 @@
     box-sizing: border-box;
 }
 
-/* ... full iPad2 CSS ... (kept exactly as in index_old_ipad.html) ... */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    padding: 8px;
+    overflow: hidden;
+}
 
-/* For brevity in this code block I kept the full style set exactly as you had */
-</style>
+body.theme-amber {
+    background: -webkit-linear-gradient(315deg, #fef3c7 0%, #fde68a 100%);
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #1c1917;
+}
+
+body.theme-blue {
+    background: -webkit-linear-gradient(315deg, #dbeafe 0%, #bfdbfe 100%);
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1e3a8a;
+}
+
+body.theme-gray {
+    background: -webkit-linear-gradient(315deg, #f3f4f6 0%, #e5e7eb 100%);
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    color: #111827;
+}
+
+body.theme-cream {
+    background: -webkit-linear-gradient(315deg, #fefce8 0%, #fef9c3 100%);
+    background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+    color: #292524;
+}
+
+body.theme-green {
+    background: #0d1b0d;
+    color: #33ff33;
+    font-family: 'Courier New', monospace;
+}
+
+body.theme-blackgreen {
+    background: -webkit-linear-gradient(315deg, #86efac 0%, #4ade80 100%);
+    background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
+    color: #000000;
+}
+
+body.theme-amberblack {
+    background: #000000;
+    color: #fbbf24;
+}
+
+.container {
+    width: 100%;
+    max-width: 100%;
+}
+
+.time {
+    font-size: 2em;
+    font-weight: 300;
+    text-align: center;
+    margin: 0;
+}
+
+.date {
+    font-size: 0.85em;
+    text-align: center;
+    opacity: 0.9;
+    margin: 0 0 8px 0;
+}
+
+.weather-row {
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.weather-card {
+    float: left;
+    width: 48.5%;
+    margin-right: 1.5%;
+}
+
+.weather-card:last-of-type {
+    margin-right: 0;
+}
+
+.card {
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    padding: 12px;
+    margin-bottom: 8px;
+}
+
+body.theme-amber .card {
+    background: rgba(255, 255, 255, 0.8);
+    color: #1c1917;
+    -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+body.theme-blue .card {
+    background: rgba(255, 255, 255, 0.9);
+    color: #1e3a8a;
+    -webkit-box-shadow: 0 4px 16px rgba(30, 58, 138, 0.1);
+    box-shadow: 0 4px 16px rgba(30, 58, 138, 0.1);
+}
+
+body.theme-gray .card {
+    background: #ffffff;
+    color: #111827;
+    -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+body.theme-cream .card {
+    background: rgba(255, 255, 255, 0.7);
+    color: #292524;
+    border: 1px solid rgba(41, 37, 36, 0.1);
+    -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+body.theme-green .card {
+    background: rgba(0, 20, 0, 0.6);
+    color: #33ff33;
+    border: 2px solid #33ff33;
+    -webkit-box-shadow: 0 0 20px rgba(51, 255, 51, 0.3), inset 0 0 20px rgba(51, 255, 51, 0.1);
+    box-shadow: 0 0 20px rgba(51, 255, 51, 0.3), inset 0 0 20px rgba(51, 255, 51, 0.1);
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
+}
+
+body.theme-blackgreen .card {
+    background: rgba(220, 252, 231, 0.9);
+    color: #000000;
+    border: 2px solid #166534;
+    -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+body.theme-amberblack .card {
+    background: rgba(20, 20, 20, 0.95);
+    color: #fbbf24;
+    border: 2px solid #f59e0b;
+    -webkit-box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+}
+
+body.theme-green .card-title {
+    text-shadow: 0 0 8px rgba(51, 255, 51, 0.8);
+}
+
+.card-title {
+    font-size: 1.1em;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.weather-main {
+    overflow: hidden;
+    margin-bottom: 8px;
+    position: relative;
+    min-height: 200px;
+}
+
+.main-left {
+    float: left;
+    width: 50%;
+}
+
+.main-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.temperature {
+    font-size: 9.5em;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.temperature-secondary {
+    font-size: 3.5em;
+    font-weight: 700;
+    opacity: 0.7;
+    line-height: 1;
+}
+
+.temperature .temp-unit {
+    font-size: 0.4em;
+    vertical-align: top;
+    display: inline-block;
+    line-height: 1;
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+.feels-like {
+    font-size: 2.1em;
+    font-weight: 600;
+    opacity: 0.85;
+    margin-top: 8px;
+}
+
+.temperature-secondary .temp-unit {
+    font-size: 0.6em;
+    vertical-align: top;
+    display: inline-block;
+    line-height: 1;
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+.feels-like .temp-unit {
+    font-size: 0.6em;
+    vertical-align: top;
+    display: inline-block;
+    line-height: 1;
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+.forecast-high .temp-unit,
+.forecast-low .temp-unit {
+    font-size: 0.7em;
+    vertical-align: top;
+    display: inline-block;
+    line-height: 1;
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+.detail-left .temp-unit,
+.detail-right .temp-unit {
+    font-size: 0.7em;
+    vertical-align: top;
+    display: inline-block;
+    line-height: 1;
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+/* try to make work with both old ipad and newer browers, see next block
+// this one works fine for the ipad2!!!
+*/
+
+/*
+.weather-icon {
+    font-size: 40px;
+    -webkit-transform: scale(5);
+    transform: scale(5);
+    display: inline-block;
+    line-height: 1;
+    margin: 100px 100px 0 0;
+}
+*/
+
+/* * CORE STYLES - Only apply absolute positioning and large icon sizing 
+ * for modern/desktop screens (wider than the iPad 2).
+ */
+@media only screen and (min-width: 1025px) {
+    /* The selected code: Pushes the container to the top-right corner. */
+    .main-right {
+        /* Ensure this container is positioned relative to its parent */
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .weather-icon {
+        /* For modern browsers (Desktop/Newer Tablets), 100px is the final size */
+        font-size: 100px;
+        display: inline-block;
+        line-height: 1;
+        margin: 0;
+    }
+}
+
+/*
+ * iPAD 2 HACK (Targeting 1024x768 and smaller/shorter)
+ * * This block is now completely independent and uses only the old, working styles, 
+ * * relying on the iPad 2's default layout flow since .main-right positioning 
+ * * is NOT applied at this resolution.
+ */
+        
+@media only screen and (max-width: 1024px) and (max-height: 768px) {
+    .weather-icon {
+        /* --- START: Original Working iPad 2 Styles (Cleaned) --- */
+        font-size: 40px;
+        
+        -webkit-transform: scale(7);
+        transform: scale(7);
+        
+        /* Using the original simple margins that worked. (Top, Right, Bottom, Left) */
+        margin: 20px 50px 0 0;
+        
+        display: inline-block;
+        line-height: 1;
+        /* --- END: Original Working iPad 2 Styles --- */
+    }
+}
+     
+.sun-precept-info { 
+    font-size: 1.8em;
+    font-weight: 600;
+    line-height: 1.6;
+    overflow: hidden;
+    margin-top: 8px;
+    width: 100%;
+    padding: 0 2px; /* Small padding for visual separation from card edge */
+    display: -webkit-box; /* For old iOS */
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    clear: both; /* Ensure it moves below .weather-main floats */
+}
+
+.sun-precept-info > span {
+    /* Force equal spacing, especially important for old browsers */
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.sun-precept-info > span:first-child {
+     text-align: left;
+}
+        
+.sun-precept-info > span:last-child {
+     text-align: right;
+}
+        
+.current-details {
+    clear: both;
+    overflow: hidden;
+    font-size: 1.15em;
+    font-weight: 600;
+    line-height: 1.6;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    padding-top: 8px; /* Added padding to separate from sun-precept-info */
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.theme-green .current-details {
+    border-bottom-color: rgba(51, 255, 51, 0.3);
+    border-top-color: rgba(51, 255, 51, 0.3);
+}
+
+body.theme-amberblack .current-details {
+    border-bottom-color: rgba(251, 191, 36, 0.3);
+    border-top-color: rgba(251, 191, 36, 0.3);
+}
+
+.forecast-days {
+    overflow: hidden;
+}
+
+.forecast-day {
+    float: left;
+    width: 33.333%;
+    padding: 4px;
+}
+
+.forecast-day-inner {
+    overflow: hidden;
+}
+
+.forecast-day-name {
+    font-size: 1.05em;
+    font-weight: 700;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.forecast-icon-col {
+    float: left;
+    width: 45%;
+    text-align: center;
+}
+
+.forecast-icon {
+    font-size: 3.5em;
+    line-height: 1;
+}
+
+.forecast-info-col {
+    float: right;
+    width: 55%;
+    text-align: left;
+    padding-left: 4px;
+}
+
+.forecast-temps {
+    font-size: 1.2em;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.forecast-high {
+    font-weight: 700;
+}
+
+.forecast-low {
+    opacity: 0.8;
+    font-weight: 600;
+}
+
+.forecast-rain {
+    font-size: 0.9em;
+    font-weight: 600;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+.currency-card {
+    padding: 10px;
+    clear: both;
+}
+
+.loading {
+    text-align: center;
+    opacity: 0.7;
+    font-size: 0.9em;
+    word-break: break-all;
+}
+
+.debug-url-display { /* Subtle display for long-term use */
+    text-align: left;
+    font-size: 0.6em;
+    opacity: 0.2;
+    word-break: break-all;
+    margin-bottom: 4px;
+}
+
+.error {
+    color: #fca5a5;
+    text-align: center;
+    font-size: 0.8em;
+}
+
+/* --- NEW SIMPLE FOOTER STYLES --- */
+.footer-version {
+    font-size: 0.75em;
+    text-align: center;
+    opacity: 0.5;
+    margin-top: 16px;
+    padding-bottom: 8px;
+    clear: both; /* Ensures it drops below the floated weather cards */
+}
+/* --- END index_old_ipad.html CSS --- */
+    </style>
 
     <div class="container" id="container-ipad2">
         <div>
@@ -79,13 +525,13 @@
     <div id="version-display" class="footer-version"></div>
 
     <script type="text/template" data-script>
-/* index_old_ipad.html script (unchanged except we immediately set version on injection) */
+/* BEGIN index_old_ipad.html JAVASCRIPT (unchanged logic, adjusted to run after injection) */
 var PROXY_URL = 'https://weatherproxy.ldmathes.cc/';
 var APP_VERSION = "v. 2025.10.31 (23:55)";
 
-(function setVersion(){
-  var el = document.getElementById("version-display");
-  if (el) el.innerHTML = APP_VERSION;
+(function setVersionDisplay(){
+    var el = document.getElementById("version-display");
+    if (el) el.innerHTML = APP_VERSION;
 })();
 
 function getUrlParameter(name) {
@@ -104,7 +550,9 @@ if (proxyParam) {
 var theme = getUrlParameter('theme') || 'blue';
 document.body.className = 'theme-' + theme;
 
-function padZero(num) { return num < 10 ? '0' + num : '' + num; }
+function padZero(num) {
+    return num < 10 ? '0' + num : '' + num;
+}
 
 function updateTime() {
     var now = new Date();
@@ -112,14 +560,16 @@ function updateTime() {
     var minutes = padZero(now.getMinutes());
     var timeStr = hours + ':' + minutes;
 
-    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                  'July', 'August', 'September', 'October', 'November', 'December'];
+
     var dateStr = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
 
-    var t = document.getElementById('time');
-    var d = document.getElementById('date');
-    if (t) t.textContent = timeStr;
-    if (d) d.textContent = dateStr;
+    var elTime = document.getElementById('time');
+    var elDate = document.getElementById('date');
+    if (elTime) elTime.textContent = timeStr;
+    if (elDate) elDate.textContent = dateStr;
 }
 
 function getWeatherIcon(code) {
@@ -133,28 +583,31 @@ function getWeatherIcon(code) {
 
 function getDayName(dateStr) {
     var date = new Date(dateStr);
-    var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     return days[date.getDay()];
 }
 
 function fetchWeatherForLocation(elementId, lat, lon) {
-    var apiUrl = 'http://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
+    var apiUrl = 'http://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
                  '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
                  '&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code' +
                  '&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto&forecast_days=4';
+    
     var url = PROXY_URL + '?url=' + encodeURIComponent(apiUrl);
 
     var debugContainer = document.getElementById(elementId);
-    var timeoutId;
+    var timeoutId; 
 
-    if (debugContainer) debugContainer.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + 'Loading...';
+    if (debugContainer) {
+        debugContainer.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + 'Loading...';
+    }
     console.log("Weather Proxy URL (" + elementId + "):", url);
 
     timeoutId = setTimeout(function() {
         if (debugContainer && debugContainer.innerHTML && debugContainer.innerHTML.indexOf(url) !== -1 && debugContainer.innerHTML.indexOf('Loading...') !== -1) {
             debugContainer.innerHTML = 'Loading...';
         }
-    }, 15000);
+    }, 15000); // 15 seconds
 
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
@@ -166,6 +619,7 @@ function fetchWeatherForLocation(elementId, lat, lon) {
         if (xhr.status === 200) {
             try {
                 var data = JSON.parse(xhr.responseText);
+
                 if (data.error || data.reason) {
                     var errorMsg = data.reason || (typeof data.error === 'string' ? data.error : 'Unknown error');
                     if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">API Error: ' + errorMsg + '</div>';
@@ -185,6 +639,7 @@ function fetchWeatherForLocation(elementId, lat, lon) {
                 var todayLowF = Math.round(todayLowC * 9/5 + 32);
 
                 var rainChance = data.daily.precipitation_probability_max[0] || 0;
+
                 var sunrise = new Date(data.daily.sunrise[0]);
                 var sunset = new Date(data.daily.sunset[0]);
                 var riseTime = padZero(sunrise.getHours()) + ':' + padZero(sunrise.getMinutes());
@@ -193,7 +648,7 @@ function fetchWeatherForLocation(elementId, lat, lon) {
                 var weatherCode = data.current.weather_code;
                 var icon = getWeatherIcon(weatherCode);
 
-                var html =
+                var html = 
                     '<div class="weather-main">' +
                     '<div class="main-left">' +
                     '<div class="temperature">' + tempF + '<span class="temp-unit">°F</span></div>' +
@@ -203,7 +658,7 @@ function fetchWeatherForLocation(elementId, lat, lon) {
                     '<div class="main-right">' +
                     '<div class="weather-icon">' + icon + '</div>' +
                     '</div>' +
-                    '</div>';
+                    '</div>'; 
 
                 html += '<div class="sun-precept-info">' +
                     '<span>☀️ ' + riseTime + '</span>' +
@@ -263,7 +718,11 @@ function fetchWeatherForLocation(elementId, lat, lon) {
         console.error('XHR network error for', url);
     };
 
-    xhr.ontimeout = function() { clearTimeout(timeoutId); var el = document.getElementById(elementId); if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Request timeout</div>'; };
+    xhr.ontimeout = function() {
+        clearTimeout(timeoutId);
+        var el = document.getElementById(elementId);
+        if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Request timeout</div>';
+    };
 
     xhr.send();
 }
@@ -278,7 +737,10 @@ function isInActiveWindow() {
     var utcDay = now.getUTCDay();
     var utcHour = now.getUTCHours();
 
+    // NEW LOGIC: block midnight to 07 UTC
     if (utcHour >= 0 && utcHour <= 7) return false;
+
+    // Original Weekend blockout
     if (utcDay === 5 && utcHour >= 21) return false;
     if (utcDay === 6) return false;
     if (utcDay === 0 && utcHour < 21) return false;
@@ -304,6 +766,7 @@ function fetchCurrency() {
 
     function displayCurrency() {
         var displayRate = oxrRate || ecbRate || altRate || '0.00000';
+
         var source = '';
         if (oxrRate) source = 'OXR';
         else if (ecbRate) source = 'ECB';
@@ -322,7 +785,12 @@ function fetchCurrency() {
         var infoLine = parts.join(' • ');
 
         var el = document.getElementById('currency-content');
-        if (el) el.innerHTML = '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate + (source ? ' (' + source + ')' : '') + rightIcon + '</div><div style="font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
+        if (el) {
+            el.innerHTML =
+                '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate +
+                (source ? ' (' + source + ')' : '') + rightIcon + '</div>' +
+                '<div style="font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
+        }
     }
 
     var xhr1 = new XMLHttpRequest();
@@ -345,7 +813,6 @@ function fetchCurrency() {
     xhr3.onload = function() { if (xhr3.status === 200) { try { var data = JSON.parse(xhr3.responseText); altRate = data.rates.USD.toFixed(5); if (data.time_last_update_utc) { var updateDate = new Date(data.time_last_update_utc); if (!isNaN(updateDate.getTime())) { var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; var month = months[updateDate.getMonth()]; var day = updateDate.getDate(); var hours = padZero(updateDate.getHours()); var minutes = padZero(updateDate.getMinutes()); altDateTime = month + ' ' + day + ', ' + hours + ':' + minutes; } } } catch (e) {} } checkComplete(); };
     xhr3.onerror = function() { checkComplete(); };
     xhr3.send();
-
 }
 
 updateTime();
@@ -360,15 +827,207 @@ setInterval(function() {
         fetchCurrency();
     }
 }, 3600000);
+/* END index_old_ipad.html JS */
     </script>
   </template>
 
-  <!-- ---- TPL: SE (index.html) ---- -->
+  <!-- TEMPLATE: SE (index.html) -->
   <template id="tpl-se">
     <style>
-/* (index.html CSS copied verbatim) */
-/* ... full SE CSS ... */
-</style>
+/* BEGIN index.html CSS (exact) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 8px;
+    overflow: hidden;
+}
+
+body.theme-amber {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #1c1917;
+}
+
+body.theme-blue {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1e3a8a;
+}
+
+body.theme-gray {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    color: #111827;
+}
+
+body.theme-cream {
+    background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+    color: #292524;
+}
+
+body.theme-green {
+    background: #0d1b0d;
+    color: #33ff33;
+    font-family: 'Courier New', monospace;
+}
+
+body.theme-blackgreen {
+    background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
+    color: #000000;
+}
+
+body.theme-amberblack {
+    background: #000000;
+    color: #fbbf24;
+}
+
+.container {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    gap: 8px;
+}
+
+.time {
+    font-size: 1.8em;
+    font-weight: 300;
+    text-align: center;
+    margin: 0;
+}
+
+.date {
+    font-size: 0.75em;
+    text-align: center;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.weather-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+}
+
+.card {
+    border-radius: 15px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+body.theme-amber .card {
+    background: rgba(255, 255, 255, 0.8);
+    color: #1c1917;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+body.theme-blue .card {
+    background: rgba(255, 255, 255, 0.9);
+    color: #1e3a8a;
+    box-shadow: 0 4px 16px rgba(30, 58, 138, 0.1);
+}
+
+body.theme-gray .card {
+    background: #ffffff;
+    color: #111827;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+body.theme-cream .card {
+    background: rgba(255, 255, 255, 0.7);
+    color: #292524;
+    border: 1px solid rgba(41, 37, 36, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+body.theme-green .card {
+    background: rgba(0, 20, 0, 0.6);
+    color: #33ff33;
+    border: 2px solid #33ff33;
+    box-shadow: 0 0 20px rgba(51, 255, 51, 0.3), inset 0 0 20px rgba(51, 255, 51, 0.1);
+    text-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
+}
+
+body.theme-blackgreen .card {
+    background: rgba(220, 252, 231, 0.9);
+    color: #000000;
+    border: 2px solid #166534;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+body.theme-amberblack .card {
+    background: rgba(20, 20, 20, 0.95);
+    color: #fbbf24;
+    border: 2px solid #f59e0b;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+}
+
+body.theme-green .card-title {
+    text-shadow: 0 0 8px rgba(51, 255, 51, 0.8);
+}
+
+.card-title {
+    font-size: 0.7em;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.weather-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.temperature {
+    font-size: 2.2em;
+    font-weight: 300;
+}
+
+.weather-icon {
+    font-size: 2.8em;
+}
+
+.weather-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    font-size: 0.72em;
+    line-height: 1.3;
+    flex: 1;
+}
+
+.currency-card {
+    flex: 0.4;
+    padding: 8px;
+}
+
+.loading {
+    text-align: center;
+    opacity: 0.7;
+}
+
+.error {
+    color: #fca5a5;
+    text-align: center;
+}
+/* END index.html CSS */
+    </style>
 
     <div class="container" id="container-se">
       <div>
@@ -394,7 +1053,7 @@ setInterval(function() {
     </div>
 
     <script type="text/template" data-script>
-/* index.html script (small fix: check for element existence using getElementById) */
+/* BEGIN index.html JS (unchanged, with element-existence checks) */
 (function(){
     const urlParams = new URLSearchParams(window.location.search);
     const theme = urlParams.get('theme') || 'blue';
@@ -451,6 +1110,7 @@ setInterval(function() {
 
             const weatherCode = data.current.weather_code;
             let icon = '☀️';
+
             if (weatherCode === 0) { icon = '☀️'; }
             else if (weatherCode <= 3) { icon = '☁️'; }
             else if (weatherCode <= 67) { icon = '🌧️'; }
@@ -593,12 +1253,18 @@ setInterval(function() {
         }
     }, 3600000);
 })();
+ /* END index.html JS */
     </script>
   </template>
 
+  <!-- Runner: injects selected template and runs its script -->
   <script>
     (function(){
-      var tplMap = { ipad2: document.getElementById('tpl-ipad2'), se: document.getElementById('tpl-se') };
+      var tplMap = {
+        ipad2: document.getElementById('tpl-ipad2'),
+        se: document.getElementById('tpl-se')
+      };
+
       var LAYOUT_KEY = 'weather-dashboard-layout';
       var select = document.getElementById('layout-select');
       var urlParams = new URLSearchParams(window.location.search);
@@ -630,12 +1296,11 @@ setInterval(function() {
           return;
         }
 
-        // Inject style
+        // Inject style (do not hide it)
         var styleEl = tpl.content.querySelector('style');
         if (styleEl) {
           var newStyle = document.createElement('style');
           newStyle.setAttribute('data-injected-layout','style-' + name);
-          /* newStyle.className = 'injected-layout-style'; */
           newStyle.textContent = styleEl.textContent;
           document.head.appendChild(newStyle);
         }

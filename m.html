@@ -527,7 +527,7 @@ body.theme-amberblack .current-details {
     <script type="text/template" data-script>
 /* BEGIN index_old_ipad.html JAVASCRIPT (unchanged logic, adjusted to run after injection) */
 var PROXY_URL = 'https://weatherproxy.ldmathes.cc/';
-var APP_VERSION = "v. 2025.11.01 (18:49)";
+var APP_VERSION = "v. 2025.10.31 (23:55)";
 
 (function setVersionDisplay(){
     var el = document.getElementById("version-display");
@@ -931,7 +931,6 @@ body.theme-amberblack {
 body.theme-amber .card {
     background: rgba(255, 255, 255, 0.8);
     color: #1c1917;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 body.theme-blue .card {
@@ -1257,9 +1256,10 @@ body.theme-green .card-title {
     </script>
   </template>
 
-  <!-- Runner: injects selected template and runs its script -->
+  <!-- Runner: legacy-safe ES5 implementation -->
   <script>
-    (function(){
+    (function () {
+      // Template map - element IDs already exist in m.html
       var tplMap = {
         ipad2: document.getElementById('tpl-ipad2'),
         se: document.getElementById('tpl-se')
@@ -1267,198 +1267,245 @@ body.theme-green .card-title {
 
       var LAYOUT_KEY = 'weather-dashboard-layout';
       var select = document.getElementById('layout-select');
-      var urlParams = new URLSearchParams(window.location.search);
-      var paramLayout = urlParams.get('layout');
 
-      function supportsFetch(){ return 'fetch' in window; }
-      function supportsSVG(){ try { return !!document.createElementNS && !!document.createElementNS('http://www.w3.org/2000/svg','svg').createSVGRect; } catch(e){ return false; } }
-      function supportsGrid(){ return typeof CSS !== 'undefined' && CSS.supports && CSS.supports('display','grid'); }
-      function isLegacyBrowser(){
+      // Small robust query param getter (avoids URLSearchParams)
+      function getQueryParam(name) {
+        try {
+          var q = window.location.search || '';
+          if (q.indexOf('?') === 0) q = q.substring(1);
+          var parts = q.split('&');
+          for (var i = 0; i < parts.length; i++) {
+            var kv = parts[i].split('=');
+            if (decodeURIComponent(kv[0] || '') === name) {
+              return kv.length > 1 ? decodeURIComponent(kv[1].replace(/\+/g, ' ')) : '';
+            }
+          }
+        } catch (e) { /* ignore */ }
+        return null;
+      }
+
+      // Feature checks - conservative, avoid CSS.supports and URLSearchParams
+      function supportsFetch() { try { return 'fetch' in window; } catch (e) { return false; } }
+      function supportsSVG() {
+        try {
+          return !!document.createElementNS && !!document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect;
+        } catch (e) { return false; }
+      }
+      function supportsFlexOrGrid() {
+        try {
+          var el = document.createElement('div');
+          if ('flexBasis' in el.style || 'webkitFlexBasis' in el.style || 'msFlex' in el.style) return true;
+          if ('gridTemplateColumns' in el.style) return true;
+        } catch (e) {}
+        return false;
+      }
+
+      function isLegacyBrowser() {
         if (!supportsFetch()) return true;
         if (!supportsSVG()) return true;
-        if (!supportsGrid() && !CSS.supports('display','flex')) return true;
+        if (!supportsFlexOrGrid()) return true;
         if (!('classList' in document.documentElement)) return true;
         return false;
       }
 
-      
+      // Robust injectTemplate that works when <template>.content isn't supported
+      function injectTemplate(name) {
+        var tpl = tplMap[name];
+        var root = document.getElementById('root');
+        try {
+          // Clean up previous injected nodes
+          var prev = document.querySelectorAll('[data-injected-layout]');
+          for (var pi = 0; pi < prev.length; pi++) {
+            var n = prev[pi];
+            if (n && n.parentNode) try { n.parentNode.removeChild(n); } catch (er) {}
+          }
+          root.innerHTML = '';
+          if (!tpl) {
+            root.innerHTML = '<div style="padding:20px;">Requested layout not available: ' + name + '</div>';
+            return;
+          }
 
+          // Obtain content: prefer template.content.cloneNode, otherwise parse innerHTML
+          var contentSource;
+          if (tpl.content && typeof tpl.content.cloneNode === 'function') {
+            try {
+              contentSource = tpl.content.cloneNode(true);
+            } catch (e) {
+              var w = document.createElement('div');
+              w.innerHTML = tpl.innerHTML;
+              contentSource = w;
+            }
+          } else {
+            var wrapper = document.createElement('div');
+            wrapper.innerHTML = tpl.innerHTML;
+            contentSource = wrapper;
+          }
 
-
-/* REPLACE existing injectTemplate(name) with this more robust implementation */
-function injectTemplate(name) {
-  var tpl = tplMap[name];
-  var root = document.getElementById('root');
-
-  // cleanup previously injected nodes (style/script/dom markers)
-  var prev = document.querySelectorAll('[data-injected-layout]');
-  prev.forEach(function(n){ if (n && n.parentNode) n.parentNode.removeChild(n); });
-
-  root.innerHTML = '';
-
-  if (!tpl) {
-    root.innerHTML = '<div style="padding:20px;">Requested layout not available: ' + name + '</div>';
-    return;
-  }
-
-  try {
-    // Obtain template content in a way that works on older browsers
-    var contentSource;
-    if (tpl.content && typeof tpl.content.cloneNode === 'function') {
-      // modern browsers: clone the DocumentFragment
-      contentSource = tpl.content.cloneNode(true);
-    } else {
-      // legacy fallback: <template> not supported; parse innerHTML into a container
-      var wrapper = document.createElement('div');
-      // Use tpl.innerHTML (text inside template) and parse it
-      wrapper.innerHTML = tpl.innerHTML;
-      contentSource = wrapper;
-    }
-
-    // Helper: find first matching element in contentSource (works for fragments and elements)
-    function findFirst(rootNode, selectorTagName, attrName, attrValue) {
-      // If querySelector available, use it
-      try {
-        if (rootNode.querySelector && selectorTagName) {
-          return rootNode.querySelector(selectorTagName);
-        }
-      } catch (e) {
-        /* fall through to manual search */
-      }
-      // Manual search (walk children)
-      var nodes = rootNode.childNodes;
-      for (var i = 0; i < nodes.length; i++) {
-        var node = nodes[i];
-        if (node.nodeType === 1) {
-          if (selectorTagName && node.tagName && node.tagName.toLowerCase() === selectorTagName.toLowerCase()) {
-            if (attrName) {
-              if (node.getAttribute && node.getAttribute(attrName) === attrValue) return node;
-            } else {
-              return node;
+          // Find first <style> element (works on fragments or nodes)
+          var styleEl = null;
+          try {
+            if (contentSource.querySelector) styleEl = contentSource.querySelector('style');
+          } catch (e) { styleEl = null; }
+          if (!styleEl) {
+            var children = contentSource.childNodes || [];
+            for (var c = 0; c < children.length; c++) {
+              var node = children[c];
+              if (node && node.nodeType === 1 && node.tagName && node.tagName.toLowerCase() === 'style') {
+                styleEl = node;
+                break;
+              }
             }
           }
-          // Recurse
-          var found = findFirst(node, selectorTagName, attrName, attrValue);
-          if (found) return found;
-        }
-      }
-      return null;
-    }
 
-    // Find a <style> in the content
-    var styleEl = null;
-    try { styleEl = contentSource.querySelector ? contentSource.querySelector('style') : findFirst(contentSource, 'style'); } catch(e){ styleEl = findFirst(contentSource, 'style'); }
+          if (styleEl) {
+            var newStyle = document.createElement('style');
+            newStyle.setAttribute('data-injected-layout', 'style-' + name);
+            newStyle.textContent = styleEl.textContent || styleEl.innerText || '';
+            document.head.appendChild(newStyle);
+          }
 
-    if (styleEl) {
-      var newStyle = document.createElement('style');
-      newStyle.setAttribute('data-injected-layout', 'style-' + name);
-      // copy CSS content. Use textContent for cross-browser safety.
-      newStyle.textContent = styleEl.textContent || styleEl.innerText || '';
-      document.head.appendChild(newStyle);
-    }
-
-    // Remove script[type="text/template"][data-script] nodes from the content to prevent them appearing in DOM
-    // We will execute their contents explicitly below.
-    var scriptTpls = [];
-    // If contentSource supports querySelectorAll:
-    if (contentSource.querySelectorAll) {
-      var sList = contentSource.querySelectorAll('script[type="text/template"][data-script]');
-      for (var si = 0; si < sList.length; si++) {
-        scriptTpls.push(sList[si]);
-        if (sList[si].parentNode) sList[si].parentNode.removeChild(sList[si]);
-      }
-    } else {
-      // Manual walk to collect and remove script templates
-      var allNodes = Array.prototype.slice.call(contentSource.childNodes || []);
-      function collectScripts(node) {
-        var nodes = node.childNodes || [];
-        for (var j = 0; j < nodes.length; j++) {
-          var n = nodes[j];
-          if (n.nodeType === 1) {
-            if (n.tagName && n.tagName.toLowerCase() === 'script') {
-              try {
-                var t = (n.getAttribute && n.getAttribute('type')) || '';
-                var ds = (n.getAttribute && n.getAttribute('data-script')) || null;
-                if (t === 'text/template' && ds !== null) {
-                  scriptTpls.push(n);
-                  if (n.parentNode) n.parentNode.removeChild(n);
-                  continue;
+          // Collect script[type="text/template"][data-script] nodes and remove them from the content
+          var scriptTpls = [];
+          try {
+            if (contentSource.querySelectorAll) {
+              var sList = contentSource.querySelectorAll('script[type="text/template"][data-script]');
+              for (var si = 0; si < sList.length; si++) {
+                scriptTpls.push(sList[si]);
+                if (sList[si].parentNode) sList[si].parentNode.removeChild(sList[si]);
+              }
+            }
+          } catch (e) {
+            (function collect(node) {
+              var nodes = node.childNodes || [];
+              for (var ni = nodes.length - 1; ni >= 0; ni--) {
+                var n = nodes[ni];
+                if (n && n.nodeType === 1) {
+                  if (n.tagName && n.tagName.toLowerCase() === 'script') {
+                    try {
+                      var t = n.getAttribute && n.getAttribute('type') || '';
+                      var ds = n.getAttribute && n.getAttribute('data-script');
+                      if (t === 'text/template' && ds !== null) {
+                        scriptTpls.push(n);
+                        n.parentNode && n.parentNode.removeChild(n);
+                        continue;
+                      }
+                    } catch (er) {}
+                  }
+                  collect(n);
                 }
-              } catch (er) {}
-            }
-            collectScripts(n);
+              }
+            })(contentSource);
           }
+
+          // Append the remaining nodes into root
+          var appendNodes = [];
+          try {
+            appendNodes = contentSource.childNodes ? Array.prototype.slice.call(contentSource.childNodes) : [];
+          } catch (e) {
+            var ch = contentSource.childNodes || [];
+            for (var ii = 0; ii < ch.length; ii++) appendNodes.push(ch[ii]);
+          }
+          for (var k = 0; k < appendNodes.length; k++) {
+            var node = appendNodes[k];
+            try {
+              if (node.nodeType === 1 && node.setAttribute) node.setAttribute('data-injected-layout', 'node-' + name);
+              root.appendChild(node);
+            } catch (er) {}
+          }
+
+          // Execute script templates in order
+          for (var m = 0; m < scriptTpls.length; m++) {
+            var scr = scriptTpls[m];
+            var code = scr.textContent || scr.innerText || '';
+            if (!code) continue;
+            try {
+              var executable = document.createElement('script');
+              executable.setAttribute('data-injected-layout', 'script-' + name + (m ? '-' + m : ''));
+              executable.text = code;
+              document.body.appendChild(executable);
+            } catch (ex) {
+              try {
+                (function () { eval(code); }).call(window);
+              } catch (err) {
+                console.error('Failed to execute injected script for', name, err);
+              }
+            }
+          }
+        } catch (err) {
+          console.error('injectTemplate error for', name, err);
+          try {
+            root.innerHTML = '<div style="padding:16px;color:#900;background:#fffbe6;border:1px solid #f1c40f;">Error loading layout. Open web inspector for details.</div>';
+          } catch (e) {}
         }
       }
-      collectScripts(contentSource);
-    }
-
-    // Append the remaining nodes into root
-    var appendNodes = (contentSource.childNodes && contentSource.childNodes.length) ? Array.prototype.slice.call(contentSource.childNodes) : [];
-    for (var k = 0; k < appendNodes.length; k++) {
-      var node = appendNodes[k];
-      if (node.nodeType === 1) node.setAttribute && node.setAttribute('data-injected-layout', 'node-' + name);
-      // adoptNode may be necessary in some environments, but appendChild from cloned nodes is fine
-      root.appendChild(node);
-    }
-
-    // Execute each script template's text content in order (so initialization runs)
-    for (var m = 0; m < scriptTpls.length; m++) {
-      var scr = scriptTpls[m];
-      var code = scr.textContent || scr.innerText || '';
-      if (!code) continue;
-      try {
-        var executable = document.createElement('script');
-        executable.setAttribute('data-injected-layout', 'script-' + name + (m ? '-' + m : ''));
-        executable.text = code;
-        document.body.appendChild(executable);
-      } catch (ex) {
-        // Fallback: try to use eval in a function scope (less ideal but better than nothing)
-        try { (function(){ eval(code); }).call(window); } catch (e) { console.error('Failed to execute injected script for', name, e); }
-      }
-    }
-  } catch (err) {
-    console.error('injectTemplate error for', name, err);
-    root.innerHTML = '<div style="padding:16px;color:#900;background:#fffbe6;border:1px solid #f1c40f;">Error loading layout. See console for details.</div>';
-  }
-}
-
-
-
-
-      
 
       function setLayout(layout) {
         if (layout === 'auto') {
           layout = isLegacyBrowser() ? 'ipad2' : 'se';
         } else {
-          // If the browser is legacy, force ipad2 even if user chose modern
           if (isLegacyBrowser() && layout !== 'ipad2') {
-            console.warn('Legacy browser detected: forcing ipad2 layout (requested: ' + layout + ')');
+            try { console.warn('Legacy browser detected: forcing ipad2 layout (requested: ' + layout + ')'); } catch(e){}
             layout = 'ipad2';
           }
         }
-        localStorage.setItem(LAYOUT_KEY, layout);
-        select.value = layout;
+        try { localStorage.setItem(LAYOUT_KEY, layout); } catch (e) {}
+        try { if (select) select.value = layout; } catch (e) {}
         injectTemplate(layout);
       }
 
-      var initial = paramLayout || localStorage.getItem(LAYOUT_KEY) || 'auto';
-      if (initial === 'auto') initial = isLegacyBrowser() ? 'ipad2' : 'se';
-      if (paramLayout) select.value = paramLayout;
-      setLayout(initial);
-
-      select.addEventListener('change', function(){
-        var v = select.value;
-        if (v === 'auto') {
-          localStorage.removeItem(LAYOUT_KEY);
-          setLayout('auto');
-        } else {
-          setLayout(v);
+      try {
+        var paramLayout = getQueryParam('layout');
+        var initial = paramLayout || (function(){ try { return localStorage.getItem(LAYOUT_KEY); } catch (e) { return null; } })() || 'auto';
+        if (initial === 'auto') initial = isLegacyBrowser() ? 'ipad2' : 'se';
+        if (paramLayout && select) {
+          try { select.value = paramLayout; } catch(e) {}
         }
-      });
+        setLayout(initial);
+      } catch (e) {
+        try {
+          var root = document.getElementById('root');
+          if (root) root.innerHTML = '<div style="padding:16px;color:#900;background:#fffbe6;border:1px solid #f1c40f;">Initialization error. See console for details.</div>';
+        } catch (er) {}
+        console.error('Runner init error', e);
+      }
 
-      window._wDashboard = { injectTemplate: injectTemplate, isLegacyBrowser: isLegacyBrowser };
+      try {
+        if (select && select.addEventListener) {
+          select.addEventListener('change', function () {
+            var v = select.value;
+            if (v === 'auto') {
+              try { localStorage.removeItem(LAYOUT_KEY); } catch (e) {}
+              setLayout('auto');
+            } else {
+              setLayout(v);
+            }
+          }, false);
+        }
+      } catch (e) {}
+
+      try {
+        window._wDashboard = { injectTemplate: injectTemplate, isLegacyBrowser: isLegacyBrowser };
+      } catch (e) {}
+
+      try {
+        window.onerror = function (msg, src, ln, col, err) {
+          try {
+            var root = document.getElementById('root');
+            if (root) {
+              var pre = document.createElement('pre');
+              pre.style.whiteSpace = 'pre-wrap';
+              pre.style.padding = '12px';
+              pre.style.background = '#fff0f0';
+              pre.style.color = '#900';
+              pre.style.border = '1px solid #f99';
+              pre.textContent = 'JS error: ' + msg + (src ? '\n at ' + src + ':' + ln + ':' + col : '');
+              root.innerHTML = '';
+              root.appendChild(pre);
+            }
+          } catch (e) {}
+          return false;
+        };
+      } catch (e) {}
     })();
   </script>
 </body>

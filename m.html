@@ -17,7 +17,7 @@
     #layout-switcher label{margin-right:6px}
     #layout-switcher select{font-size:12px}
     #layout-hint{font-size:11px;opacity:.7;margin-top:6px}
-    .injected-layout-style{display:none}
+    /* .injected-layout-style{display:none} */
   </style>
 </head>
 <body>
@@ -635,7 +635,7 @@ setInterval(function() {
         if (styleEl) {
           var newStyle = document.createElement('style');
           newStyle.setAttribute('data-injected-layout','style-' + name);
-          newStyle.className = 'injected-layout-style';
+          /* newStyle.className = 'injected-layout-style'; */
           newStyle.textContent = styleEl.textContent;
           document.head.appendChild(newStyle);
         }

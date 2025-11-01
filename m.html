@@ -699,134 +699,134 @@ function fetchWeatherForLocation(elementId, lat, lon) {
                         '</div>';
                 }
 
-                html += '</div>';
+                    html += '</div>';
 
-                if (el) el.innerHTML = html;
+                    if (el) el.innerHTML = html;
 
-            } catch (e) {
-                if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Parse error: ' + e.message + '</div>';
+                } catch (e) {
+                    if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Parse error: ' + e.message + '</div>';
+                }
+            } else {
+                if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">HTTP Error ' + xhr.status + '</div>';
             }
-        } else {
-            if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">HTTP Error ' + xhr.status + '</div>';
-        }
-    };
+        };
 
-    xhr.onerror = function() {
-        clearTimeout(timeoutId);
-        var el = document.getElementById(elementId);
-        if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Network error</div>';
-        console.error('XHR network error for', url);
-    };
+        xhr.onerror = function() {
+            clearTimeout(timeoutId);
+            var el = document.getElementById(elementId);
+            if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Network error</div>';
+            console.error('XHR network error for', url);
+        };
 
-    xhr.ontimeout = function() {
-        clearTimeout(timeoutId);
-        var el = document.getElementById(elementId);
-        if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Request timeout</div>';
-    };
+        xhr.ontimeout = function() {
+            clearTimeout(timeoutId);
+            var el = document.getElementById(elementId);
+            if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Request timeout</div>';
+        };
 
-    xhr.send();
-}
-
-function fetchAllWeather() {
-    fetchWeatherForLocation('weather-amsterdam', 52.3676, 4.9041);
-    fetchWeatherForLocation('weather-maspalomas', 27.7609, -15.5863);
-}
-
-function isInActiveWindow() {
-    var now = new Date();
-    var utcDay = now.getUTCDay();
-    var utcHour = now.getUTCHours();
-
-    // NEW LOGIC: block midnight to 07 UTC
-    if (utcHour >= 0 && utcHour <= 7) return false;
-
-    // Original Weekend blockout
-    if (utcDay === 5 && utcHour >= 21) return false;
-    if (utcDay === 6) return false;
-    if (utcDay === 0 && utcHour < 21) return false;
-
-    return true;
-}
-
-function fetchCurrency() {
-    var lowThreshold = parseFloat(getUrlParameter('low')) || 1.1;
-    var highThreshold = parseFloat(getUrlParameter('high')) || 1.2;
-
-    var oxrRate = null, oxrDateTime = null;
-    var ecbRate = null, ecbDate = null;
-    var altRate = null, altDateTime = null;
-    var completed = 0;
-
-    function checkComplete() {
-        completed++;
-        if (completed >= 3) {
-            displayCurrency();
-        }
+        xhr.send();
     }
 
-    function displayCurrency() {
-        var displayRate = oxrRate || ecbRate || altRate || '0.00000';
+    function fetchAllWeather() {
+        fetchWeatherForLocation('weather-amsterdam', 52.3676, 4.9041);
+        fetchWeatherForLocation('weather-maspalomas', 27.7609, -15.5863);
+    }
 
-        var source = '';
-        if (oxrRate) source = 'OXR';
-        else if (ecbRate) source = 'ECB';
-        else if (altRate) source = 'Alt';
+    function isInActiveWindow() {
+        var now = new Date();
+        var utcDay = now.getUTCDay();
+        var utcHour = now.getUTCHours();
 
-        var rateNum = parseFloat(displayRate);
-        var leftIcon = '';
-        var rightIcon = '';
-        if (rateNum < lowThreshold) leftIcon = '✅ ';
-        else if (rateNum > highThreshold) rightIcon = ' ❌';
+        // NEW LOGIC: block midnight to 07 UTC
+        if (utcHour >= 0 && utcHour <= 7) return false;
 
-        var parts = [];
-        if (oxrRate) parts.push('OXR $' + oxrRate + ' (' + oxrDateTime + ')');
-        if (ecbRate) parts.push('ECB $' + ecbRate + ' (' + ecbDate + ')');
-        if (altRate) parts.push('Alt $' + altRate + (altDateTime ? ' (' + altDateTime + ')' : ''));
-        var infoLine = parts.join(' • ');
+        // Original Weekend blockout
+        if (utcDay === 5 && utcHour >= 21) return false;
+        if (utcDay === 6) return false;
+        if (utcDay === 0 && utcHour < 21) return false;
 
-        var el = document.getElementById('currency-content');
-        if (el) {
-            el.innerHTML =
-                '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate +
-                (source ? ' (' + source + ')' : '') + rightIcon + '</div>' +
-                '<div style="font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
+        return true;
+    }
+
+    function fetchCurrency() {
+        var lowThreshold = parseFloat(getUrlParameter('low')) || 1.1;
+        var highThreshold = parseFloat(getUrlParameter('high')) || 1.2;
+
+        var oxrRate = null, oxrDateTime = null;
+        var ecbRate = null, ecbDate = null;
+        var altRate = null, altDateTime = null;
+        var completed = 0;
+
+        function checkComplete() {
+            completed++;
+            if (completed >= 3) {
+                displayCurrency();
+            }
         }
+
+        function displayCurrency() {
+            var displayRate = oxrRate || ecbRate || altRate || '0.00000';
+
+            var source = '';
+            if (oxrRate) source = 'OXR';
+            else if (ecbRate) source = 'ECB';
+            else if (altRate) source = 'Alt';
+
+            var rateNum = parseFloat(displayRate);
+            var leftIcon = '';
+            var rightIcon = '';
+            if (rateNum < lowThreshold) leftIcon = '✅ ';
+            else if (rateNum > highThreshold) rightIcon = ' ❌';
+
+            var parts = [];
+            if (oxrRate) parts.push('OXR $' + oxrRate + ' (' + oxrDateTime + ')');
+            if (ecbRate) parts.push('ECB $' + ecbRate + ' (' + ecbDate + ')');
+            if (altRate) parts.push('Alt $' + altRate + (altDateTime ? ' (' + altDateTime + ')' : ''));
+            var infoLine = parts.join(' • ');
+
+            var el = document.getElementById('currency-content');
+            if (el) {
+                el.innerHTML =
+                    '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate +
+                    (source ? ' (' + source + ')' : '') + rightIcon + '</div>' +
+                    '<div style="font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
+            }
+        }
+
+        var xhr1 = new XMLHttpRequest();
+        var apiUrl1 = 'https://openexchangerates.org/api/latest.json?app_id=59f0442d524d41608055554519509c57';
+        xhr1.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl1), true);
+        xhr1.onload = function() { if (xhr1.status === 200) { try { var data = JSON.parse(xhr1.responseText); var usdEurRate = data.rates.EUR; oxrRate = (1 / usdEurRate).toFixed(5); var updateDate = new Date(data.timestamp * 1000); var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; var month = months[updateDate.getMonth()]; var day = updateDate.getDate(); var hours = padZero(updateDate.getHours()); var minutes = padZero(updateDate.getMinutes()); oxrDateTime = month + ' ' + day + ', ' + hours + ':' + minutes;} catch (e) {} } checkComplete(); };
+        xhr1.onerror = function() { checkComplete(); };
+        xhr1.send();
+
+        var xhr2 = new XMLHttpRequest();
+        var apiUrl2 = 'https://api.frankfurter.app/latest?from=EUR&to=USD';
+        xhr2.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl2), true);
+        xhr2.onload = function() { if (xhr2.status === 200) { try { var data = JSON.parse(xhr2.responseText); ecbRate = data.rates.USD.toFixed(5); ecbDate = data.date; } catch (e) {} } checkComplete(); };
+        xhr2.onerror = function() { checkComplete(); };
+        xhr2.send();
+
+        var xhr3 = new XMLHttpRequest();
+        var apiUrl3 = 'https://api.exchangerate-api.com/v4/latest/EUR';
+        xhr3.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl3), true);
+        xhr3.onload = function() { if (xhr3.status === 200) { try { var data = JSON.parse(xhr3.responseText); altRate = data.rates.USD.toFixed(5); if (data.time_last_update_utc) { var updateDate = new Date(data.time_last_update_utc); if (!isNaN(updateDate.getTime())) { var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; var month = months[updateDate.getMonth()]; var day = updateDate.getDate(); var hours = padZero(updateDate.getHours()); var minutes = padZero(updateDate.getMinutes()); altDateTime = month + ' ' + day + ', ' + hours + ':' + minutes; } } } catch (e) {} } checkComplete(); };
+        xhr3.onerror = function() { checkComplete(); };
+        xhr3.send();
     }
 
-    var xhr1 = new XMLHttpRequest();
-    var apiUrl1 = 'https://openexchangerates.org/api/latest.json?app_id=59f0442d524d41608055554519509c57';
-    xhr1.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl1), true);
-    xhr1.onload = function() { if (xhr1.status === 200) { try { var data = JSON.parse(xhr1.responseText); var usdEurRate = data.rates.EUR; oxrRate = (1 / usdEurRate).toFixed(5); var updateDate = new Date(data.timestamp * 1000); var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; var month = months[updateDate.getMonth()]; var day = updateDate.getDate(); var hours = padZero(updateDate.getHours()); var minutes = padZero(updateDate.getMinutes()); oxrDateTime = month + ' ' + day + ', ' + hours + ':' + minutes;} catch (e) {} } checkComplete(); };
-    xhr1.onerror = function() { checkComplete(); };
-    xhr1.send();
+    updateTime();
+    setInterval(updateTime, 1000);
 
-    var xhr2 = new XMLHttpRequest();
-    var apiUrl2 = 'https://api.frankfurter.app/latest?from=EUR&to=USD';
-    xhr2.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl2), true);
-    xhr2.onload = function() { if (xhr2.status === 200) { try { var data = JSON.parse(xhr2.responseText); ecbRate = data.rates.USD.toFixed(5); ecbDate = data.date; } catch (e) {} } checkComplete(); };
-    xhr2.onerror = function() { checkComplete(); };
-    xhr2.send();
+    fetchAllWeather();
+    fetchCurrency();
 
-    var xhr3 = new XMLHttpRequest();
-    var apiUrl3 = 'https://api.exchangerate-api.com/v4/latest/EUR';
-    xhr3.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl3), true);
-    xhr3.onload = function() { if (xhr3.status === 200) { try { var data = JSON.parse(xhr3.responseText); altRate = data.rates.USD.toFixed(5); if (data.time_last_update_utc) { var updateDate = new Date(data.time_last_update_utc); if (!isNaN(updateDate.getTime())) { var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; var month = months[updateDate.getMonth()]; var day = updateDate.getDate(); var hours = padZero(updateDate.getHours()); var minutes = padZero(updateDate.getMinutes()); altDateTime = month + ' ' + day + ', ' + hours + ':' + minutes; } } } catch (e) {} } checkComplete(); };
-    xhr3.onerror = function() { checkComplete(); };
-    xhr3.send();
-}
-
-updateTime();
-setInterval(updateTime, 1000);
-
-fetchAllWeather();
-fetchCurrency();
-
-setInterval(fetchAllWeather, 600000);
-setInterval(function() {
-    if (isInActiveWindow()) {
-        fetchCurrency();
-    }
-}, 3600000);
+    setInterval(fetchAllWeather, 600000);
+    setInterval(function() {
+        if (isInActiveWindow()) {
+            fetchCurrency();
+        }
+    }, 3600000);
 /* END index_old_ipad.html JS */
     </script>
   </template>
@@ -879,7 +879,7 @@ body.theme-green {
 }
 
 body.theme-blackgreen {
-    background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
+    background: linear-gradient(135deg, #86efac 0%, #4ade80 100%); 
     color: #000000;
 }
 
@@ -957,7 +957,6 @@ body.theme-green .card {
     color: #33ff33;
     border: 2px solid #33ff33;
     box-shadow: 0 0 20px rgba(51, 255, 51, 0.3), inset 0 0 20px rgba(51, 255, 51, 0.1);
-    text-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
 }
 
 body.theme-blackgreen .card {
@@ -1455,6 +1454,15 @@ body.theme-green .card-title {
 
       try {
         var paramLayout = getQueryParam('layout');
+
+        // If layout provided in URL, remove/hide the layout switcher so it doesn't appear
+        if (paramLayout) {
+          try {
+            var _ls = document.getElementById('layout-switcher');
+            if (_ls && _ls.parentNode) _ls.parentNode.removeChild(_ls);
+          } catch (e) {}
+        }
+
         var initial = paramLayout || (function(){ try { return localStorage.getItem(LAYOUT_KEY); } catch (e) { return null; } })() || 'auto';
         if (initial === 'auto') initial = isLegacyBrowser() ? 'ipad2' : 'se';
         if (paramLayout && select) {

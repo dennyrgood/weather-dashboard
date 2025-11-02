@@ -2,14 +2,13 @@
 
 # --- 1. Get Commit Message ---
 
-# Set a default message
 DEFAULT_MESSAGE="Cleaning up files/sync from local to web"
 
 # Prompt user for input
 echo "Enter commit message (or press Enter to use default):"
 read -r USER_MESSAGE
 
-# Use the default message if user input is empty
+# Set the final commit message
 if [ -z "$USER_MESSAGE" ]; then
     COMMIT_MESSAGE="$DEFAULT_MESSAGE"
 else
@@ -28,12 +27,17 @@ git add -A
 echo "Committing staged changes..."
 git commit -m "$COMMIT_MESSAGE"
 
-# Check if the commit was successful before pushing
+# Check if the commit was successful before proceeding
 if [ $? -ne 0 ]; then
-    echo "ERROR: Commit failed. Check git status for details."
-    exit 1
+    # The commit fails if there are no changes to commit.
+    # We will still proceed to pull/push, which is often desirable for a sync script.
+    echo "Warning: No changes to commit. Proceeding with pull/push sync."
 fi
 
-# Push to the remote main branch
-echo "Pushing changes to origin main..."
+# PULL: Fetch and merge remote changes before pushing local changes
+echo "Pulling remote changes from origin main..."
+git pull origin main
+
+# PUSH: Send local changes to the remote branch
+echo "Pushing local changes to origin main..."
 git push origin main

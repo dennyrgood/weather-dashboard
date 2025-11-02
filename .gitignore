@@ -1,0 +1,5 @@
+# System files
+.DS_Store
+# Temporary/utility scripts
+copy.m.html.sh
+push.m.html.from.main.to.bkp.sh

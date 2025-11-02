@@ -1,9 +1,12 @@
-<!DOCTYPE html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+  
+  <script>
+var WeatherDashboard=function(){var e={version:"v. 2025.11.02 (Modular)",proxyUrl:"https://weatherproxy.ldmathes.cc/",locations:[{id:"weather-amsterdam",name:"Amsterdam",lat:52.3676,lon:4.9041},{id:"weather-maspalomas",name:"Maspalomas",lat:27.7609,lon:-15.5863}],currencyApis:{oxr:"https://openexchangerates.org/api/latest.json?app_id=59f0442d524d41608055554519509c57",ecb:"https://api.frankfurter.app/latest?from=EUR&to=USD",alt:"https://api.exchangerate-api.com/v4/latest/EUR"},updateIntervals:{clock:1e3,weather:6e5,currency:36e5},constants:{days:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],daysShort:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],monthsLong:["January","February","March","April","May","June","July","August","September","October","November","December"],monthsShort:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]}};function t(e){var t=new RegExp("[?&]"+e+"=([^&#]*)").exec(window.location.href);return t?decodeURIComponent(t[1])||null:null}function a(e){return e<10?"0"+e:""+e}function n(e){return Math.round(9*e/5+32)}function r(e){return a(e.getHours())+":"+a(e.getMinutes())}function i(t){var n=new Date(t),r=e.constants.monthsShort[n.getMonth()];return r+" "+n.getDate()+", "+a(n.getHours())+":"+a(n.getMinutes())}function o(e){return 0===e?"☀️":e<=3?"☁️":e<=67?"🌧️":e<=77?"❄️":e<=99?"⛈️":"☀️"}function s(t,a){var n=a?e.constants.daysShort:e.constants.days;return n[new Date(t).getDay()]}function c(t,a){return"https://api.open-meteo.com/v1/forecast?latitude="+t+"&longitude="+a+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto&forecast_days=4"}function d(t){return e.proxyUrl+"?url="+encodeURIComponent(t)}function u(e,t){var a=document.getElementById(e);a&&(a.innerHTML=t)}function l(e,t,a){var n="Loading...";t&&(n='<div class="debug-url-display">URL: '+t+"</div>"+n),u(e,n)}function m(e,t,a){var n='<div class="error">'+t+"</div>";a&&(n='<div class="debug-url-display">URL: '+a+"</div>"+n),u(e,n)}function h(){var e=new Date,t=e.getUTCDay(),a=e.getUTCHours();return!(a>=0&&a<=7||5===t&&a>=21||6===t||0===t&&a<21)}function p(){var n=t("proxy");n&&(e.proxyUrl=n);var r=t("theme")||"blue";document.body.className="theme-"+r}function g(e){var t=e.current,a=e.daily,r=Math.round(t.temperature_2m),i=Math.round(t.apparent_temperature);return{current:{tempC:r,tempF:n(r),feelsLikeC:i,feelsLikeF:n(i),humidity:t.relative_humidity_2m,windSpeed:Math.round(t.wind_speed_10m),weatherCode:t.weather_code,icon:o(t.weather_code)},today:{highC:Math.round(a.temperature_2m_max[0]),highF:n(Math.round(a.temperature_2m_max[0])),lowC:Math.round(a.temperature_2m_min[0]),lowF:n(Math.round(a.temperature_2m_min[0])),rainChance:a.precipitation_probability_max[0]||0,sunrise:r(new Date(a.sunrise[0])),sunset:r(new Date(a.sunset[0]))},forecast:[f(a,1),f(a,2),f(a,3)]}}function f(e,t){var a=Math.round(e.temperature_2m_max[t]),r=Math.round(e.temperature_2m_min[t]);return{name:s(e.time[t],!0),highC:a,highF:n(a),lowC:r,lowF:n(r),icon:o(e.weather_code[t]),rainChance:e.precipitation_probability_max[t]||0}}function v(e){for(var t='<div class="weather-main"><div class="main-left"><div class="temperature">'+e.current.tempF+'<span class="temp-unit">°F</span></div><div class="temperature-secondary">'+e.current.tempC+'<span class="temp-unit">°C</span></div><div class="feels-like">Feels '+e.current.feelsLikeF+'<span class="temp-unit">°F</span></div></div><div class="main-right"><div class="weather-icon">'+e.current.icon+'</div></div></div><div class="sun-precept-info"><span>☀️ '+e.today.sunrise+'</span><span>💧 '+e.today.rainChance+'%</span><span>🌙 '+e.today.sunset+'</span></div><div class="current-details"><div class="detail-left"><strong>Low/High:</strong> '+e.today.lowF+'<span class="temp-unit">°F</span> / '+e.today.highF+'<span class="temp-unit">°F</span></div><div class="detail-right"><strong>Humidity/Wind:</strong> '+e.current.humidity+"% / "+e.current.windSpeed+' mph</div></div><div class="forecast-days">',a=0;a<e.forecast.length;a++){var n=e.forecast[a];t+='<div class="forecast-day"><div class="forecast-day-name">'+n.name+'</div><div class="forecast-day-inner"><div class="forecast-icon-col"><div class="forecast-icon">'+n.icon+'</div></div><div class="forecast-info-col"><div class="forecast-temps"><div class="forecast-high">'+n.highF+'<span class="temp-unit">°F</span></div><div class="forecast-low">'+n.lowF+'<span class="temp-unit">°F</span></div></div><div class="forecast-rain">💧 '+n.rainChance+"%</div></div></div></div>"}return t+="</div>"}function w(e){var t=e.forecast[<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Weather Dashboard — merged (complete from backup)</title>
+  <title>Weather Dashboard – Streamlined</title>
 
   <style>
     html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
@@ -17,13 +20,45 @@
     #layout-switcher label{margin-right:6px}
     #layout-switcher select{font-size:12px}
     #layout-hint{font-size:11px;opacity:.7;margin-top:6px}
-    /* NOTE: no rule hiding injected styles */
+  </style>
+
+  <style id="shared-themes">
+    body.theme-amber {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      color: #1c1917;
+    }
+    body.theme-blue {
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+      color: #1e3a8a;
+    }
+    body.theme-gray {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      color: #111827;
+    }
+    body.theme-cream {
+      background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+      color: #292524;
+    }
+    body.theme-green {
+      background: #0d1b0d;
+      color: #33ff33;
+      font-family: 'Courier New', monospace;
+    }
+    body.theme-blackgreen {
+      background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
+      color: #000000;
+    }
+    body.theme-amberblack {
+      background: #000000;
+      color: #fbbf24;
+    }
   </style>
 </head>
 <body>
+  
   <div id="root"></div>
 
-  <div id="layout-switcher" aria-hidden="false" role="region" aria-label="Layout switcher">
+  <div id="layout-switcher" role="region" aria-label="Layout switcher">
     <label for="layout-select">Layout:</label>
     <select id="layout-select" title="Choose layout">
       <option value="auto">Auto (detect)</option>
@@ -33,13 +68,11 @@
       <option value="iphone-modern">iPhone modern</option>
       <option value="desktop">Desktop</option>
     </select>
-    <div id="layout-hint">Use ?layout=&lt;name&gt; to persist. (localStorage)</div>
+    <div id="layout-hint">Use ?layout=&lt;name&gt; to persist</div>
   </div>
 
-  <!-- TEMPLATE: iPad2 (index_old_ipad.html) -->
   <template id="tpl-ipad2">
     <style>
-/* BEGIN index_old_ipad.html CSS (exact) */
 * {
     margin: 0;
     padding: 0;
@@ -48,92 +81,9 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     min-height: 100vh;
     padding: 8px;
     overflow: hidden;
-}
-
-body.theme-amber {
-    background: -webkit-linear-gradient(315deg, #fef3c7 0%, #fde68a 100%);
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    color: #1c1917;
-}
-
-body.theme-blue {
-    background: -webkit-linear-gradient(315deg, #dbeafe 0%, #bfdbfe 100%);
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    color: #1e3a8a;
-}
-
-body.theme-gray {
-    background: -webkit-linear-gradient(315deg, #f3f4f6 0%, #e5e7eb 100%);
-    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-    color: #111827;
-}
-
-body.theme-cream {
-    background: -webkit-linear-gradient(315deg, #fefce8 0%, #fef9c3 100%);
-    background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
-    color: #292524;
-}
-
-body.theme-green {
-    background: #0d1b0d;
-    color: #33ff33;
-    font-family: 'Courier New', monospace;
-}
-
-body.theme-blackgreen {
-    background: -webkit-linear-gradient(315deg, #86efac 0%, #4ade80 100%);
-    background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
-    color: #000000;
-}
-
-body.theme-amberblack {
-    background: #000000;
-    color: #fbbf24;
-}
-
-.container {
-    width: 100%;
-    max-width: 100%;
-}
-
-.time {
-    font-size: 2em;
-    font-weight: 300;
-    text-align: center;
-    margin: 0;
-}
-
-.date {
-    font-size: 0.85em;
-    text-align: center;
-    opacity: 0.9;
-    margin: 0 0 8px 0;
-}
-
-.weather-row {
-    margin-top: 8px;
-    overflow: hidden;
-}
-
-.weather-card {
-    float: left;
-    width: 48.5%;
-    margin-right: 1.5%;
-}
-
-.weather-card:last-of-type {
-    margin-right: 0;
-}
-
-.card {
-    -webkit-border-radius: 15px;
-    border-radius: 15px;
-    padding: 12px;
-    margin-bottom: 8px;
 }
 
 body.theme-amber .card {
@@ -190,8 +140,60 @@ body.theme-amberblack .card {
     box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
 }
 
-body.theme-green .card-title {
+body.theme-green .card-title,
+body.theme-green .current-details {
     text-shadow: 0 0 8px rgba(51, 255, 51, 0.8);
+}
+
+body.theme-green .current-details {
+    border-bottom-color: rgba(51, 255, 51, 0.3);
+    border-top-color: rgba(51, 255, 51, 0.3);
+}
+
+body.theme-amberblack .current-details {
+    border-bottom-color: rgba(251, 191, 36, 0.3);
+    border-top-color: rgba(251, 191, 36, 0.3);
+}
+
+.container {
+    width: 100%;
+    max-width: 100%;
+}
+
+.time {
+    font-size: 2em;
+    font-weight: 300;
+    text-align: center;
+    margin: 0;
+}
+
+.date {
+    font-size: 0.85em;
+    text-align: center;
+    opacity: 0.9;
+    margin: 0 0 8px 0;
+}
+
+.weather-row {
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.weather-card {
+    float: left;
+    width: 48.5%;
+    margin-right: 1.5%;
+}
+
+.weather-card:last-of-type {
+    margin-right: 0;
+}
+
+.card {
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    padding: 12px;
+    margin-bottom: 8px;
 }
 
 .card-title {
@@ -249,15 +251,7 @@ body.theme-green .card-title {
     margin-top: 8px;
 }
 
-.temperature-secondary .temp-unit {
-    font-size: 0.6em;
-    vertical-align: top;
-    display: inline-block;
-    line-height: 1;
-    font-weight: 400;
-    margin-left: 2px;
-}
-
+.temperature-secondary .temp-unit,
 .feels-like .temp-unit {
     font-size: 0.6em;
     vertical-align: top;
@@ -268,15 +262,7 @@ body.theme-green .card-title {
 }
 
 .forecast-high .temp-unit,
-.forecast-low .temp-unit {
-    font-size: 0.7em;
-    vertical-align: top;
-    display: inline-block;
-    line-height: 1;
-    font-weight: 400;
-    margin-left: 2px;
-}
-
+.forecast-low .temp-unit,
 .detail-left .temp-unit,
 .detail-right .temp-unit {
     font-size: 0.7em;
@@ -287,35 +273,14 @@ body.theme-green .card-title {
     margin-left: 2px;
 }
 
-/* try to make work with both old ipad and newer browers, see next block
-// this one works fine for the ipad2!!!
-*/
-
-/*
-.weather-icon {
-    font-size: 40px;
-    -webkit-transform: scale(5);
-    transform: scale(5);
-    display: inline-block;
-    line-height: 1;
-    margin: 100px 100px 0 0;
-}
-*/
-
-/* * CORE STYLES - Only apply absolute positioning and large icon sizing 
- * for modern/desktop screens (wider than the iPad 2).
- */
 @media only screen and (min-width: 1025px) {
-    /* The selected code: Pushes the container to the top-right corner. */
     .main-right {
-        /* Ensure this container is positioned relative to its parent */
         position: absolute;
         top: 0;
         right: 0;
     }
 
     .weather-icon {
-        /* For modern browsers (Desktop/Newer Tablets), 100px is the final size */
         font-size: 100px;
         display: inline-block;
         line-height: 1;
@@ -323,27 +288,14 @@ body.theme-green .card-title {
     }
 }
 
-/*
- * iPAD 2 HACK (Targeting 1024x768 and smaller/shorter)
- * * This block is now completely independent and uses only the old, working styles, 
- * * relying on the iPad 2's default layout flow since .main-right positioning 
- * * is NOT applied at this resolution.
- */
-        
 @media only screen and (max-width: 1024px) and (max-height: 768px) {
     .weather-icon {
-        /* --- START: Original Working iPad 2 Styles (Cleaned) --- */
         font-size: 40px;
-        
         -webkit-transform: scale(7);
         transform: scale(7);
-        
-        /* Using the original simple margins that worked. (Top, Right, Bottom, Left) */
         margin: 20px 50px 0 0;
-        
         display: inline-block;
         line-height: 1;
-        /* --- END: Original Working iPad 2 Styles --- */
     }
 }
      
@@ -354,16 +306,15 @@ body.theme-green .card-title {
     overflow: hidden;
     margin-top: 8px;
     width: 100%;
-    padding: 0 2px; /* Small padding for visual separation from card edge */
-    display: -webkit-box; /* For old iOS */
+    padding: 0 2px;
+    display: -webkit-box;
     display: flex;
     -webkit-box-pack: justify;
     justify-content: space-between;
-    clear: both; /* Ensure it moves below .weather-main floats */
+    clear: both;
 }
 
 .sun-precept-info > span {
-    /* Force equal spacing, especially important for old browsers */
     -webkit-box-flex: 1;
     flex-grow: 1;
     text-align: center;
@@ -385,19 +336,9 @@ body.theme-green .card-title {
     line-height: 1.6;
     margin-bottom: 8px;
     padding-bottom: 8px;
-    padding-top: 8px; /* Added padding to separate from sun-precept-info */
+    padding-top: 8px;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-body.theme-green .current-details {
-    border-bottom-color: rgba(51, 255, 51, 0.3);
-    border-top-color: rgba(51, 255, 51, 0.3);
-}
-
-body.theme-amberblack .current-details {
-    border-bottom-color: rgba(251, 191, 36, 0.3);
-    border-top-color: rgba(251, 191, 36, 0.3);
 }
 
 .forecast-days {
@@ -473,7 +414,7 @@ body.theme-amberblack .current-details {
     word-break: break-all;
 }
 
-.debug-url-display { /* Subtle display for long-term use */
+.debug-url-display {
     text-align: left;
     font-size: 0.6em;
     opacity: 0.2;
@@ -487,25 +428,23 @@ body.theme-amberblack .current-details {
     font-size: 0.8em;
 }
 
-/* --- NEW SIMPLE FOOTER STYLES --- */
 .footer-version {
     font-size: 0.75em;
     text-align: center;
     opacity: 0.5;
     margin-top: 16px;
     padding-bottom: 8px;
-    clear: both; /* Ensures it drops below the floated weather cards */
+    clear: both;
 }
-/* --- END index_old_ipad.html CSS --- */
     </style>
 
-    <div class="container" id="container-ipad2">
+    <div class="container">
         <div>
             <div class="time" id="time">--:--</div>
             <div class="date" id="date">Loading...</div>
         </div>
 
-        <div id="content-area" class="weather-row">
+        <div class="weather-row">
             <div class="card weather-card">
                 <div class="card-title">Amsterdam</div>
                 <div id="weather-amsterdam" class="loading">Loading...</div>
@@ -525,316 +464,12 @@ body.theme-amberblack .current-details {
     <div id="version-display" class="footer-version"></div>
 
     <script type="text/template" data-script>
-/* BEGIN index_old_ipad.html JAVASCRIPT (unchanged logic, adjusted to run after injection) */
-var PROXY_URL = 'https://weatherproxy.ldmathes.cc/';
-var APP_VERSION = "v. 2025.10.31 (23:55)";
-
-(function setVersionDisplay(){
-    var el = document.getElementById("version-display");
-    if (el) el.innerHTML = APP_VERSION;
-})();
-
-function getUrlParameter(name) {
-    var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
-    if (results == null) {
-        return null;
-    }
-    return decodeURIComponent(results[1]) || null;
-}
-
-var proxyParam = getUrlParameter('proxy');
-if (proxyParam) {
-    PROXY_URL = proxyParam;
-}
-
-var theme = getUrlParameter('theme') || 'blue';
-document.body.className = 'theme-' + theme;
-
-function padZero(num) {
-    return num < 10 ? '0' + num : '' + num;
-}
-
-function updateTime() {
-    var now = new Date();
-    var hours = padZero(now.getHours());
-    var minutes = padZero(now.getMinutes());
-    var timeStr = hours + ':' + minutes;
-
-    var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    var months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                  'July', 'August', 'September', 'October', 'November', 'December'];
-
-    var dateStr = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
-
-    var elTime = document.getElementById('time');
-    var elDate = document.getElementById('date');
-    if (elTime) elTime.textContent = timeStr;
-    if (elDate) elDate.textContent = dateStr;
-}
-
-function getWeatherIcon(code) {
-    if (code === 0) return '☀️';
-    else if (code <= 3) return '☁️';
-    else if (code <= 67) return '🌧️';
-    else if (code <= 77) return '❄️';
-    else if (code <= 99) return '⛈️';
-    return '☀️';
-}
-
-function getDayName(dateStr) {
-    var date = new Date(dateStr);
-    var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    return days[date.getDay()];
-}
-
-function fetchWeatherForLocation(elementId, lat, lon) {
-    var apiUrl = 'http://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
-                 '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
-                 '&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code' +
-                 '&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto&forecast_days=4';
-    
-    var url = PROXY_URL + '?url=' + encodeURIComponent(apiUrl);
-
-    var debugContainer = document.getElementById(elementId);
-    var timeoutId; 
-
-    if (debugContainer) {
-        debugContainer.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + 'Loading...';
-    }
-    console.log("Weather Proxy URL (" + elementId + "):", url);
-
-    timeoutId = setTimeout(function() {
-        if (debugContainer && debugContainer.innerHTML && debugContainer.innerHTML.indexOf(url) !== -1 && debugContainer.innerHTML.indexOf('Loading...') !== -1) {
-            debugContainer.innerHTML = 'Loading...';
-        }
-    }, 15000); // 15 seconds
-
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.timeout = 20000;
-
-    xhr.onload = function() {
-        clearTimeout(timeoutId);
-        var el = document.getElementById(elementId);
-        if (xhr.status === 200) {
-            try {
-                var data = JSON.parse(xhr.responseText);
-
-                if (data.error || data.reason) {
-                    var errorMsg = data.reason || (typeof data.error === 'string' ? data.error : 'Unknown error');
-                    if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">API Error: ' + errorMsg + '</div>';
-                    return;
-                }
-
-                var tempC = Math.round(data.current.temperature_2m);
-                var tempF = Math.round(tempC * 9/5 + 32);
-                var feelsLikeC = Math.round(data.current.apparent_temperature);
-                var feelsLikeF = Math.round(feelsLikeC * 9/5 + 32);
-                var humidity = data.current.relative_humidity_2m;
-                var windSpeed = Math.round(data.current.wind_speed_10m);
-
-                var todayHighC = Math.round(data.daily.temperature_2m_max[0]);
-                var todayHighF = Math.round(todayHighC * 9/5 + 32);
-                var todayLowC = Math.round(data.daily.temperature_2m_min[0]);
-                var todayLowF = Math.round(todayLowC * 9/5 + 32);
-
-                var rainChance = data.daily.precipitation_probability_max[0] || 0;
-
-                var sunrise = new Date(data.daily.sunrise[0]);
-                var sunset = new Date(data.daily.sunset[0]);
-                var riseTime = padZero(sunrise.getHours()) + ':' + padZero(sunrise.getMinutes());
-                var setTime = padZero(sunset.getHours()) + ':' + padZero(sunset.getMinutes());
-
-                var weatherCode = data.current.weather_code;
-                var icon = getWeatherIcon(weatherCode);
-
-                var html = 
-                    '<div class="weather-main">' +
-                    '<div class="main-left">' +
-                    '<div class="temperature">' + tempF + '<span class="temp-unit">°F</span></div>' +
-                    '<div class="temperature-secondary">' + tempC + '<span class="temp-unit">°C</span></div>' +
-                    '<div class="feels-like">Feels ' + feelsLikeF + '<span class="temp-unit">°F</span></div>' +
-                    '</div>' +
-                    '<div class="main-right">' +
-                    '<div class="weather-icon">' + icon + '</div>' +
-                    '</div>' +
-                    '</div>'; 
-
-                html += '<div class="sun-precept-info">' +
-                    '<span>☀️ ' + riseTime + '</span>' +
-                    '<span>💧 ' + rainChance + '%</span>' +
-                    '<span>🌙 ' + setTime + '</span>' +
-                    '</div>';
-
-                html += '<div class="current-details">' +
-                    '<div class="detail-left"><strong>Low/High:</strong> ' + todayLowF + '<span class="temp-unit">°F</span> / ' + todayHighF + '<span class="temp-unit">°F</span></div>' +
-                    '<div class="detail-right"><strong>Humidity/Wind:</strong> ' + humidity + '% / ' + windSpeed + ' mph</div>' +
-                    '</div>';
-
-                html += '<div class="forecast-days">';
-
-                for (var i = 1; i <= 3; i++) {
-                    var dayName = getDayName(data.daily.time[i]);
-                    var highC = Math.round(data.daily.temperature_2m_max[i]);
-                    var highF = Math.round(highC * 9/5 + 32);
-                    var lowC = Math.round(data.daily.temperature_2m_min[i]);
-                    var lowF = Math.round(lowC * 9/5 + 32);
-                    var dayIcon = getWeatherIcon(data.daily.weather_code[i]);
-                    var dayRain = data.daily.precipitation_probability_max[i] || 0;
-
-                    html += '<div class="forecast-day">' +
-                        '<div class="forecast-day-name">' + dayName + '</div>' +
-                        '<div class="forecast-day-inner">' +
-                        '<div class="forecast-icon-col">' +
-                        '<div class="forecast-icon">' + dayIcon + '</div>' +
-                        '</div>' +
-                        '<div class="forecast-info-col">' +
-                        '<div class="forecast-temps">' +
-                        '<div class="forecast-high">' + highF + '<span class="temp-unit">°F</span></div>' +
-                        '<div class="forecast-low">' + lowF + '<span class="temp-unit">°F</span></div>' +
-                        '</div>' +
-                        '<div class="forecast-rain">💧 ' + dayRain + '%</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>';
-                }
-
-                    html += '</div>';
-
-                    if (el) el.innerHTML = html;
-
-                } catch (e) {
-                    if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Parse error: ' + e.message + '</div>';
-                }
-            } else {
-                if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">HTTP Error ' + xhr.status + '</div>';
-            }
-        };
-
-        xhr.onerror = function() {
-            clearTimeout(timeoutId);
-            var el = document.getElementById(elementId);
-            if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Network error</div>';
-            console.error('XHR network error for', url);
-        };
-
-        xhr.ontimeout = function() {
-            clearTimeout(timeoutId);
-            var el = document.getElementById(elementId);
-            if (el) el.innerHTML = '<div class="debug-url-display">URL: ' + url + '</div>' + '<div class="error">Request timeout</div>';
-        };
-
-        xhr.send();
-    }
-
-    function fetchAllWeather() {
-        fetchWeatherForLocation('weather-amsterdam', 52.3676, 4.9041);
-        fetchWeatherForLocation('weather-maspalomas', 27.7609, -15.5863);
-    }
-
-    function isInActiveWindow() {
-        var now = new Date();
-        var utcDay = now.getUTCDay();
-        var utcHour = now.getUTCHours();
-
-        // NEW LOGIC: block midnight to 07 UTC
-        if (utcHour >= 0 && utcHour <= 7) return false;
-
-        // Original Weekend blockout
-        if (utcDay === 5 && utcHour >= 21) return false;
-        if (utcDay === 6) return false;
-        if (utcDay === 0 && utcHour < 21) return false;
-
-        return true;
-    }
-
-    function fetchCurrency() {
-        var lowThreshold = parseFloat(getUrlParameter('low')) || 1.1;
-        var highThreshold = parseFloat(getUrlParameter('high')) || 1.2;
-
-        var oxrRate = null, oxrDateTime = null;
-        var ecbRate = null, ecbDate = null;
-        var altRate = null, altDateTime = null;
-        var completed = 0;
-
-        function checkComplete() {
-            completed++;
-            if (completed >= 3) {
-                displayCurrency();
-            }
-        }
-
-        function displayCurrency() {
-            var displayRate = oxrRate || ecbRate || altRate || '0.00000';
-
-            var source = '';
-            if (oxrRate) source = 'OXR';
-            else if (ecbRate) source = 'ECB';
-            else if (altRate) source = 'Alt';
-
-            var rateNum = parseFloat(displayRate);
-            var leftIcon = '';
-            var rightIcon = '';
-            if (rateNum < lowThreshold) leftIcon = '✅ ';
-            else if (rateNum > highThreshold) rightIcon = ' ❌';
-
-            var parts = [];
-            if (oxrRate) parts.push('OXR $' + oxrRate + ' (' + oxrDateTime + ')');
-            if (ecbRate) parts.push('ECB $' + ecbRate + ' (' + ecbDate + ')');
-            if (altRate) parts.push('Alt $' + altRate + (altDateTime ? ' (' + altDateTime + ')' : ''));
-            var infoLine = parts.join(' • ');
-
-            var el = document.getElementById('currency-content');
-            if (el) {
-                el.innerHTML =
-                    '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate +
-                    (source ? ' (' + source + ')' : '') + rightIcon + '</div>' +
-                    '<div style="font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
-            }
-        }
-
-        var xhr1 = new XMLHttpRequest();
-        var apiUrl1 = 'https://openexchangerates.org/api/latest.json?app_id=59f0442d524d41608055554519509c57';
-        xhr1.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl1), true);
-        xhr1.onload = function() { if (xhr1.status === 200) { try { var data = JSON.parse(xhr1.responseText); var usdEurRate = data.rates.EUR; oxrRate = (1 / usdEurRate).toFixed(5); var updateDate = new Date(data.timestamp * 1000); var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; var month = months[updateDate.getMonth()]; var day = updateDate.getDate(); var hours = padZero(updateDate.getHours()); var minutes = padZero(updateDate.getMinutes()); oxrDateTime = month + ' ' + day + ', ' + hours + ':' + minutes;} catch (e) {} } checkComplete(); };
-        xhr1.onerror = function() { checkComplete(); };
-        xhr1.send();
-
-        var xhr2 = new XMLHttpRequest();
-        var apiUrl2 = 'https://api.frankfurter.app/latest?from=EUR&to=USD';
-        xhr2.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl2), true);
-        xhr2.onload = function() { if (xhr2.status === 200) { try { var data = JSON.parse(xhr2.responseText); ecbRate = data.rates.USD.toFixed(5); ecbDate = data.date; } catch (e) {} } checkComplete(); };
-        xhr2.onerror = function() { checkComplete(); };
-        xhr2.send();
-
-        var xhr3 = new XMLHttpRequest();
-        var apiUrl3 = 'https://api.exchangerate-api.com/v4/latest/EUR';
-        xhr3.open('GET', PROXY_URL + '?url=' + encodeURIComponent(apiUrl3), true);
-        xhr3.onload = function() { if (xhr3.status === 200) { try { var data = JSON.parse(xhr3.responseText); altRate = data.rates.USD.toFixed(5); if (data.time_last_update_utc) { var updateDate = new Date(data.time_last_update_utc); if (!isNaN(updateDate.getTime())) { var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; var month = months[updateDate.getMonth()]; var day = updateDate.getDate(); var hours = padZero(updateDate.getHours()); var minutes = padZero(updateDate.getMinutes()); altDateTime = month + ' ' + day + ', ' + hours + ':' + minutes; } } } catch (e) {} } checkComplete(); };
-        xhr3.onerror = function() { checkComplete(); };
-        xhr3.send();
-    }
-
-    updateTime();
-    setInterval(updateTime, 1000);
-
-    fetchAllWeather();
-    fetchCurrency();
-
-    setInterval(fetchAllWeather, 600000);
-    setInterval(function() {
-        if (isInActiveWindow()) {
-            fetchCurrency();
-        }
-    }, 3600000);
-/* END index_old_ipad.html JS */
+if(typeof WeatherDashboard !== 'undefined') { WeatherDashboard.initIPad2(); }
     </script>
   </template>
 
-  <!-- TEMPLATE: SE (index.html) -->
   <template id="tpl-se">
     <style>
-/* BEGIN index.html CSS (exact) */
 * {
     margin: 0;
     padding: 0;
@@ -842,7 +477,6 @@ function fetchWeatherForLocation(elementId, lat, lon) {
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -850,82 +484,6 @@ body {
     align-items: center;
     padding: 8px;
     overflow: hidden;
-}
-
-body.theme-amber {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    color: #1c1917;
-}
-
-body.theme-blue {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    color: #1e3a8a;
-}
-
-body.theme-gray {
-    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-    color: #111827;
-}
-
-body.theme-cream {
-    background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
-    color: #292524;
-}
-
-body.theme-green {
-    background: #0d1b0d;
-    color: #33ff33;
-    font-family: 'Courier New', monospace;
-}
-
-body.theme-blackgreen {
-    background: linear-gradient(135deg, #86efac 0%, #4ade80 100%); 
-    color: #000000;
-}
-
-body.theme-amberblack {
-    background: #000000;
-    color: #fbbf24;
-}
-
-.container {
-    width: 100%;
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    gap: 8px;
-}
-
-.time {
-    font-size: 1.8em;
-    font-weight: 300;
-    text-align: center;
-    margin: 0;
-}
-
-.date {
-    font-size: 0.75em;
-    text-align: center;
-    opacity: 0.9;
-    margin: 0;
-}
-
-.weather-row {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex: 1;
-    min-height: 0;
-}
-
-.card {
-    border-radius: 15px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
 }
 
 body.theme-amber .card {
@@ -977,6 +535,46 @@ body.theme-green .card-title {
     text-shadow: 0 0 8px rgba(51, 255, 51, 0.8);
 }
 
+.container {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    gap: 8px;
+}
+
+.time {
+    font-size: 1.8em;
+    font-weight: 300;
+    text-align: center;
+    margin: 0;
+}
+
+.date {
+    font-size: 0.75em;
+    text-align: center;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.weather-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+}
+
+.card {
+    border-radius: 15px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
 .card-title {
     font-size: 0.7em;
     margin-bottom: 5px;
@@ -1024,241 +622,45 @@ body.theme-green .card-title {
     color: #fca5a5;
     text-align: center;
 }
-/* END index.html CSS */
     </style>
 
-    <div class="container" id="container-se">
+    <div class="container">
       <div>
-        <div class="time" id="time-se">--:--</div>
-        <div class="date" id="date-se">Loading...</div>
+        <div class="time" id="time">--:--</div>
+        <div class="date" id="date">Loading...</div>
       </div>
 
-      <div id="content-area-se" class="weather-row">
+      <div class="weather-row">
           <div class="card">
               <div class="card-title">Amsterdam</div>
-              <div id="weather-amsterdam-se" class="loading">Loading...</div>
+              <div id="weather-amsterdam" class="loading">Loading...</div>
           </div>
 
           <div class="card">
               <div class="card-title">Maspalomas</div>
-              <div id="weather-maspalomas-se" class="loading">Loading...</div>
+              <div id="weather-maspalomas" class="loading">Loading...</div>
           </div>
 
           <div class="card currency-card">
-              <div id="currency-content-se" class="loading">Loading rate...</div>
+              <div id="currency-content" class="loading">Loading rate...</div>
           </div>
       </div>
     </div>
 
     <script type="text/template" data-script>
-/* BEGIN index.html JS (unchanged, with element-existence checks) */
-(function(){
-    const urlParams = new URLSearchParams(window.location.search);
-    const theme = urlParams.get('theme') || 'blue';
-    document.body.classList.add(`theme-${theme}`);
-
-    function padZero(num) { return num < 10 ? '0' + num : '' + num; }
-
-    function updateTime() {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const timeStr = `${hours}:${minutes}`;
-
-        const dateStr = now.toLocaleDateString('en-US', {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric'
-        });
-
-        var elTime = document.getElementById('time-se') || document.getElementById('time');
-        var elDate = document.getElementById('date-se') || document.getElementById('date');
-        if (elTime) elTime.textContent = timeStr;
-        if (elDate) elDate.textContent = dateStr;
-    }
-
-    async function fetchWeatherForLocation(elementId, lat, lon) {
-        try {
-            const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto&forecast_days=4`);
-            const data = await response.json();
-
-            const tempC = Math.round(data.current.temperature_2m);
-            const tempF = Math.round(tempC * 9/5 + 32);
-            const feelsLikeC = Math.round(data.current.apparent_temperature);
-            const feelsLikeF = Math.round(feelsLikeC * 9/5 + 32);
-            const humidity = data.current.relative_humidity_2m;
-            const windSpeed = Math.round(data.current.wind_speed_10m);
-
-            const highC = Math.round(data.daily.temperature_2m_max[0]);
-            const highF = Math.round(highC * 9/5 + 32);
-            const lowC = Math.round(data.daily.temperature_2m_min[0]);
-            const lowF = Math.round(lowC * 9/5 + 32);
-
-            const tomorrowHighC = Math.round(data.daily.temperature_2m_max[1]);
-            const tomorrowHighF = Math.round(tomorrowHighC * 9/5 + 32);
-            const tomorrowLowC = Math.round(data.daily.temperature_2m_min[1]);
-            const tomorrowLowF = Math.round(tomorrowLowC * 9/5 + 32);
-
-            const rainChance = data.daily.precipitation_probability_max[0] || 0;
-
-            const sunrise = new Date(data.daily.sunrise[0]);
-            const sunset = new Date(data.daily.sunset[0]);
-            const riseTime = `${String(sunrise.getHours()).padStart(2, '0')}:${String(sunrise.getMinutes()).padStart(2, '0')}`;
-            const setTime = `${String(sunset.getHours()).padStart(2, '0')}:${String(sunset.getMinutes()).padStart(2, '0')}`;
-
-            const weatherCode = data.current.weather_code;
-            let icon = '☀️';
-
-            if (weatherCode === 0) { icon = '☀️'; }
-            else if (weatherCode <= 3) { icon = '☁️'; }
-            else if (weatherCode <= 67) { icon = '🌧️'; }
-            else if (weatherCode <= 77) { icon = '❄️'; }
-            else if (weatherCode <= 99) { icon = '⛈️'; }
-
-            const target = document.getElementById(elementId);
-            if (!target) {
-                console.warn('Target element not found for', elementId);
-                return;
-            }
-
-            target.innerHTML = `
-                <div class="weather-main">
-                    <div>
-                        <div class="temperature">${tempF}°F<span style="font-size: 0.4em; opacity: 0.7; margin-left: 3px;">${tempC}°C</span></div>
-                        <div style="font-size: 0.65em; opacity: 0.8;">Feels: ${feelsLikeF}°F</div>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center;">
-                        <div class="weather-icon">${icon}</div>
-                        <div style="font-size: 0.55em; opacity: 0.8;">💧${rainChance}%</div>
-                    </div>
-                </div>
-                <div class="weather-details">
-                    <div>Low/Tom:<br>${lowF}°F / ${tomorrowLowF}°F</div>
-                    <div>High/Tom:<br>${highF}°F / ${tomorrowHighF}°F</div>
-                    <div>Rise/Set:<br>${riseTime} / ${setTime}</div>
-                    <div>Humidity/Wind:<br>${humidity}% / ${windSpeed} mph</div>
-                </div>
-            `;
-        } catch (error) {
-            var el = document.getElementById(elementId);
-            if (el) el.innerHTML = '<div class="error">Weather unavailable</div>';
-            console.error('fetchWeatherForLocation error for', elementId, error);
-        }
-    }
-
-    function fetchAllWeather() {
-        var idA = document.getElementById('weather-amsterdam-se') ? 'weather-amsterdam-se' : 'weather-amsterdam';
-        var idM = document.getElementById('weather-maspalomas-se') ? 'weather-maspalomas-se' : 'weather-maspalomas';
-        fetchWeatherForLocation(idA, 52.3676, 4.9041);
-        fetchWeatherForLocation(idM, 27.7609, -15.5863);
-    }
-
-    function isInActiveWindow() {
-        const now = new Date();
-        const utcDay = now.getUTCDay();
-        const utcHour = now.getUTCHours();
-
-        if (utcHour >= 0 && utcHour <= 7) return false;
-        if (utcDay === 5 && utcHour >= 21) return false;
-        if (utcDay === 6) return false;
-        if (utcDay === 0 && utcHour < 21) return false;
-
-        return true;
-    }
-
-    async function fetchCurrency() {
-        const params = new URLSearchParams(window.location.search);
-        const lowThreshold = parseFloat(params.get('low')) || 1.1;
-        const highThreshold = parseFloat(params.get('high')) || 1.2;
-
-        let oxrRate = null, oxrDateTime = null;
-        let ecbRate = null, ecbDate = null;
-        let altRate = null, altDateTime = null;
-
-        try {
-            const response = await fetch('https://openexchangerates.org/api/latest.json?app_id=59f0442d524d41608055554519509c57');
-            const data = await response.json();
-
-            const usdEurRate = data.rates.EUR;
-            oxrRate = (1 / usdEurRate).toFixed(5);
-
-            const updateDate = new Date(data.timestamp * 1000);
-            const month = updateDate.toLocaleString('en-US', { month: 'short' });
-            const day = updateDate.getDate();
-            const hours = String(updateDate.getHours()).padStart(2, '0');
-            const minutes = String(updateDate.getMinutes()).padStart(2, '0');
-            oxrDateTime = `${month} ${day}, ${hours}:${minutes}`;
-        } catch (e) { console.warn('OXR fetch failed', e); }
-
-        try {
-            const resp = await fetch('https://api.frankfurter.app/latest?from=EUR&to=USD');
-            const data = await resp.json();
-            ecbRate = data.rates.USD.toFixed(5);
-            ecbDate = data.date;
-        } catch (e) { console.warn('ECB fetch failed', e); }
-
-        try {
-            const resp = await fetch('https://api.exchangerate-api.com/v4/latest/EUR');
-            const data = await resp.json();
-            altRate = data.rates.USD.toFixed(5);
-
-            if (data.time_last_update_utc) {
-                const updateDate = new Date(data.time_last_update_utc);
-                if (!isNaN(updateDate.getTime())) {
-                    const month = updateDate.toLocaleString('en-US', { month: 'short' });
-                    const day = updateDate.getDate();
-                    const hours = String(updateDate.getHours()).padStart(2, '0');
-                    const minutes = String(updateDate.getMinutes()).padStart(2, '0');
-                    altDateTime = `${month} ${day}, ${hours}:${minutes}`;
-                }
-            }
-        } catch (e) { console.warn('Alt fetch failed', e); }
-
-        const displayRate = oxrRate || ecbRate || altRate || '0.00000';
-        const rateNum = parseFloat(displayRate);
-
-        let leftIcon = '';
-        let rightIcon = '';
-        if (rateNum < lowThreshold) leftIcon = '✅ ';
-        else if (rateNum > highThreshold) rightIcon = ' ❌';
-
-        let infoLine = '';
-        const parts = [];
-        if (oxrRate) parts.push(`OXR $${oxrRate} (${oxrDateTime})`);
-        if (ecbRate) parts.push(`ECB $${ecbRate} (${ecbDate})`);
-        if (altRate) parts.push(`Alt $${altRate}${altDateTime ? ' (' + altDateTime + ')' : ''}`);
-        infoLine = parts.join(' • ');
-
-        var target = document.getElementById('currency-content-se') || document.getElementById('currency-content');
-        if (target) {
-            target.innerHTML = `
-                <div class="card-title">${leftIcon}EUR → USD - $${displayRate}${rightIcon}</div>
-                <div style="font-size: 0.6em; opacity: 0.7; margin-top: 2px; word-wrap: break-word; white-space: normal;">${infoLine}</div>
-            `;
-        }
-    }
-
-    updateTime();
-    setInterval(updateTime, 1000);
-
-    fetchAllWeather();
-    fetchCurrency();
-
-    setInterval(fetchAllWeather, 600000);
-    setInterval(() => {
-        if (isInActiveWindow()) {
-            fetchCurrency();
-        }
-    }, 3600000);
-})();
- /* END index.html JS */
+if(typeof WeatherDashboard !== 'undefined') { WeatherDashboard.initSE(); }
     </script>
   </template>
 
-  <!-- Runner: legacy-safe ES5 implementation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+  
+  <script>
+var WeatherDashboard=function(){var e={version:"v. 2025.11.02 (Modular)",proxyUrl:"https://weatherproxy.ldmathes.cc/",locations:[{id:"weather-amsterdam",name:"Amsterdam",lat:52.3676,lon:4.9041},{id:"weather-maspalomas",name:"Maspalomas",lat:27.7609,lon:-15.5863}],currencyApis:{oxr:"https://openexchangerates.org/api/latest.json?app_id=59f0442d524d41608055554519509c57",ecb:"https://api.frankfurter.app/latest?from=EUR&to=USD",alt:"https://api.exchangerate-api.com/v4/latest/EUR"},updateIntervals:{clock:1e3,weather:6e5,currency:36e5},constants:{days:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],daysShort:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],monthsLong:["January","February","March","April","May","June","July","August","September","October","November","December"],monthsShort:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]}};function t(e){var t=new RegExp("[?&]"+e+"=([^&#]*)").exec(window.location.href);return t?decodeURIComponent(t[1])||null:null}function a(e){return e<10?"0"+e:""+e}function n(e){return Math.round(9*e/5+32)}function r(e){return a(e.getHours())+":"+a(e.getMinutes())}function i(t){var n=new Date(t),r=e.constants.monthsShort[n.getMonth()];return r+" "+n.getDate()+", "+a(n.getHours())+":"+a(n.getMinutes())}function o(e){return 0===e?"☀️":e<=3?"☁️":e<=67?"🌧️":e<=77?"❄️":e<=99?"⛈️":"☀️"}function s(t,a){var n=a?e.constants.daysShort:e.constants.days;return n[new Date(t).getDay()]}function c(t,a){return"http://api.open-meteo.com/v1/forecast?latitude="+t+"&longitude="+a+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto&forecast_days=4"}function d(t){return e.proxyUrl+"?url="+encodeURIComponent(t)}function u(e,t){var a=document.getElementById(e);a&&(a.innerHTML=t)}function l(e,t,a){var n="Loading...";t&&(n='<div class="debug-url-display">URL: '+t+"</div>"+n),u(e,n)}function m(e,t,a){var n='<div class="error">'+t+"</div>";a&&(n='<div class="debug-url-display">URL: '+a+"</div>"+n),u(e,n)}function h(){var e=new Date,t=e.getUTCDay(),a=e.getUTCHours();return!(a>=0&&a<=7||5===t&&a>=21||6===t||0===t&&a<21)}function p(){var n=t("proxy");n&&(e.proxyUrl=n);var r=t("theme")||"blue";document.body.className="theme-"+r}function g(e){var t=e.current,a=e.daily,r=Math.round(t.temperature_2m),i=Math.round(t.apparent_temperature);return{current:{tempC:r,tempF:n(r),feelsLikeC:i,feelsLikeF:n(i),humidity:t.relative_humidity_2m,windSpeed:Math.round(t.wind_speed_10m),weatherCode:t.weather_code,icon:o(t.weather_code)},today:{highC:Math.round(a.temperature_2m_max[0]),highF:n(Math.round(a.temperature_2m_max[0])),lowC:Math.round(a.temperature_2m_min[0]),lowF:n(Math.round(a.temperature_2m_min[0])),rainChance:a.precipitation_probability_max[0]||0,sunrise:r(new Date(a.sunrise[0])),sunset:r(new Date(a.sunset[0]))},forecast:[f(a,1),f(a,2),f(a,3)]}}function f(e,t){var a=Math.round(e.temperature_2m_max[t]),r=Math.round(e.temperature_2m_min[t]);return{name:s(e.time[t],!0),highC:a,highF:n(a),lowC:r,lowF:n(r),icon:o(e.weather_code[t]),rainChance:e.precipitation_probability_max[t]||0}}function v(e){for(var t='<div class="weather-main"><div class="main-left"><div class="temperature">'+e.current.tempF+'<span class="temp-unit">°F</span></div><div class="temperature-secondary">'+e.current.tempC+'<span class="temp-unit">°C</span></div><div class="feels-like">Feels '+e.current.feelsLikeF+'<span class="temp-unit">°F</span></div></div><div class="main-right"><div class="weather-icon">'+e.current.icon+'</div></div></div><div class="sun-precept-info"><span>☀️ '+e.today.sunrise+'</span><span>💧 '+e.today.rainChance+'%</span><span>🌙 '+e.today.sunset+'</span></div><div class="current-details"><div class="detail-left"><strong>Low/High:</strong> '+e.today.lowF+'<span class="temp-unit">°F</span> / '+e.today.highF+'<span class="temp-unit">°F</span></div><div class="detail-right"><strong>Humidity/Wind:</strong> '+e.current.humidity+"% / "+e.current.windSpeed+' mph</div></div><div class="forecast-days">',a=0;a<e.forecast.length;a++){var n=e.forecast[a];t+='<div class="forecast-day"><div class="forecast-day-name">'+n.name+'</div><div class="forecast-day-inner"><div class="forecast-icon-col"><div class="forecast-icon">'+n.icon+'</div></div><div class="forecast-info-col"><div class="forecast-temps"><div class="forecast-high">'+n.highF+'<span class="temp-unit">°F</span></div><div class="forecast-low">'+n.lowF+'<span class="temp-unit">°F</span></div></div><div class="forecast-rain">💧 '+n.rainChance+"%</div></div></div></div>"}return t+="</div>"}function w(e){var t=e.forecast[0],a="<div class='weather-main'>";return a+="<div>",a+="<div class='temperature'>"+e.current.tempF+"°F",a+="<span style='font-size: 0.4em; opacity: 0.7; margin-left: 3px;'>"+e.current.tempC+"°C</span></div>",a+="<div style='font-size: 0.65em; opacity: 0.8;'>Feels: "+e.current.feelsLikeF+"°F</div>",a+="</div>",a+="<div style='display: flex; flex-direction: column; align-items: center;'>",a+="<div class='weather-icon'>"+e.current.icon+"</div>",a+="<div style='font-size: 0.55em; opacity: 0.8;'>💧"+e.today.rainChance+"%</div>",a+="</div>",a+="</div>",a+="<div class='weather-details'>",a+="<div>Low/Tom:<br>"+e.today.lowF+"°F / "+t.lowF+"°F</div>",a+="<div>High/Tom:<br>"+e.today.highF+"°F / "+t.highF+"°F</div>",a+="<div>Rise/Set:<br>"+e.today.sunrise+" / "+e.today.sunset+"</div>",a+="<div>Humidity/Wind:<br>"+e.current.humidity+"% / "+e.current.windSpeed+" mph</div>",a+="</div>"}function y(e){var a=parseFloat(t("low"))||1.1,n=parseFloat(t("high"))||1.2,r=e.oxr||e.ecb||e.alt||"0.00000",i="";e.oxr?i="OXR":e.ecb?i="ECB":e.alt&&(i="Alt");var o=parseFloat(r),s=o<a?"✅ ":"",c=o>n?" ❌":"",d=[];e.oxr&&d.push("OXR $"+e.oxr+" ("+e.oxrTime+")"),e.ecb&&d.push("ECB $"+e.ecb+" ("+e.ecbDate+")"),e.alt&&d.push("Alt $"+e.alt+(e.altTime?" ("+e.altTime+")":""));var u=d.join(" • "),l="<div class='card-title'>"+s+"EUR → USD - $"+r;return l+=(i?" ("+i+")":"")+c+"</div>",l+="<div style='font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;'>",l+=u+"</div>"}function C(){var t=new Date,n=a(t.getHours())+":"+a(t.getMinutes()),r=e.constants.days[t.getDay()]+", "+e.constants.monthsLong[t.getMonth()]+" "+t.getDate();u("time",n),u("date",r)}function x(t,a){var n=d(c(t.lat,t.lon));l(t.id,n);var r=setTimeout(function(){l(t.id)},15e3),i=new XMLHttpRequest;i.open("GET",n,!0),i.timeout=2e4,i.onload=function(){if(clearTimeout(r),200===i.status)try{var e=JSON.parse(i.responseText);if(e.error||e.reason){var o=e.reason||("string"==typeof e.error?e.error:"Unknown error");return void m(t.id,"API Error: "+o,n)}a(g(e),t.id)}catch(e){m(t.id,"Parse error: "+e.message,n)}else m(t.id,"HTTP Error "+i.status,n)},i.onerror=function(){clearTimeout(r),m(t.id,"Network error",n)},i.ontimeout=function(){clearTimeout(r),m(t.id,"Request timeout",n)},i.send()}function I(e,t){var a=c(e.lat,e.lon);l(e.id),fetch(a).then(function(e){return e.json()}).then(function(a){if(a.error||a.reason){var n=a.reason||("string"==typeof a.error?a.error:"Unknown error");return void m(e.id,"API Error: "+n)}t(g(a),e.id)}).catch(function(t){m(e.id,"Weather unavailable")})}function b(t){var n={oxr:null,oxrTime:null,ecb:null,ecbDate:null,alt:null,altTime:null},r=0;function o(){++r>=3&&t(n)}var s=new XMLHttpRequest;s.open("GET",d(e.currencyApis.oxr),!0),s.onload=function(){if(200===s.status)try{var e=JSON.parse(s.responseText);n.oxr=(1/e.rates.EUR).toFixed(5),n.oxrTime=i(1e3*e.timestamp)}catch(e){}o()},s.onerror=o,s.send();var c=new XMLHttpRequest;c.open("GET",d(e.currencyApis.ecb),!0),c.onload=function(){if(200===c.status)try{var e=JSON.parse(c.responseText);n.ecb=e.rates.USD.toFixed(5),n.ecbDate=e.date}catch(e){}o()},c.onerror=o,c.send();var u=new XMLHttpRequest;u.open("GET",d(e.currencyApis.alt),!0),u.onload=function(){if(200===u.status)try{var e=JSON.parse(u.responseText);if(n.alt=e.rates.USD.toFixed(5),e.time_last_update_utc){var t=new Date(e.time_last_update_utc);if(!isNaN(t.getTime())){n.altTime=i(t)}}}catch(e){}o()},u.onerror=o,u.send()}function T(t){var n={oxr:null,oxrTime:null,ecb:null,ecbDate:null,alt:null,altTime:null},r=0;function o(){++r>=3&&t(n)}fetch(e.currencyApis.oxr).then(function(e){return e.json()}).then(function(e){n.oxr=(1/e.rates.EUR).toFixed(5),n.oxrTime=i(1e3*e.timestamp)}).catch(function(){}).finally(o),fetch(e.currencyApis.ecb).then(function(e){return e.json()}).then(function(e){n.ecb=e.rates.USD.toFixed(5),n.ecbDate=e.date}).catch(function(){}).finally(o),fetch(e.currencyApis.alt).then(function(e){return e.json()}).then(function(e){if(n.alt=e.rates.USD.toFixed(5),e.time_last_update_utc){var t=new Date(e.time_last_update_utc);isNaN(t.getTime())||(n.altTime=i(t))}}).catch(function(){}).finally(o)}function E(t,a,n){C();for(var r=0;r<e.locations.length;r++)t(e.locations[r],function(e,t){u(t,a(e))});n(function(e){u("currency-content",y(e))}),setInterval(C,e.updateIntervals.clock),setInterval(function(){for(var n=0;n<e.locations.length;n++)t(e.locations[n],function(e,t){u(t,a(e))})},e.updateIntervals.weather),setInterval(function(){h()&&n(function(e){u("currency-content",y(e))})},e.updateIntervals.currency)}return{initIPad2:function(){p(),u("version-display",e.version),E(x,v,b)},initSE:function(){p(),E(I,w,T)},version:e.version}}();
+  </script>.version),E(x,v,b)},initSE:function(){p(),E(I,w,T)},version:e.version}}();
+  </script>
+
   <script>
     (function () {
-      // Template map - element IDs already exist in m.html
       var tplMap = {
         ipad2: document.getElementById('tpl-ipad2'),
         se: document.getElementById('tpl-se')
@@ -1267,7 +669,6 @@ body.theme-green .card-title {
       var LAYOUT_KEY = 'weather-dashboard-layout';
       var select = document.getElementById('layout-select');
 
-      // Small robust query param getter (avoids URLSearchParams)
       function getQueryParam(name) {
         try {
           var q = window.location.search || '';
@@ -1279,11 +680,10 @@ body.theme-green .card-title {
               return kv.length > 1 ? decodeURIComponent(kv[1].replace(/\+/g, ' ')) : '';
             }
           }
-        } catch (e) { /* ignore */ }
+        } catch (e) {}
         return null;
       }
 
-      // Feature checks - conservative, avoid CSS.supports and URLSearchParams
       function supportsFetch() { try { return 'fetch' in window; } catch (e) { return false; } }
       function supportsSVG() {
         try {
@@ -1307,12 +707,10 @@ body.theme-green .card-title {
         return false;
       }
 
-      // Robust injectTemplate that works when <template>.content isn't supported
       function injectTemplate(name) {
         var tpl = tplMap[name];
         var root = document.getElementById('root');
         try {
-          // Clean up previous injected nodes
           var prev = document.querySelectorAll('[data-injected-layout]');
           for (var pi = 0; pi < prev.length; pi++) {
             var n = prev[pi];
@@ -1324,7 +722,6 @@ body.theme-green .card-title {
             return;
           }
 
-          // Obtain content: prefer template.content.cloneNode, otherwise parse innerHTML
           var contentSource;
           if (tpl.content && typeof tpl.content.cloneNode === 'function') {
             try {
@@ -1340,7 +737,6 @@ body.theme-green .card-title {
             contentSource = wrapper;
           }
 
-          // Find first <style> element (works on fragments or nodes)
           var styleEl = null;
           try {
             if (contentSource.querySelector) styleEl = contentSource.querySelector('style');
@@ -1363,7 +759,6 @@ body.theme-green .card-title {
             document.head.appendChild(newStyle);
           }
 
-          // Collect script[type="text/template"][data-script] nodes and remove them from the content
           var scriptTpls = [];
           try {
             if (contentSource.querySelectorAll) {
@@ -1396,7 +791,6 @@ body.theme-green .card-title {
             })(contentSource);
           }
 
-          // Append the remaining nodes into root
           var appendNodes = [];
           try {
             appendNodes = contentSource.childNodes ? Array.prototype.slice.call(contentSource.childNodes) : [];
@@ -1412,7 +806,6 @@ body.theme-green .card-title {
             } catch (er) {}
           }
 
-          // Execute script templates in order
           for (var m = 0; m < scriptTpls.length; m++) {
             var scr = scriptTpls[m];
             var code = scr.textContent || scr.innerText || '';
@@ -1433,7 +826,7 @@ body.theme-green .card-title {
         } catch (err) {
           console.error('injectTemplate error for', name, err);
           try {
-            root.innerHTML = '<div style="padding:16px;color:#900;background:#fffbe6;border:1px solid #f1c40f;">Error loading layout. Open web inspector for details.</div>';
+            root.innerHTML = '<div style="padding:16px;color:#900;background:#fffbe6;border:1px solid#f1c40f;">Error loading layout. Open web inspector for details.</div>';
           } catch (e) {}
         }
       }
@@ -1455,7 +848,6 @@ body.theme-green .card-title {
       try {
         var paramLayout = getQueryParam('layout');
 
-        // If layout provided in URL, remove/hide the layout switcher so it doesn't appear
         if (paramLayout) {
           try {
             var _ls = document.getElementById('layout-switcher');
@@ -1472,7 +864,7 @@ body.theme-green .card-title {
       } catch (e) {
         try {
           var root = document.getElementById('root');
-          if (root) root.innerHTML = '<div style="padding:16px;color:#900;background:#fffbe6;border:1px solid #f1c40f;">Initialization error. See console for details.</div>';
+          if (root) root.innerHTML = '<div style="padding:16px;color:#900;background:#fffbe6;border:1px solid#f1c40f;">Initialization error. See console for details.</div>';
         } catch (er) {}
         console.error('Runner init error', e);
       }
@@ -1493,26 +885,6 @@ body.theme-green .card-title {
 
       try {
         window._wDashboard = { injectTemplate: injectTemplate, isLegacyBrowser: isLegacyBrowser };
-      } catch (e) {}
-
-      try {
-        window.onerror = function (msg, src, ln, col, err) {
-          try {
-            var root = document.getElementById('root');
-            if (root) {
-              var pre = document.createElement('pre');
-              pre.style.whiteSpace = 'pre-wrap';
-              pre.style.padding = '12px';
-              pre.style.background = '#fff0f0';
-              pre.style.color = '#900';
-              pre.style.border = '1px solid #f99';
-              pre.textContent = 'JS error: ' + msg + (src ? '\n at ' + src + ':' + ln + ':' + col : '');
-              root.innerHTML = '';
-              root.appendChild(pre);
-            }
-          } catch (e) {}
-          return false;
-        };
       } catch (e) {}
     })();
   </script>

@@ -19,7 +19,6 @@
     #layout-hint{font-size:11px;opacity:.7;margin-top:6px}
   </style>
 
-  <!-- Shared themes -->
   <style id="shared-themes">
     body.theme-amber {
       background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
@@ -51,531 +50,9 @@
       color: #fbbf24;
     }
   </style>
-
-  <!-- ============================================ -->
-  <!-- WEATHER DASHBOARD - CORE LOGIC              -->
-  <!-- ============================================ -->
-  <script>
-    var WeatherDashboard = (function() {
-      
-      // ============================================
-      // CONFIGURATION
-      // ============================================
-      
-      var CONFIG = {
-        version: "v. 2025.11.02 (Modular)",
-        proxyUrl: 'https://weatherproxy.ldmathes.cc/',
-        
-        locations: [
-          { id: 'weather-amsterdam', name: 'Amsterdam', lat: 52.3676, lon: 4.9041 },
-          { id: 'weather-maspalomas', name: 'Maspalomas', lat: 27.7609, lon: -15.5863 }
-        ],
-        
-        currencyApis: {
-          oxr: 'https://openexchangerates.org/api/latest.json?app_id=59f0442d524d41608055554519509c57',
-          ecb: 'https://api.frankfurter.app/latest?from=EUR&to=USD',
-          alt: 'https://api.exchangerate-api.com/v4/latest/EUR'
-        },
-        
-        updateIntervals: {
-          clock: 1000,           // 1 second
-          weather: 600000,       // 10 minutes
-          currency: 3600000      // 1 hour
-        },
-        
-        constants: {
-          days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-          daysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-          monthsLong: ['January', 'February', 'March', 'April', 'May', 'June', 
-                       'July', 'August', 'September', 'October', 'November', 'December'],
-          monthsShort: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-        }
-      };
-      
-      // ============================================
-      // UTILITIES - Pure helper functions
-      // ============================================
-      
-      function getUrlParameter(name) {
-        var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
-        return results ? (decodeURIComponent(results[1]) || null) : null;
-      }
-
-      function padZero(num) {
-        return num < 10 ? '0' + num : '' + num;
-      }
-      
-      function celsiusToFahrenheit(c) {
-        return Math.round(c * 9/5 + 32);
-      }
-      
-      function formatTime(date) {
-        return padZero(date.getHours()) + ':' + padZero(date.getMinutes());
-      }
-      
-      function formatDateTime(timestamp) {
-        var date = new Date(timestamp);
-        var month = CONFIG.constants.monthsShort[date.getMonth()];
-        var day = date.getDate();
-        var time = formatTime(date);
-        return month + ' ' + day + ', ' + time;
-      }
-      
-      function getWeatherIcon(code) {
-        if (code === 0) return '☀️';
-        else if (code <= 3) return '☁️';
-        else if (code <= 67) return '🌧️';
-        else if (code <= 77) return '❄️';
-        else if (code <= 99) return '⛈️';
-        return '☀️';
-      }
-
-      function getDayName(dateStr, short) {
-        var date = new Date(dateStr);
-        var days = short ? CONFIG.constants.daysShort : CONFIG.constants.days;
-        return days[date.getDay()];
-      }
-      
-      function buildWeatherApiUrl(lat, lon) {
-        return 'http://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + 
-               '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m' +
-               '&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code' +
-               '&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto&forecast_days=4';
-      }
-      
-      function proxyWrap(url) {
-        return CONFIG.proxyUrl + '?url=' + encodeURIComponent(url);
-      }
-      
-      function setElementHTML(id, html) {
-        var el = document.getElementById(id);
-        if (el) el.innerHTML = html;
-      }
-      
-      function showLoading(elementId, url) {
-        var html = 'Loading...';
-        if (url) {
-          html = '<div class="debug-url-display">URL: ' + url + '</div>' + html;
-        }
-        setElementHTML(elementId, html);
-      }
-      
-      function showError(elementId, message, url) {
-        var html = '<div class="error">' + message + '</div>';
-        if (url) {
-          html = '<div class="debug-url-display">URL: ' + url + '</div>' + html;
-        }
-        setElementHTML(elementId, html);
-      }
-
-      function isInActiveWindow() {
-        var now = new Date();
-        var utcDay = now.getUTCDay();
-        var utcHour = now.getUTCHours();
-
-        if (utcHour >= 0 && utcHour <= 7) return false;
-        if (utcDay === 5 && utcHour >= 21) return false;
-        if (utcDay === 6) return false;
-        if (utcDay === 0 && utcHour < 21) return false;
-
-        return true;
-      }
-      
-      function applyTheme() {
-        var proxyParam = getUrlParameter('proxy');
-        if (proxyParam) CONFIG.proxyUrl = proxyParam;
-        
-        var theme = getUrlParameter('theme') || 'blue';
-        document.body.className = 'theme-' + theme;
-      }
-      
-      // ============================================
-      // DATA LAYER - Transform raw API data
-      // ============================================
-      
-      function transformWeatherData(data) {
-        var current = data.current;
-        var daily = data.daily;
-        
-        var tempC = Math.round(current.temperature_2m);
-        var feelsLikeC = Math.round(current.apparent_temperature);
-        
-        return {
-          current: {
-            tempC: tempC,
-            tempF: celsiusToFahrenheit(tempC),
-            feelsLikeC: feelsLikeC,
-            feelsLikeF: celsiusToFahrenheit(feelsLikeC),
-            humidity: current.relative_humidity_2m,
-            windSpeed: Math.round(current.wind_speed_10m),
-            weatherCode: current.weather_code,
-            icon: getWeatherIcon(current.weather_code)
-          },
-          today: {
-            highC: Math.round(daily.temperature_2m_max[0]),
-            highF: celsiusToFahrenheit(Math.round(daily.temperature_2m_max[0])),
-            lowC: Math.round(daily.temperature_2m_min[0]),
-            lowF: celsiusToFahrenheit(Math.round(daily.temperature_2m_min[0])),
-            rainChance: daily.precipitation_probability_max[0] || 0,
-            sunrise: formatTime(new Date(daily.sunrise[0])),
-            sunset: formatTime(new Date(daily.sunset[0]))
-          },
-          forecast: [
-            buildForecastDay(daily, 1),
-            buildForecastDay(daily, 2),
-            buildForecastDay(daily, 3)
-          ]
-        };
-      }
-      
-      function buildForecastDay(daily, index) {
-        var highC = Math.round(daily.temperature_2m_max[index]);
-        var lowC = Math.round(daily.temperature_2m_min[index]);
-        
-        return {
-          name: getDayName(daily.time[index], true),
-          highC: highC,
-          highF: celsiusToFahrenheit(highC),
-          lowC: lowC,
-          lowF: celsiusToFahrenheit(lowC),
-          icon: getWeatherIcon(daily.weather_code[index]),
-          rainChance: daily.precipitation_probability_max[index] || 0
-        };
-      }
-      
-      // ============================================
-      // RENDERING LAYER - Generate HTML
-      // ============================================
-      
-      function renderWeatherIPad2(weather) {
-        var html = '<div class="weather-main">' +
-          '<div class="main-left">' +
-          '<div class="temperature">' + weather.current.tempF + '<span class="temp-unit">°F</span></div>' +
-          '<div class="temperature-secondary">' + weather.current.tempC + '<span class="temp-unit">°C</span></div>' +
-          '<div class="feels-like">Feels ' + weather.current.feelsLikeF + '<span class="temp-unit">°F</span></div>' +
-          '</div>' +
-          '<div class="main-right">' +
-          '<div class="weather-icon">' + weather.current.icon + '</div>' +
-          '</div>' +
-          '</div>';
-
-        html += '<div class="sun-precept-info">' +
-          '<span>☀️ ' + weather.today.sunrise + '</span>' +
-          '<span>💧 ' + weather.today.rainChance + '%</span>' +
-          '<span>🌙 ' + weather.today.sunset + '</span>' +
-          '</div>';
-
-        html += '<div class="current-details">' +
-          '<div class="detail-left"><strong>Low/High:</strong> ' + weather.today.lowF + '<span class="temp-unit">°F</span> / ' + weather.today.highF + '<span class="temp-unit">°F</span></div>' +
-          '<div class="detail-right"><strong>Humidity/Wind:</strong> ' + weather.current.humidity + '% / ' + weather.current.windSpeed + ' mph</div>' +
-          '</div>';
-
-        html += '<div class="forecast-days">';
-        for (var i = 0; i < weather.forecast.length; i++) {
-          var day = weather.forecast[i];
-          html += '<div class="forecast-day">' +
-            '<div class="forecast-day-name">' + day.name + '</div>' +
-            '<div class="forecast-day-inner">' +
-            '<div class="forecast-icon-col">' +
-            '<div class="forecast-icon">' + day.icon + '</div>' +
-            '</div>' +
-            '<div class="forecast-info-col">' +
-            '<div class="forecast-temps">' +
-            '<div class="forecast-high">' + day.highF + '<span class="temp-unit">°F</span></div>' +
-            '<div class="forecast-low">' + day.lowF + '<span class="temp-unit">°F</span></div>' +
-            '</div>' +
-            '<div class="forecast-rain">💧 ' + day.rainChance + '%</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>';
-        }
-        html += '</div>';
-        
-        return html;
-      }
-      
-      function renderWeatherSE(weather) {
-        var tomorrow = weather.forecast[0];
-        
-        return '<div class="weather-main">' +
-          '<div>' +
-          '<div class="temperature">' + weather.current.tempF + '°F<span style="font-size: 0.4em; opacity: 0.7; margin-left: 3px;">' + weather.current.tempC + '°C</span></div>' +
-          '<div style="font-size: 0.65em; opacity: 0.8;">Feels: ' + weather.current.feelsLikeF + '°F</div>' +
-          '</div>' +
-          '<div style="display: flex; flex-direction: column; align-items: center;">' +
-          '<div class="weather-icon">' + weather.current.icon + '</div>' +
-          '<div style="font-size: 0.55em; opacity: 0.8;">💧' + weather.today.rainChance + '%</div>' +
-          '</div>' +
-          '</div>' +
-          '<div class="weather-details">' +
-          '<div>Low/Tom:<br>' + weather.today.lowF + '°F / ' + tomorrow.lowF + '°F</div>' +
-          '<div>High/Tom:<br>' + weather.today.highF + '°F / ' + tomorrow.highF + '°F</div>' +
-          '<div>Rise/Set:<br>' + weather.today.sunrise + ' / ' + weather.today.sunset + '</div>' +
-          '<div>Humidity/Wind:<br>' + weather.current.humidity + '% / ' + weather.current.windSpeed + ' mph</div>' +
-          '</div>';
-      }
-      
-      function renderCurrency(rates) {
-        var lowThreshold = parseFloat(getUrlParameter('low')) || 1.1;
-        var highThreshold = parseFloat(getUrlParameter('high')) || 1.2;
-        
-        var displayRate = rates.oxr || rates.ecb || rates.alt || '0.00000';
-        var rateNum = parseFloat(displayRate);
-        var leftIcon = rateNum < lowThreshold ? '✅ ' : '';
-        var rightIcon = rateNum > highThreshold ? ' ❌' : '';
-
-        var parts = [];
-        if (rates.oxr) parts.push('OXR $' + rates.oxr + ' (' + rates.oxrTime + ')');
-        if (rates.ecb) parts.push('ECB $' + rates.ecb + ' (' + rates.ecbDate + ')');
-        if (rates.alt) parts.push('Alt $' + rates.alt + (rates.altTime ? ' (' + rates.altTime + ')' : ''));
-        var infoLine = parts.join(' • ');
-
-        return '<div class="card-title">' + leftIcon + 'EUR → USD - $' + displayRate + rightIcon + '</div>' +
-               '<div style="font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;">' + infoLine + '</div>';
-      }
-      
-      // ============================================
-      // CLOCK UPDATE (shared by both layouts)
-      // ============================================
-      
-      function updateClock() {
-        var now = new Date();
-        var timeStr = padZero(now.getHours()) + ':' + padZero(now.getMinutes());
-        var dateStr = CONFIG.constants.days[now.getDay()] + ', ' + 
-                      CONFIG.constants.monthsLong[now.getMonth()] + ' ' + now.getDate();
-
-        setElementHTML('time', timeStr);
-        setElementHTML('date', dateStr);
-      }
-      
-      // ============================================
-      // DATA FETCHING - Device-specific HTTP methods
-      // ============================================
-      
-      function fetchWeatherXHR(location, callback) {
-        var url = proxyWrap(buildWeatherApiUrl(location.lat, location.lon));
-        showLoading(location.id, url);
-        
-        var timeoutId = setTimeout(function() {
-          showLoading(location.id);
-        }, 15000);
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.timeout = 20000;
-
-        xhr.onload = function() {
-          clearTimeout(timeoutId);
-          if (xhr.status === 200) {
-            try {
-              var data = JSON.parse(xhr.responseText);
-              if (data.error || data.reason) {
-                var errorMsg = data.reason || (typeof data.error === 'string' ? data.error : 'Unknown error');
-                showError(location.id, 'API Error: ' + errorMsg, url);
-                return;
-              }
-              callback(transformWeatherData(data), location.id);
-            } catch (e) {
-              showError(location.id, 'Parse error: ' + e.message, url);
-            }
-          } else {
-            showError(location.id, 'HTTP Error ' + xhr.status, url);
-          }
-        };
-
-        xhr.onerror = function() {
-          clearTimeout(timeoutId);
-          showError(location.id, 'Network error', url);
-        };
-
-        xhr.ontimeout = function() {
-          clearTimeout(timeoutId);
-          showError(location.id, 'Request timeout', url);
-        };
-
-        xhr.send();
-      }
-      
-      function fetchWeatherFetch(location, callback) {
-        var url = buildWeatherApiUrl(location.lat, location.lon);
-        showLoading(location.id);
-        
-        fetch(url)
-          .then(function(response) { return response.json(); })
-          .then(function(data) {
-            callback(transformWeatherData(data), location.id);
-          })
-          .catch(function(error) {
-            showError(location.id, 'Weather unavailable');
-          });
-      }
-      
-      function fetchCurrencyXHR(callback) {
-        var results = { oxr: null, oxrTime: null, ecb: null, ecbDate: null, alt: null, altTime: null };
-        var completed = 0;
-
-        function checkComplete() {
-          completed++;
-          if (completed >= 3) callback(results);
-        }
-
-        var xhr1 = new XMLHttpRequest();
-        xhr1.open('GET', proxyWrap(CONFIG.currencyApis.oxr), true);
-        xhr1.onload = function() {
-          if (xhr1.status === 200) {
-            try {
-              var data = JSON.parse(xhr1.responseText);
-              results.oxr = (1 / data.rates.EUR).toFixed(5);
-              results.oxrTime = formatDateTime(data.timestamp * 1000);
-            } catch (e) {}
-          }
-          checkComplete();
-        };
-        xhr1.onerror = checkComplete;
-        xhr1.send();
-
-        var xhr2 = new XMLHttpRequest();
-        xhr2.open('GET', proxyWrap(CONFIG.currencyApis.ecb), true);
-        xhr2.onload = function() {
-          if (xhr2.status === 200) {
-            try {
-              var data = JSON.parse(xhr2.responseText);
-              results.ecb = data.rates.USD.toFixed(5);
-              results.ecbDate = data.date;
-            } catch (e) {}
-          }
-          checkComplete();
-        };
-        xhr2.onerror = checkComplete;
-        xhr2.send();
-
-        var xhr3 = new XMLHttpRequest();
-        xhr3.open('GET', proxyWrap(CONFIG.currencyApis.alt), true);
-        xhr3.onload = function() {
-          if (xhr3.status === 200) {
-            try {
-              var data = JSON.parse(xhr3.responseText);
-              results.alt = data.rates.USD.toFixed(5);
-              if (data.time_last_update_utc) {
-                var updateDate = new Date(data.time_last_update_utc);
-                if (!isNaN(updateDate.getTime())) {
-                  results.altTime = formatDateTime(updateDate);
-                }
-              }
-            } catch (e) {}
-          }
-          checkComplete();
-        };
-        xhr3.onerror = checkComplete;
-        xhr3.send();
-      }
-      
-      function fetchCurrencyFetch(callback) {
-        var results = { oxr: null, oxrTime: null, ecb: null, ecbDate: null, alt: null, altTime: null };
-        var completed = 0;
-
-        function checkComplete() {
-          completed++;
-          if (completed >= 3) callback(results);
-        }
-
-        fetch(CONFIG.currencyApis.oxr)
-          .then(function(r) { return r.json(); })
-          .then(function(data) {
-            results.oxr = (1 / data.rates.EUR).toFixed(5);
-            results.oxrTime = formatDateTime(data.timestamp * 1000);
-          })
-          .catch(function() {})
-          .finally(checkComplete);
-
-        fetch(CONFIG.currencyApis.ecb)
-          .then(function(r) { return r.json(); })
-          .then(function(data) {
-            results.ecb = data.rates.USD.toFixed(5);
-            results.ecbDate = data.date;
-          })
-          .catch(function() {})
-          .finally(checkComplete);
-
-        fetch(CONFIG.currencyApis.alt)
-          .then(function(r) { return r.json(); })
-          .then(function(data) {
-            results.alt = data.rates.USD.toFixed(5);
-            if (data.time_last_update_utc) {
-              var updateDate = new Date(data.time_last_update_utc);
-              if (!isNaN(updateDate.getTime())) {
-                results.altTime = formatDateTime(updateDate);
-              }
-            }
-          })
-          .catch(function() {})
-          .finally(checkComplete);
-      }
-      
-      // ============================================
-      // POLLING MANAGEMENT
-      // ============================================
-      
-      function startPolling(weatherFetcher, weatherRenderer, currencyFetcher) {
-        // Initial load
-        updateClock();
-        for (var i = 0; i < CONFIG.locations.length; i++) {
-          weatherFetcher(CONFIG.locations[i], function(weather, elementId) {
-            setElementHTML(elementId, weatherRenderer(weather));
-          });
-        }
-        currencyFetcher(function(rates) {
-          setElementHTML('currency-content', renderCurrency(rates));
-        });
-
-        // Set up intervals
-        setInterval(updateClock, CONFIG.updateIntervals.clock);
-        
-        setInterval(function() {
-          for (var i = 0; i < CONFIG.locations.length; i++) {
-            weatherFetcher(CONFIG.locations[i], function(weather, elementId) {
-              setElementHTML(elementId, weatherRenderer(weather));
-            });
-          }
-        }, CONFIG.updateIntervals.weather);
-
-        setInterval(function() {
-          if (isInActiveWindow()) {
-            currencyFetcher(function(rates) {
-              setElementHTML('currency-content', renderCurrency(rates));
-            });
-          }
-        }, CONFIG.updateIntervals.currency);
-      }
-      
-      // ============================================
-      // INITIALIZATION - Device-specific wrappers
-      // ============================================
-      
-      function initIPad2() {
-        applyTheme();
-        setElementHTML('version-display', CONFIG.version);
-        startPolling(fetchWeatherXHR, renderWeatherIPad2, fetchCurrencyXHR);
-      }
-
-      function initSE() {
-        applyTheme();
-        startPolling(fetchWeatherFetch, renderWeatherSE, fetchCurrencyFetch);
-      }
-
-      // ============================================
-      // PUBLIC API
-      // ============================================
-      
-      return {
-        initIPad2: initIPad2,
-        initSE: initSE,
-        version: CONFIG.version
-      };
-    })();
-  </script>
 </head>
 <body>
+  
   <div id="root"></div>
 
   <div id="layout-switcher" role="region" aria-label="Layout switcher">
@@ -591,7 +68,6 @@
     <div id="layout-hint">Use ?layout=&lt;name&gt; to persist</div>
   </div>
 
-  <!-- TEMPLATE: iPad2 -->
   <template id="tpl-ipad2">
     <style>
 * {
@@ -985,11 +461,10 @@ body.theme-amberblack .current-details {
     <div id="version-display" class="footer-version"></div>
 
     <script type="text/template" data-script>
-WeatherDashboard.initIPad2();
+if(typeof WeatherDashboard !== 'undefined') { WeatherDashboard.initIPad2(); }
     </script>
   </template>
 
-  <!-- TEMPLATE: SE -->
   <template id="tpl-se">
     <style>
 * {
@@ -1170,13 +645,16 @@ body.theme-green .card-title {
     </div>
 
     <script type="text/template" data-script>
-WeatherDashboard.initSE();
+if(typeof WeatherDashboard !== 'undefined') { WeatherDashboard.initSE(); }
     </script>
   </template>
 
-  <!-- ============================================ -->
-  <!-- TEMPLATE INJECTION SYSTEM                   -->
-  <!-- ============================================ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+  
+  <script>
+var WeatherDashboard=function(){var e={version:"v. 2025.11.02 (Modular)",proxyUrl:"https://weatherproxy.ldmathes.cc/",locations:[{id:"weather-amsterdam",name:"Amsterdam",lat:52.3676,lon:4.9041},{id:"weather-maspalomas",name:"Maspalomas",lat:27.7609,lon:-15.5863}],currencyApis:{oxr:"https://openexchangerates.org/api/latest.json?app_id=59f0442d524d41608055554519509c57",ecb:"https://api.frankfurter.app/latest?from=EUR&to=USD",alt:"https://api.exchangerate-api.com/v4/latest/EUR"},updateIntervals:{clock:1e3,weather:6e5,currency:36e5},constants:{days:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],daysShort:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],monthsLong:["January","February","March","April","May","June","July","August","September","October","November","December"],monthsShort:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]}};function t(e){var t=new RegExp("[?&]"+e+"=([^&#]*)").exec(window.location.href);return t?decodeURIComponent(t[1])||null:null}function a(e){return e<10?"0"+e:""+e}function n(e){return Math.round(9*e/5+32)}function r(e){return a(e.getHours())+":"+a(e.getMinutes())}function i(t){var n=new Date(t),r=e.constants.monthsShort[n.getMonth()];return r+" "+n.getDate()+", "+a(n.getHours())+":"+a(n.getMinutes())}function o(e){return 0===e?"☀️":e<=3?"☁️":e<=67?"🌧️":e<=77?"❄️":e<=99?"⛈️":"☀️"}function s(t,a){var n=a?e.constants.daysShort:e.constants.days;return n[new Date(t).getDay()]}function c(t,a){return"http://api.open-meteo.com/v1/forecast?latitude="+t+"&longitude="+a+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto&forecast_days=4"}function d(t){return e.proxyUrl+"?url="+encodeURIComponent(t)}function u(e,t){var a=document.getElementById(e);a&&(a.innerHTML=t)}function l(e,t,a){var n="Loading...";t&&(n='<div class="debug-url-display">URL: '+t+"</div>"+n),u(e,n)}function m(e,t,a){var n='<div class="error">'+t+"</div>";a&&(n='<div class="debug-url-display">URL: '+a+"</div>"+n),u(e,n)}function h(){var e=new Date,t=e.getUTCDay(),a=e.getUTCHours();return!(a>=0&&a<=7||5===t&&a>=21||6===t||0===t&&a<21)}function p(){var n=t("proxy");n&&(e.proxyUrl=n);var r=t("theme")||"blue";document.body.className="theme-"+r}function g(e){var t=e.current,a=e.daily,r=Math.round(t.temperature_2m),i=Math.round(t.apparent_temperature);return{current:{tempC:r,tempF:n(r),feelsLikeC:i,feelsLikeF:n(i),humidity:t.relative_humidity_2m,windSpeed:Math.round(t.wind_speed_10m),weatherCode:t.weather_code,icon:o(t.weather_code)},today:{highC:Math.round(a.temperature_2m_max[0]),highF:n(Math.round(a.temperature_2m_max[0])),lowC:Math.round(a.temperature_2m_min[0]),lowF:n(Math.round(a.temperature_2m_min[0])),rainChance:a.precipitation_probability_max[0]||0,sunrise:r(new Date(a.sunrise[0])),sunset:r(new Date(a.sunset[0]))},forecast:[f(a,1),f(a,2),f(a,3)]}}function f(e,t){var a=Math.round(e.temperature_2m_max[t]),r=Math.round(e.temperature_2m_min[t]);return{name:s(e.time[t],!0),highC:a,highF:n(a),lowC:r,lowF:n(r),icon:o(e.weather_code[t]),rainChance:e.precipitation_probability_max[t]||0}}function v(e){for(var t='<div class="weather-main"><div class="main-left"><div class="temperature">'+e.current.tempF+'<span class="temp-unit">°F</span></div><div class="temperature-secondary">'+e.current.tempC+'<span class="temp-unit">°C</span></div><div class="feels-like">Feels '+e.current.feelsLikeF+'<span class="temp-unit">°F</span></div></div><div class="main-right"><div class="weather-icon">'+e.current.icon+'</div></div></div><div class="sun-precept-info"><span>☀️ '+e.today.sunrise+'</span><span>💧 '+e.today.rainChance+'%</span><span>🌙 '+e.today.sunset+'</span></div><div class="current-details"><div class="detail-left"><strong>Low/High:</strong> '+e.today.lowF+'<span class="temp-unit">°F</span> / '+e.today.highF+'<span class="temp-unit">°F</span></div><div class="detail-right"><strong>Humidity/Wind:</strong> '+e.current.humidity+"% / "+e.current.windSpeed+' mph</div></div><div class="forecast-days">',a=0;a<e.forecast.length;a++){var n=e.forecast[a];t+='<div class="forecast-day"><div class="forecast-day-name">'+n.name+'</div><div class="forecast-day-inner"><div class="forecast-icon-col"><div class="forecast-icon">'+n.icon+'</div></div><div class="forecast-info-col"><div class="forecast-temps"><div class="forecast-high">'+n.highF+'<span class="temp-unit">°F</span></div><div class="forecast-low">'+n.lowF+'<span class="temp-unit">°F</span></div></div><div class="forecast-rain">💧 '+n.rainChance+"%</div></div></div></div>"}return t+="</div>"}function w(e){var t=e.forecast[0],a="<div class='weather-main'>";return a+="<div>",a+="<div class='temperature'>"+e.current.tempF+"°F",a+="<span style='font-size: 0.4em; opacity: 0.7; margin-left: 3px;'>"+e.current.tempC+"°C</span></div>",a+="<div style='font-size: 0.65em; opacity: 0.8;'>Feels: "+e.current.feelsLikeF+"°F</div>",a+="</div>",a+="<div style='display: flex; flex-direction: column; align-items: center;'>",a+="<div class='weather-icon'>"+e.current.icon+"</div>",a+="<div style='font-size: 0.55em; opacity: 0.8;'>💧"+e.today.rainChance+"%</div>",a+="</div>",a+="</div>",a+="<div class='weather-details'>",a+="<div>Low/Tom:<br>"+e.today.lowF+"°F / "+t.lowF+"°F</div>",a+="<div>High/Tom:<br>"+e.today.highF+"°F / "+t.highF+"°F</div>",a+="<div>Rise/Set:<br>"+e.today.sunrise+" / "+e.today.sunset+"</div>",a+="<div>Humidity/Wind:<br>"+e.current.humidity+"% / "+e.current.windSpeed+" mph</div>",a+="</div>"}function y(e){var a=parseFloat(t("low"))||1.1,n=parseFloat(t("high"))||1.2,r=e.oxr||e.ecb||e.alt||"0.00000",i="";e.oxr?i="OXR":e.ecb?i="ECB":e.alt&&(i="Alt");var o=parseFloat(r),s=o<a?"✅ ":"",c=o>n?" ❌":"",d=[];e.oxr&&d.push("OXR $"+e.oxr+" ("+e.oxrTime+")"),e.ecb&&d.push("ECB $"+e.ecb+" ("+e.ecbDate+")"),e.alt&&d.push("Alt $"+e.alt+(e.altTime?" ("+e.altTime+")":""));var u=d.join(" • "),l="<div class='card-title'>"+s+"EUR → USD - $"+r;return l+=(i?" ("+i+")":"")+c+"</div>",l+="<div style='font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;'>",l+=u+"</div>"}function C(){var t=new Date,n=a(t.getHours())+":"+a(t.getMinutes()),r=e.constants.days[t.getDay()]+", "+e.constants.monthsLong[t.getMonth()]+" "+t.getDate();u("time",n),u("date",r)}function x(t,a){var n=d(c(t.lat,t.lon));l(t.id,n);var r=setTimeout(function(){l(t.id)},15e3),i=new XMLHttpRequest;i.open("GET",n,!0),i.timeout=2e4,i.onload=function(){if(clearTimeout(r),200===i.status)try{var e=JSON.parse(i.responseText);if(e.error||e.reason){var o=e.reason||("string"==typeof e.error?e.error:"Unknown error");return void m(t.id,"API Error: "+o,n)}a(g(e),t.id)}catch(e){m(t.id,"Parse error: "+e.message,n)}else m(t.id,"HTTP Error "+i.status,n)},i.onerror=function(){clearTimeout(r),m(t.id,"Network error",n)},i.ontimeout=function(){clearTimeout(r),m(t.id,"Request timeout",n)},i.send()}function I(e,t){var a=c(e.lat,e.lon);l(e.id),fetch(a).then(function(e){return e.json()}).then(function(a){if(a.error||a.reason){var n=a.reason||("string"==typeof a.error?a.error:"Unknown error");return void m(e.id,"API Error: "+n)}t(g(a),e.id)}).catch(function(t){m(e.id,"Weather unavailable")})}function b(t){var n={oxr:null,oxrTime:null,ecb:null,ecbDate:null,alt:null,altTime:null},r=0;function o(){++r>=3&&t(n)}var s=new XMLHttpRequest;s.open("GET",d(e.currencyApis.oxr),!0),s.onload=function(){if(200===s.status)try{var e=JSON.parse(s.responseText);n.oxr=(1/e.rates.EUR).toFixed(5),n.oxrTime=i(1e3*e.timestamp)}catch(e){}o()},s.onerror=o,s.send();var c=new XMLHttpRequest;c.open("GET",d(e.currencyApis.ecb),!0),c.onload=function(){if(200===c.status)try{var e=JSON.parse(c.responseText);n.ecb=e.rates.USD.toFixed(5),n.ecbDate=e.date}catch(e){}o()},c.onerror=o,c.send();var u=new XMLHttpRequest;u.open("GET",d(e.currencyApis.alt),!0),u.onload=function(){if(200===u.status)try{var e=JSON.parse(u.responseText);if(n.alt=e.rates.USD.toFixed(5),e.time_last_update_utc){var t=new Date(e.time_last_update_utc);if(!isNaN(t.getTime())){n.altTime=i(t)}}}catch(e){}o()},u.onerror=o,u.send()}function T(t){var n={oxr:null,oxrTime:null,ecb:null,ecbDate:null,alt:null,altTime:null},r=0;function o(){++r>=3&&t(n)}fetch(e.currencyApis.oxr).then(function(e){return e.json()}).then(function(e){n.oxr=(1/e.rates.EUR).toFixed(5),n.oxrTime=i(1e3*e.timestamp)}).catch(function(){}).finally(o),fetch(e.currencyApis.ecb).then(function(e){return e.json()}).then(function(e){n.ecb=e.rates.USD.toFixed(5),n.ecbDate=e.date}).catch(function(){}).finally(o),fetch(e.currencyApis.alt).then(function(e){return e.json()}).then(function(e){if(n.alt=e.rates.USD.toFixed(5),e.time_last_update_utc){var t=new Date(e.time_last_update_utc);isNaN(t.getTime())||(n.altTime=i(t))}}).catch(function(){}).finally(o)}function E(t,a,n){C();for(var r=0;r<e.locations.length;r++)t(e.locations[r],function(e,t){u(t,a(e))});n(function(e){u("currency-content",y(e))}),setInterval(C,e.updateIntervals.clock),setInterval(function(){for(var n=0;n<e.locations.length;n++)t(e.locations[n],function(e,t){u(t,a(e))})},e.updateIntervals.weather),setInterval(function(){h()&&n(function(e){u("currency-content",y(e))})},e.updateIntervals.currency)}return{initIPad2:function(){p(),u("version-display",e.version),E(x,v,b)},initSE:function(){p(),E(I,w,T)},version:e.version}}();
+  </script>
+
   <script>
     (function () {
       var tplMap = {
@@ -1344,7 +822,7 @@ WeatherDashboard.initSE();
         } catch (err) {
           console.error('injectTemplate error for', name, err);
           try {
-            root.innerHTML = '<div style="padding:16px;color:#900;background:#fffbe6;border:1px solid #f1c40f;">Error loading layout. Open web inspector for details.</div>';
+            root.innerHTML = '<div style="padding:16px;color:#900;background:#fffbe6;border:1px solid#f1c40f;">Error loading layout. Open web inspector for details.</div>';
           } catch (e) {}
         }
       }
@@ -1382,7 +860,7 @@ WeatherDashboard.initSE();
       } catch (e) {
         try {
           var root = document.getElementById('root');
-          if (root) root.innerHTML = '<div style="padding:16px;color:#900;background:#fffbe6;border:1px solid #f1c40f;">Initialization error. See console for details.</div>';
+          if (root) root.innerHTML = '<div style="padding:16px;color:#900;background:#fffbe6;border:1px solid#f1c40f;">Initialization error. See console for details.</div>';
         } catch (er) {}
         console.error('Runner init error', e);
       }

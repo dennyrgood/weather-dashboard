@@ -25,824 +25,438 @@
       color: #1c1917;
     }
     body.theme-blue {
-      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-      color: #1e3a8a;
-    }
-    body.theme-gray {
-      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-      color: #111827;
-    }
-    body.theme-cream {
-      background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
-      color: #292524;
+      background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%);
+      color: #172554;
     }
     body.theme-green {
-      background: #0d1b0d;
-      color: #33ff33;
-      font-family: 'Courier New', monospace;
+      background: linear-gradient(135deg, #dcfce7 0%, #86efac 100%);
+      color: #064e3b;
     }
-    body.theme-blackgreen {
-      background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
-      color: #000000;
+    body.theme-purple {
+      background: linear-gradient(135deg, #ede9fe 0%, #a78bfa 100%);
+      color: #4c1d95;
     }
-    body.theme-amberblack {
-      background: #000000;
-      color: #fbbf24;
+  </style>
+
+  <style id="layout-se">
+    .layout-se #root {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 16px;
+      font-family: 'Inter', sans-serif;
+    }
+    .layout-se .weather-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 24px;
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    .layout-se .weather-card:hover {
+      transform: translateY(-5px);
+    }
+    .layout-se .location-name {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .layout-se .date-time {
+      font-size: 0.9rem;
+      color: #6d6d6d;
+      margin-bottom: 24px;
+    }
+    .layout-se .weather-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+      40% {transform: translateY(-15px);}
+      60% {transform: translateY(-8px);}
+    }
+    .layout-se .temperature {
+      font-size: 4.5rem;
+      font-weight: 300;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .layout-se .description {
+      font-size: 1.25rem;
+      font-weight: 500;
+      text-transform: capitalize;
+      margin-bottom: 24px;
+    }
+    .layout-se .details {
+      display: flex;
+      justify-content: space-around;
+      padding-top: 16px;
+      border-top: 1px solid #e5e5e5;
+    }
+    .layout-se .detail-item {
+      font-size: 0.85rem;
+    }
+    .layout-se .detail-value {
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .layout-se .loading-indicator, .layout-se .status-message {
+      padding: 20px;
+      font-size: 1.1rem;
+      color: #555;
+    }
+    .layout-se .loading-indicator {
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+  </style>
+
+  <style id="layout-ipad2">
+    .layout-ipad2 #root {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    .layout-ipad2 .header {
+      width: 100%;
+      max-width: 600px;
+      padding: 10px 0;
+      border-bottom: 2px solid #3b82f6;
+      margin-bottom: 20px;
+    }
+    .layout-ipad2 .header h1 {
+      margin: 0;
+      font-size: 2rem;
+      color: #172554;
+      font-weight: 700;
+    }
+    .layout-ipad2 .location-name {
+      font-size: 1.2rem;
+      color: #1e40af;
+      margin-bottom: 5px;
+    }
+    .layout-ipad2 .weather-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      width: 100%;
+      max-width: 600px;
+    }
+    .layout-ipad2 .current-weather-card {
+      grid-column: span 2;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 20px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .layout-ipad2 .current-temp {
+      font-size: 5rem;
+      font-weight: 200;
+      line-height: 1;
+      color: #172554;
+    }
+    .layout-ipad2 .current-details {
+      text-align: right;
+    }
+    .layout-ipad2 .current-details .description {
+      font-size: 1.5rem;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+    .layout-ipad2 .detail-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      padding: 15px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .layout-ipad2 .detail-card:hover {
+      background: #eff6ff;
+    }
+    .layout-ipad2 .detail-label {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+    .layout-ipad2 .detail-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 5px;
+      color: #172554;
+    }
+    .layout-ipad2 .loading-indicator, .layout-ipad2 .status-message {
+      padding: 40px;
+      font-size: 1.5rem;
+      color: #555;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  
-  <div id="root"></div>
 
-  <div id="layout-switcher" role="region" aria-label="Layout switcher">
-    <label for="layout-select">Layout:</label>
-    <select id="layout-select" title="Choose layout">
-      <option value="auto">Auto (detect)</option>
-      <option value="ipad2">iPad 2 (legacy)</option>
-      <option value="se">iPhone SE (exact)</option>
-      <option value="ipad-modern">iPad modern</option>
-      <option value="iphone-modern">iPhone modern</option>
-      <option value="desktop">Desktop</option>
-    </select>
-    <div id="layout-hint">Use ?layout=&lt;name&gt; to persist</div>
+  <div id="root">
+    <!-- Initial loading state, replaced by JS -->
+    <div style="padding: 20px; text-align: center; font-family: sans-serif;">Loading dashboard...</div>
   </div>
 
-  <template id="tpl-ipad2">
-    <style>
-* {
-    margin: 0;
-    padding: 0;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
-body {
-    min-height: 100vh;
-    padding: 8px;
-    overflow: hidden;
-}
-
-body.theme-amber .card {
-    background: rgba(255, 255, 255, 0.8);
-    color: #1c1917;
-    -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
-
-body.theme-blue .card {
-    background: rgba(255, 255, 255, 0.9);
-    color: #1e3a8a;
-    -webkit-box-shadow: 0 4px 16px rgba(30, 58, 138, 0.1);
-    box-shadow: 0 4px 16px rgba(30, 58, 138, 0.1);
-}
-
-body.theme-gray .card {
-    background: #ffffff;
-    color: #111827;
-    -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-}
-
-body.theme-cream .card {
-    background: rgba(255, 255, 255, 0.7);
-    color: #292524;
-    border: 1px solid rgba(41, 37, 36, 0.1);
-    -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-body.theme-green .card {
-    background: rgba(0, 20, 0, 0.6);
-    color: #33ff33;
-    border: 2px solid #33ff33;
-    -webkit-box-shadow: 0 0 20px rgba(51, 255, 51, 0.3), inset 0 0 20px rgba(51, 255, 51, 0.1);
-    box-shadow: 0 0 20px rgba(51, 255, 51, 0.3), inset 0 0 20px rgba(51, 255, 51, 0.1);
-    text-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
-}
-
-body.theme-blackgreen .card {
-    background: rgba(220, 252, 231, 0.9);
-    color: #000000;
-    border: 2px solid #166534;
-    -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-}
-
-body.theme-amberblack .card {
-    background: rgba(20, 20, 20, 0.95);
-    color: #fbbf24;
-    border: 2px solid #f59e0b;
-    -webkit-box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
-}
-
-body.theme-green .card-title,
-body.theme-green .current-details {
-    text-shadow: 0 0 8px rgba(51, 255, 51, 0.8);
-}
-
-body.theme-green .current-details {
-    border-bottom-color: rgba(51, 255, 51, 0.3);
-    border-top-color: rgba(51, 255, 51, 0.3);
-}
-
-body.theme-amberblack .current-details {
-    border-bottom-color: rgba(251, 191, 36, 0.3);
-    border-top-color: rgba(251, 191, 36, 0.3);
-}
-
-.container {
-    width: 100%;
-    max-width: 100%;
-}
-
-.time {
-    font-size: 2em;
-    font-weight: 300;
-    text-align: center;
-    margin: 0;
-}
-
-.date {
-    font-size: 0.85em;
-    text-align: center;
-    opacity: 0.9;
-    margin: 0 0 8px 0;
-}
-
-.weather-row {
-    margin-top: 8px;
-    overflow: hidden;
-}
-
-.weather-card {
-    float: left;
-    width: 48.5%;
-    margin-right: 1.5%;
-}
-
-.weather-card:last-of-type {
-    margin-right: 0;
-}
-
-.card {
-    -webkit-border-radius: 15px;
-    border-radius: 15px;
-    padding: 12px;
-    margin-bottom: 8px;
-}
-
-.card-title {
-    font-size: 1.1em;
-    margin-bottom: 6px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    font-weight: 700;
-}
-
-.weather-main {
-    overflow: hidden;
-    margin-bottom: 8px;
-    position: relative;
-    min-height: 200px;
-}
-
-.main-left {
-    float: left;
-    width: 50%;
-}
-
-.main-right {
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-
-.temperature {
-    font-size: 9.5em;
-    font-weight: 700;
-    line-height: 1;
-}
-
-.temperature-secondary {
-    font-size: 3.5em;
-    font-weight: 700;
-    opacity: 0.7;
-    line-height: 1;
-}
-
-.temperature .temp-unit {
-    font-size: 0.4em;
-    vertical-align: top;
-    display: inline-block;
-    line-height: 1;
-    font-weight: 400;
-    margin-left: 2px;
-}
-
-.feels-like {
-    font-size: 2.1em;
-    font-weight: 600;
-    opacity: 0.85;
-    margin-top: 8px;
-}
-
-.temperature-secondary .temp-unit,
-.feels-like .temp-unit {
-    font-size: 0.6em;
-    vertical-align: top;
-    display: inline-block;
-    line-height: 1;
-    font-weight: 400;
-    margin-left: 2px;
-}
-
-.forecast-high .temp-unit,
-.forecast-low .temp-unit,
-.detail-left .temp-unit,
-.detail-right .temp-unit {
-    font-size: 0.7em;
-    vertical-align: top;
-    display: inline-block;
-    line-height: 1;
-    font-weight: 400;
-    margin-left: 2px;
-}
-
-@media only screen and (min-width: 1025px) {
-    .main-right {
-        position: absolute;
-        top: 0;
-        right: 0;
-    }
-
-    .weather-icon {
-        font-size: 100px;
-        display: inline-block;
-        line-height: 1;
-        margin: 0;
-    }
-}
-
-@media only screen and (max-width: 1024px) and (max-height: 768px) {
-    .weather-icon {
-        font-size: 40px;
-        -webkit-transform: scale(7);
-        transform: scale(7);
-        margin: 20px 50px 0 0;
-        display: inline-block;
-        line-height: 1;
-    }
-}
-     
-.sun-precept-info { 
-    font-size: 1.8em;
-    font-weight: 600;
-    line-height: 1.6;
-    overflow: hidden;
-    margin-top: 8px;
-    width: 100%;
-    padding: 0 2px;
-    display: -webkit-box;
-    display: flex;
-    -webkit-box-pack: justify;
-    justify-content: space-between;
-    clear: both;
-}
-
-.sun-precept-info > span {
-    -webkit-box-flex: 1;
-    flex-grow: 1;
-    text-align: center;
-}
-
-.sun-precept-info > span:first-child {
-     text-align: left;
-}
-        
-.sun-precept-info > span:last-child {
-     text-align: right;
-}
-        
-.current-details {
-    clear: both;
-    overflow: hidden;
-    font-size: 1.15em;
-    font-weight: 600;
-    line-height: 1.6;
-    margin-bottom: 8px;
-    padding-bottom: 8px;
-    padding-top: 8px;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.forecast-days {
-    overflow: hidden;
-}
-
-.forecast-day {
-    float: left;
-    width: 33.333%;
-    padding: 4px;
-}
-
-.forecast-day-inner {
-    overflow: hidden;
-}
-
-.forecast-day-name {
-    font-size: 1.05em;
-    font-weight: 700;
-    margin-bottom: 4px;
-    text-align: center;
-}
-
-.forecast-icon-col {
-    float: left;
-    width: 45%;
-    text-align: center;
-}
-
-.forecast-icon {
-    font-size: 3.5em;
-    line-height: 1;
-}
-
-.forecast-info-col {
-    float: right;
-    width: 55%;
-    text-align: left;
-    padding-left: 4px;
-}
-
-.forecast-temps {
-    font-size: 1.2em;
-    font-weight: 700;
-    line-height: 1.4;
-}
-
-.forecast-high {
-    font-weight: 700;
-}
-
-.forecast-low {
-    opacity: 0.8;
-    font-weight: 600;
-}
-
-.forecast-rain {
-    font-size: 0.9em;
-    font-weight: 600;
-    opacity: 0.8;
-    margin-top: 2px;
-}
-
-.currency-card {
-    padding: 10px;
-    clear: both;
-}
-
-.loading {
-    text-align: center;
-    opacity: 0.7;
-    font-size: 0.9em;
-    word-break: break-all;
-}
-
-.debug-url-display {
-    text-align: left;
-    font-size: 0.6em;
-    opacity: 0.2;
-    word-break: break-all;
-    margin-bottom: 4px;
-}
-
-.error {
-    color: #fca5a5;
-    text-align: center;
-    font-size: 0.8em;
-}
-
-.footer-version {
-    font-size: 0.75em;
-    text-align: center;
-    opacity: 0.5;
-    margin-top: 16px;
-    padding-bottom: 8px;
-    clear: both;
-}
-    </style>
-
-    <div class="container">
-        <div>
-            <div class="time" id="time">--:--</div>
-            <div class="date" id="date">Loading...</div>
-        </div>
-
-        <div class="weather-row">
-            <div class="card weather-card">
-                <div class="card-title">Amsterdam</div>
-                <div id="weather-amsterdam" class="loading">Loading...</div>
-            </div>
-
-            <div class="card weather-card">
-                <div class="card-title">Maspalomas</div>
-                <div id="weather-maspalomas" class="loading">Loading...</div>
-            </div>
-
-            <div class="card currency-card">
-                <div id="currency-content" class="loading">Loading rate...</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="version-display" class="footer-version"></div>
-
-    <script type="text/template" data-script>
-if(typeof WeatherDashboard !== 'undefined') { WeatherDashboard.initIPad2(); }
-    </script>
-  </template>
-
-  <template id="tpl-se">
-    <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 8px;
-    overflow: hidden;
-}
-
-body.theme-amber .card {
-    background: rgba(255, 255, 255, 0.8);
-    color: #1c1917;
-}
-
-body.theme-blue .card {
-    background: rgba(255, 255, 255, 0.9);
-    color: #1e3a8a;
-    box-shadow: 0 4px 16px rgba(30, 58, 138, 0.1);
-}
-
-body.theme-gray .card {
-    background: #ffffff;
-    color: #111827;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-}
-
-body.theme-cream .card {
-    background: rgba(255, 255, 255, 0.7);
-    color: #292524;
-    border: 1px solid rgba(41, 37, 36, 0.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-body.theme-green .card {
-    background: rgba(0, 20, 0, 0.6);
-    color: #33ff33;
-    border: 2px solid #33ff33;
-    box-shadow: 0 0 20px rgba(51, 255, 51, 0.3), inset 0 0 20px rgba(51, 255, 51, 0.1);
-}
-
-body.theme-blackgreen .card {
-    background: rgba(220, 252, 231, 0.9);
-    color: #000000;
-    border: 2px solid #166534;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-}
-
-body.theme-amberblack .card {
-    background: rgba(20, 20, 20, 0.95);
-    color: #fbbf24;
-    border: 2px solid #f59e0b;
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
-}
-
-body.theme-green .card-title {
-    text-shadow: 0 0 8px rgba(51, 255, 51, 0.8);
-}
-
-.container {
-    width: 100%;
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    gap: 8px;
-}
-
-.time {
-    font-size: 1.8em;
-    font-weight: 300;
-    text-align: center;
-    margin: 0;
-}
-
-.date {
-    font-size: 0.75em;
-    text-align: center;
-    opacity: 0.9;
-    margin: 0;
-}
-
-.weather-row {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex: 1;
-    min-height: 0;
-}
-
-.card {
-    border-radius: 15px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-}
-
-.card-title {
-    font-size: 0.7em;
-    margin-bottom: 5px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.weather-main {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.temperature {
-    font-size: 2.2em;
-    font-weight: 300;
-}
-
-.weather-icon {
-    font-size: 2.8em;
-}
-
-.weather-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px;
-    font-size: 0.72em;
-    line-height: 1.3;
-    flex: 1;
-}
-
-.currency-card {
-    flex: 0.4;
-    padding: 8px;
-}
-
-.loading {
-    text-align: center;
-    opacity: 0.7;
-}
-
-.error {
-    color: #fca5a5;
-    text-align: center;
-}
-    </style>
-
-    <div class="container">
-      <div>
-        <div class="time" id="time">--:--</div>
-        <div class="date" id="date">Loading...</div>
-      </div>
-
-      <div class="weather-row">
-          <div class="card">
-              <div class="card-title">Amsterdam</div>
-              <div id="weather-amsterdam" class="loading">Loading...</div>
-          </div>
-
-          <div class="card">
-              <div class="card-title">Maspalomas</div>
-              <div id="weather-maspalomas" class="loading">Loading...</div>
-          </div>
-
-          <div class="card currency-card">
-              <div id="currency-content" class="loading">Loading rate...</div>
-          </div>
-      </div>
-    </div>
-
-    <script type="text/template" data-script>
-if(typeof WeatherDashboard !== 'undefined') { WeatherDashboard.initSE(); }
-    </script>
-  </template>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
-  
-  <script>
-var WeatherDashboard=function(){var e={version:"v. 2025.11.02 (Modular)",proxyUrl:"https://weatherproxy.ldmathes.cc/",locations:[{id:"weather-amsterdam",name:"Amsterdam",lat:52.3676,lon:4.9041},{id:"weather-maspalomas",name:"Maspalomas",lat:27.7609,lon:-15.5863}],currencyApis:{oxr:"https://openexchangerates.org/api/latest.json?app_id=59f0442d524d41608055554519509c57",ecb:"https://api.frankfurter.app/latest?from=EUR&to=USD",alt:"https://api.exchangerate-api.com/v4/latest/EUR"},updateIntervals:{clock:1e3,weather:6e5,currency:36e5},constants:{days:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],daysShort:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],monthsLong:["January","February","March","April","May","June","July","August","September","October","November","December"],monthsShort:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]}};function t(e){var t=new RegExp("[?&]"+e+"=([^&#]*)").exec(window.location.href);return t?decodeURIComponent(t[1])||null:null}function a(e){return e<10?"0"+e:""+e}function n(e){return Math.round(9*e/5+32)}function r(e){return a(e.getHours())+":"+a(e.getMinutes())}function i(t){var n=new Date(t),r=e.constants.monthsShort[n.getMonth()];return r+" "+n.getDate()+", "+a(n.getHours())+":"+a(n.getMinutes())}function o(e){return 0===e?"☀️":e<=3?"☁️":e<=67?"🌧️":e<=77?"❄️":e<=99?"⛈️":"☀️"}function s(t,a){var n=a?e.constants.daysShort:e.constants.days;return n[new Date(t).getDay()]}function c(t,a){return"http://api.open-meteo.com/v1/forecast?latitude="+t+"&longitude="+a+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&temperature_unit=celsius&wind_speed_unit=mph&timezone=auto&forecast_days=4"}function d(t){return e.proxyUrl+"?url="+encodeURIComponent(t)}function u(e,t){var a=document.getElementById(e);a&&(a.innerHTML=t)}function l(e,t,a){var n="Loading...";t&&(n='<div class="debug-url-display">URL: '+t+"</div>"+n),u(e,n)}function m(e,t,a){var n='<div class="error">'+t+"</div>";a&&(n='<div class="debug-url-display">URL: '+a+"</div>"+n),u(e,n)}function h(){var e=new Date,t=e.getUTCDay(),a=e.getUTCHours();return!(a>=0&&a<=7||5===t&&a>=21||6===t||0===t&&a<21)}function p(){var n=t("proxy");n&&(e.proxyUrl=n);var r=t("theme")||"blue";document.body.className="theme-"+r}function g(e){var t=e.current,a=e.daily,r=Math.round(t.temperature_2m),i=Math.round(t.apparent_temperature);return{current:{tempC:r,tempF:n(r),feelsLikeC:i,feelsLikeF:n(i),humidity:t.relative_humidity_2m,windSpeed:Math.round(t.wind_speed_10m),weatherCode:t.weather_code,icon:o(t.weather_code)},today:{highC:Math.round(a.temperature_2m_max[0]),highF:n(Math.round(a.temperature_2m_max[0])),lowC:Math.round(a.temperature_2m_min[0]),lowF:n(Math.round(a.temperature_2m_min[0])),rainChance:a.precipitation_probability_max[0]||0,sunrise:r(new Date(a.sunrise[0])),sunset:r(new Date(a.sunset[0]))},forecast:[f(a,1),f(a,2),f(a,3)]}}function f(e,t){var a=Math.round(e.temperature_2m_max[t]),r=Math.round(e.temperature_2m_min[t]);return{name:s(e.time[t],!0),highC:a,highF:n(a),lowC:r,lowF:n(r),icon:o(e.weather_code[t]),rainChance:e.precipitation_probability_max[t]||0}}function v(e){for(var t='<div class="weather-main"><div class="main-left"><div class="temperature">'+e.current.tempF+'<span class="temp-unit">°F</span></div><div class="temperature-secondary">'+e.current.tempC+'<span class="temp-unit">°C</span></div><div class="feels-like">Feels '+e.current.feelsLikeF+'<span class="temp-unit">°F</span></div></div><div class="main-right"><div class="weather-icon">'+e.current.icon+'</div></div></div><div class="sun-precept-info"><span>☀️ '+e.today.sunrise+'</span><span>💧 '+e.today.rainChance+'%</span><span>🌙 '+e.today.sunset+'</span></div><div class="current-details"><div class="detail-left"><strong>Low/High:</strong> '+e.today.lowF+'<span class="temp-unit">°F</span> / '+e.today.highF+'<span class="temp-unit">°F</span></div><div class="detail-right"><strong>Humidity/Wind:</strong> '+e.current.humidity+"% / "+e.current.windSpeed+' mph</div></div><div class="forecast-days">',a=0;a<e.forecast.length;a++){var n=e.forecast[a];t+='<div class="forecast-day"><div class="forecast-day-name">'+n.name+'</div><div class="forecast-day-inner"><div class="forecast-icon-col"><div class="forecast-icon">'+n.icon+'</div></div><div class="forecast-info-col"><div class="forecast-temps"><div class="forecast-high">'+n.highF+'<span class="temp-unit">°F</span></div><div class="forecast-low">'+n.lowF+'<span class="temp-unit">°F</span></div></div><div class="forecast-rain">💧 '+n.rainChance+"%</div></div></div></div>"}return t+="</div>"}function w(e){var t=e.forecast[0],a="<div class='weather-main'>";return a+="<div>",a+="<div class='temperature'>"+e.current.tempF+"°F",a+="<span style='font-size: 0.4em; opacity: 0.7; margin-left: 3px;'>"+e.current.tempC+"°C</span></div>",a+="<div style='font-size: 0.65em; opacity: 0.8;'>Feels: "+e.current.feelsLikeF+"°F</div>",a+="</div>",a+="<div style='display: flex; flex-direction: column; align-items: center;'>",a+="<div class='weather-icon'>"+e.current.icon+"</div>",a+="<div style='font-size: 0.55em; opacity: 0.8;'>💧"+e.today.rainChance+"%</div>",a+="</div>",a+="</div>",a+="<div class='weather-details'>",a+="<div>Low/Tom:<br>"+e.today.lowF+"°F / "+t.lowF+"°F</div>",a+="<div>High/Tom:<br>"+e.today.highF+"°F / "+t.highF+"°F</div>",a+="<div>Rise/Set:<br>"+e.today.sunrise+" / "+e.today.sunset+"</div>",a+="<div>Humidity/Wind:<br>"+e.current.humidity+"% / "+e.current.windSpeed+" mph</div>",a+="</div>"}function y(e){var a=parseFloat(t("low"))||1.1,n=parseFloat(t("high"))||1.2,r=e.oxr||e.ecb||e.alt||"0.00000",i="";e.oxr?i="OXR":e.ecb?i="ECB":e.alt&&(i="Alt");var o=parseFloat(r),s=o<a?"✅ ":"",c=o>n?" ❌":"",d=[];e.oxr&&d.push("OXR $"+e.oxr+" ("+e.oxrTime+")"),e.ecb&&d.push("ECB $"+e.ecb+" ("+e.ecbDate+")"),e.alt&&d.push("Alt $"+e.alt+(e.altTime?" ("+e.altTime+")":""));var u=d.join(" • "),l="<div class='card-title'>"+s+"EUR → USD - $"+r;return l+=(i?" ("+i+")":"")+c+"</div>",l+="<div style='font-size: 0.7em; opacity: 0.7; margin-top: 4px; word-wrap: break-word; white-space: normal;'>",l+=u+"</div>"}function C(){var t=new Date,n=a(t.getHours())+":"+a(t.getMinutes()),r=e.constants.days[t.getDay()]+", "+e.constants.monthsLong[t.getMonth()]+" "+t.getDate();u("time",n),u("date",r)}function x(t,a){var n=d(c(t.lat,t.lon));l(t.id,n);var r=setTimeout(function(){l(t.id)},15e3),i=new XMLHttpRequest;i.open("GET",n,!0),i.timeout=2e4,i.onload=function(){if(clearTimeout(r),200===i.status)try{var e=JSON.parse(i.responseText);if(e.error||e.reason){var o=e.reason||("string"==typeof e.error?e.error:"Unknown error");return void m(t.id,"API Error: "+o,n)}a(g(e),t.id)}catch(e){m(t.id,"Parse error: "+e.message,n)}else m(t.id,"HTTP Error "+i.status,n)},i.onerror=function(){clearTimeout(r),m(t.id,"Network error",n)},i.ontimeout=function(){clearTimeout(r),m(t.id,"Request timeout",n)},i.send()}function I(e,t){var a=c(e.lat,e.lon);l(e.id),fetch(a).then(function(e){return e.json()}).then(function(a){if(a.error||a.reason){var n=a.reason||("string"==typeof a.error?a.error:"Unknown error");return void m(e.id,"API Error: "+n)}t(g(a),e.id)}).catch(function(t){m(e.id,"Weather unavailable")})}function b(t){var n={oxr:null,oxrTime:null,ecb:null,ecbDate:null,alt:null,altTime:null},r=0;function o(){++r>=3&&t(n)}var s=new XMLHttpRequest;s.open("GET",d(e.currencyApis.oxr),!0),s.onload=function(){if(200===s.status)try{var e=JSON.parse(s.responseText);n.oxr=(1/e.rates.EUR).toFixed(5),n.oxrTime=i(1e3*e.timestamp)}catch(e){}o()},s.onerror=o,s.send();var c=new XMLHttpRequest;c.open("GET",d(e.currencyApis.ecb),!0),c.onload=function(){if(200===c.status)try{var e=JSON.parse(c.responseText);n.ecb=e.rates.USD.toFixed(5),n.ecbDate=e.date}catch(e){}o()},c.onerror=o,c.send();var u=new XMLHttpRequest;u.open("GET",d(e.currencyApis.alt),!0),u.onload=function(){if(200===u.status)try{var e=JSON.parse(u.responseText);if(n.alt=e.rates.USD.toFixed(5),e.time_last_update_utc){var t=new Date(e.time_last_update_utc);if(!isNaN(t.getTime())){n.altTime=i(t)}}}catch(e){}o()},u.onerror=o,u.send()}function T(t){var n={oxr:null,oxrTime:null,ecb:null,ecbDate:null,alt:null,altTime:null},r=0;function o(){++r>=3&&t(n)}fetch(e.currencyApis.oxr).then(function(e){return e.json()}).then(function(e){n.oxr=(1/e.rates.EUR).toFixed(5),n.oxrTime=i(1e3*e.timestamp)}).catch(function(){}).finally(o),fetch(e.currencyApis.ecb).then(function(e){return e.json()}).then(function(e){n.ecb=e.rates.USD.toFixed(5),n.ecbDate=e.date}).catch(function(){}).finally(o),fetch(e.currencyApis.alt).then(function(e){return e.json()}).then(function(e){if(n.alt=e.rates.USD.toFixed(5),e.time_last_update_utc){var t=new Date(e.time_last_update_utc);isNaN(t.getTime())||(n.altTime=i(t))}}).catch(function(){}).finally(o)}function E(t,a,n){C();for(var r=0;r<e.locations.length;r++)t(e.locations[r],function(e,t){u(t,a(e))});n(function(e){u("currency-content",y(e))}),setInterval(C,e.updateIntervals.clock),setInterval(function(){for(var n=0;n<e.locations.length;n++)t(e.locations[n],function(e,t){u(t,a(e))})},e.updateIntervals.weather),setInterval(function(){h()&&n(function(e){u("currency-content",y(e))})},e.updateIntervals.currency)}return{initIPad2:function(){p(),u("version-display",e.version),E(x,v,b)},initSE:function(){p(),E(I,w,T)},version:e.version}}();
-  </script>
+  <div id="layout-switcher">
+    <label for="layout-select">Layout:</label>
+    <select id="layout-select">
+      <option value="auto">Auto (iPad 2 / SE)</option>
+      <option value="ipad2">iPad 2 (Los Angeles)</option>
+      <option value="se">SE (Dhaka)</option>
+    </select>
+    <div id="layout-hint">Current: SE</div>
+  </div>
 
   <script>
-    (function () {
-      var tplMap = {
-        ipad2: document.getElementById('tpl-ipad2'),
-        se: document.getElementById('tpl-se')
+    // --- GLOBAL CONSTANTS ---
+    const LAYOUT_KEY = 'weather-dashboard-layout';
+    // Changed to Open-Meteo URL, as per your previous working code.
+    const API_URL = 'https://api.open-meteo.com/v1/forecast';
+    // Open-Meteo is keyless, so API_KEY is no longer needed.
+    // const API_KEY = '5a6873550e56728e23f1165c711a19ce'; // Removed
+
+    // --- UTILITY FUNCTIONS ---
+
+    function getLayoutTemplate(layoutId, weatherHtml, locationName) {
+      if (layoutId === 'se') {
+        return `
+          <div class="weather-card">
+            <div class="location-name">${locationName}</div>
+            ${weatherHtml}
+          </div>
+        `;
+      } else if (layoutId === 'ipad2') {
+        return `
+          <div class="header">
+            <h1>Weather Dashboard</h1>
+            <div class="location-name">${locationName}</div>
+          </div>
+          <div class="weather-grid">
+            ${weatherHtml}
+          </div>
+        `;
+      }
+      return '';
+    }
+
+    function injectTemplate(layoutId) {
+      const root = document.getElementById('root');
+      root.innerHTML = getLayoutTemplate(layoutId, '<div class="loading-indicator">Fetching weather data...</div>', 'Loading...');
+      window._wDashboard.currentLayout = layoutId;
+    }
+
+    function isLegacyBrowser() {
+      var ua = navigator.userAgent;
+      // Simple check for iPad 2/3 and older Android that might struggle with modern JS
+      return /iPad;.*OS [5-9]_\d/i.test(ua) || /Android [0-4]\.\d/i.test(ua);
+    }
+
+    // WMO Weather Code to Icon/Description Mapping (for Open-Meteo)
+    function getWmoData(code) {
+      const wmoMap = {
+        0: { icon: '☀️', description: 'Clear sky' },
+        1: { icon: '🌤️', description: 'Mostly clear' },
+        2: { icon: '☁️', description: 'Partly cloudy' },
+        3: { icon: '☁️', description: 'Overcast' },
+        45: { icon: '🌫️', description: 'Fog' },
+        48: { icon: '🌫️', description: 'Depositing rime fog' },
+        51: { icon: '🌧️', description: 'Light drizzle' },
+        53: { icon: '🌧️', description: 'Moderate drizzle' },
+        55: { icon: '🌧️', description: 'Dense drizzle' },
+        61: { icon: '🌧️', description: 'Slight rain' },
+        63: { icon: '🌧️', description: 'Moderate rain' },
+        65: { icon: '🌧️', description: 'Heavy rain' },
+        71: { icon: '❄️', description: 'Slight snow fall' },
+        73: { icon: '❄️', description: 'Moderate snow fall' },
+        75: { icon: '❄️', description: 'Heavy snow fall' },
+        80: { icon: '🌧️', description: 'Slight rain showers' },
+        81: { icon: '🌧️', description: 'Moderate rain showers' },
+        82: { icon: '🌧️', description: 'Violent rain showers' },
+        95: { icon: '⛈️', description: 'Thunderstorm' },
+        96: { icon: '⛈️', description: 'Thunderstorm with slight hail' },
+        99: { icon: '⛈️', description: 'Thunderstorm with heavy hail' },
       };
+      return wmoMap[code] || { icon: '❓', description: 'Unknown' };
+    }
 
-      var LAYOUT_KEY = 'weather-dashboard-layout';
-      var select = document.getElementById('layout-select');
+    function formatTime(isoTime) {
+      // Open-Meteo provides an ISO string (e.g., "2023-11-02T04:30")
+      // Convert to Date object, treating the string as UTC to prevent local conversion issues, and format it simply.
+      const date = new Date(isoTime);
+      return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
+    }
 
-      function getQueryParam(name) {
-        try {
-          var q = window.location.search || '';
-          if (q.indexOf('?') === 0) q = q.substring(1);
-          var parts = q.split('&');
-          for (var i = 0; i < parts.length; i++) {
-            var kv = parts[i].split('=');
-            if (decodeURIComponent(kv[0] || '') === name) {
-              return kv.length > 1 ? decodeURIComponent(kv[1].replace(/\+/g, ' ')) : '';
-            }
+    // A fetch wrapper with simple exponential backoff retry logic
+    function fetchWithRetry(url, attempts = 3) {
+      return fetch(url).then(response => {
+        if (!response.ok) {
+          if (attempts > 1) {
+            // Retry logic: wait and call again
+            return new Promise(resolve => setTimeout(resolve, 1000)).then(() =>
+              fetchWithRetry(url, attempts - 1)
+            );
           }
-        } catch (e) {}
-        return null;
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response;
+      });
+    }
+
+    function updateWeatherDisplay(data, locationName, message, isError = false) {
+      const root = document.getElementById('root');
+      if (!root) return;
+
+      const layoutId = window._wDashboard.currentLayout;
+      let weatherHtml = '';
+
+      if (isError) {
+        weatherHtml = `<div class="status-message">${message}</div>`;
+      } else if (data) {
+        // --- Open-Meteo Data Mapping ---
+        const current = data.current;
+        const daily = data.daily;
+        const wmoData = getWmoData(current.weather_code);
+
+        const temp = current.temperature_2m.toFixed(0);
+        const description = wmoData.description;
+        const icon = wmoData.icon;
+        const humidity = current.relative_humidity_2m;
+        const windSpeed = current.wind_speed_10m.toFixed(1); // Already in km/h from the request
+        
+        // Pressure is not provided in the simplified Open-Meteo request, using a dash.
+        const pressure = '-'; 
+        
+        const time = formatTime(current.time);
+
+        if (layoutId === 'se') {
+          weatherHtml = `
+            <div class="date-time">${time}</div>
+            <div class="weather-icon">${icon}</div>
+            <div class="temperature">${temp}°C</div>
+            <div class="description">${description}</div>
+            <div class="details">
+              <div class="detail-item">Humidity<div class="detail-value">${humidity}%</div></div>
+              <div class="detail-item">Wind<div class="detail-value">${windSpeed} km/h</div></div>
+              <div class="detail-item">Pressure<div class="detail-value">${pressure} hPa</div></div>
+            </div>
+          `;
+        } else if (layoutId === 'ipad2') {
+          // Min/Max are from daily data, which is an array, take the first element (index 0)
+          const tempMin = daily.temperature_2m_min[0].toFixed(0);
+          const tempMax = daily.temperature_2m_max[0].toFixed(0);
+
+          weatherHtml = `
+            <div class="current-weather-card">
+              <div class="current-temp">${temp}°C</div>
+              <div class="current-details">
+                <div class="description">${description}</div>
+                <div style="font-size:3rem; margin-top:10px">${icon}</div>
+                <div style="font-size:0.9rem; margin-top:5px; color:#6b7280;">${time}</div>
+              </div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Humidity</div>
+              <div class="detail-value">${humidity}%</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Wind Speed</div>
+              <div class="detail-value">${windSpeed} km/h</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Pressure</div>
+              <div class="detail-value">${pressure} hPa</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Min/Max Temp</div>
+              <div class="detail-value">${tempMin}°/${tempMax}°</div>
+            </div>
+          `;
+        }
       }
 
-      function supportsFetch() { try { return 'fetch' in window; } catch (e) { return false; } }
-      function supportsSVG() {
-        try {
-          return !!document.createElementNS && !!document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect;
-        } catch (e) { return false; }
-      }
-      function supportsFlexOrGrid() {
-        try {
-          var el = document.createElement('div');
-          if ('flexBasis' in el.style || 'webkitFlexBasis' in el.style || 'msFlex' in el.style) return true;
-          if ('gridTemplateColumns' in el.style) return true;
-        } catch (e) {}
-        return false;
-      }
-
-      function isLegacyBrowser() {
-        if (!supportsFetch()) return true;
-        if (!supportsSVG()) return true;
-        if (!supportsFlexOrGrid()) return true;
-        if (!('classList' in document.documentElement)) return true;
-        return false;
-      }
-
-      function injectTemplate(name) {
-        var tpl = tplMap[name];
-        var root = document.getElementById('root');
-        try {
-          var prev = document.querySelectorAll('[data-injected-layout]');
-          for (var pi = 0; pi < prev.length; pi++) {
-            var n = prev[pi];
-            if (n && n.parentNode) try { n.parentNode.removeChild(n); } catch (er) {}
-          }
-          root.innerHTML = '';
-          if (!tpl) {
-            root.innerHTML = '<div style="padding:20px;">Requested layout not available: ' + name + '</div>';
-            return;
-          }
-
-          var contentSource;
-          if (tpl.content && typeof tpl.content.cloneNode === 'function') {
-            try {
-              contentSource = tpl.content.cloneNode(true);
-            } catch (e) {
-              var w = document.createElement('div');
-              w.innerHTML = tpl.innerHTML;
-              contentSource = w;
-            }
+      root.innerHTML = getLayoutTemplate(layoutId, weatherHtml, locationName);
+      
+      // Update hint text after content is loaded
+      const hint = document.getElementById('layout-hint');
+      if (hint) {
+          const select = document.getElementById('layout-select');
+          if (select && select.value !== 'auto') {
+              hint.textContent = `Current: ${select.options[select.selectedIndex].text.split('(')[0].trim()}`;
           } else {
-            var wrapper = document.createElement('div');
-            wrapper.innerHTML = tpl.innerHTML;
-            contentSource = wrapper;
+              hint.textContent = `Current: Auto (${layoutId.toUpperCase()})`;
           }
-
-          var styleEl = null;
-          try {
-            if (contentSource.querySelector) styleEl = contentSource.querySelector('style');
-          } catch (e) { styleEl = null; }
-          if (!styleEl) {
-            var children = contentSource.childNodes || [];
-            for (var c = 0; c < children.length; c++) {
-              var node = children[c];
-              if (node && node.nodeType === 1 && node.tagName && node.tagName.toLowerCase() === 'style') {
-                styleEl = node;
-                break;
-              }
-            }
-          }
-
-          if (styleEl) {
-            var newStyle = document.createElement('style');
-            newStyle.setAttribute('data-injected-layout', 'style-' + name);
-            newStyle.textContent = styleEl.textContent || styleEl.innerText || '';
-            document.head.appendChild(newStyle);
-          }
-
-          var scriptTpls = [];
-          try {
-            if (contentSource.querySelectorAll) {
-              var sList = contentSource.querySelectorAll('script[type="text/template"][data-script]');
-              for (var si = 0; si < sList.length; si++) {
-                scriptTpls.push(sList[si]);
-                if (sList[si].parentNode) sList[si].parentNode.removeChild(sList[si]);
-              }
-            }
-          } catch (e) {
-            (function collect(node) {
-              var nodes = node.childNodes || [];
-              for (var ni = nodes.length - 1; ni >= 0; ni--) {
-                var n = nodes[ni];
-                if (n && n.nodeType === 1) {
-                  if (n.tagName && n.tagName.toLowerCase() === 'script') {
-                    try {
-                      var t = n.getAttribute && n.getAttribute('type') || '';
-                      var ds = n.getAttribute && n.getAttribute('data-script');
-                      if (t === 'text/template' && ds !== null) {
-                        scriptTpls.push(n);
-                        n.parentNode && n.parentNode.removeChild(n);
-                        continue;
-                      }
-                    } catch (er) {}
-                  }
-                  collect(n);
-                }
-              }
-            })(contentSource);
-          }
-
-          var appendNodes = [];
-          try {
-            appendNodes = contentSource.childNodes ? Array.prototype.slice.call(contentSource.childNodes) : [];
-          } catch (e) {
-            var ch = contentSource.childNodes || [];
-            for (var ii = 0; ii < ch.length; ii++) appendNodes.push(ch[ii]);
-          }
-          for (var k = 0; k < appendNodes.length; k++) {
-            var node = appendNodes[k];
-            try {
-              if (node.nodeType === 1 && node.setAttribute) node.setAttribute('data-injected-layout', 'node-' + name);
-              root.appendChild(node);
-            } catch (er) {}
-          }
-
-          for (var m = 0; m < scriptTpls.length; m++) {
-            var scr = scriptTpls[m];
-            var code = scr.textContent || scr.innerText || '';
-            if (!code) continue;
-            try {
-              var executable = document.createElement('script');
-              executable.setAttribute('data-injected-layout', 'script-' + name + (m ? '-' + m : ''));
-              executable.text = code;
-              document.body.appendChild(executable);
-            } catch (ex) {
-              try {
-                (function () { eval(code); }).call(window);
-              } catch (err) {
-                console.error('Failed to execute injected script for', name, err);
-              }
-            }
-          }
-        } catch (err) {
-          console.error('injectTemplate error for', name, err);
-          try {
-            root.innerHTML = '<div style="padding:16px;color:#900;background:#fffbe6;border:1px solid#f1c40f;">Error loading layout. Open web inspector for details.</div>';
-          } catch (e) {}
-        }
       }
+    }
 
-      function setLayout(layout) {
-        if (layout === 'auto') {
-          layout = isLegacyBrowser() ? 'ipad2' : 'se';
-        } else {
-          if (isLegacyBrowser() && layout !== 'ipad2') {
-            try { console.warn('Legacy browser detected: forcing ipad2 layout (requested: ' + layout + ')'); } catch(e){}
-            layout = 'ipad2';
+    function fetchWeather(lat, lon, locationName) {
+      updateWeatherDisplay(null, locationName, 'Fetching weather...', false); // Show loading state
+
+      // Construct the Open-Meteo URL using the fields required by the display logic
+      const url = `${API_URL}?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&temperature_unit=celsius&wind_speed_unit=kmh&timezone=auto&forecast_days=1`;
+
+      fetchWithRetry(url)
+        .then(response => response.json())
+        .then(data => {
+          // Open-Meteo validation check
+          if (data && !data.error && data.current) {
+            updateWeatherDisplay(data, locationName, null, false);
+          } else {
+            // Handle API specific error messages
+            console.error('API responded with error/missing data:', data);
+            updateWeatherDisplay(null, locationName, 'Weather data error (Open-Meteo).', true);
           }
-        }
-        try { localStorage.setItem(LAYOUT_KEY, layout); } catch (e) {}
-        try { if (select) select.value = layout; } catch (e) {}
-        injectTemplate(layout);
+        })
+        .catch(error => {
+          console.error('Weather fetch error after retries:', error);
+          // This is triggered by an HTTP error (404, 500, or network failure)
+          updateWeatherDisplay(null, locationName, 'Weather unavailable', true);
+        });
+    }
+
+    function setLayout(layoutId) {
+      window._wDashboard.currentLayout = layoutId;
+      if (layoutId === 'se') {
+        document.body.className = 'layout-se theme-amber';
+        injectTemplate('se');
+        fetchWeather(23.7779, 90.3994, 'Dhaka, Bangladesh'); // Hardcoded coordinates for SE
+      } else if (layoutId === 'ipad2') {
+        document.body.className = 'layout-ipad2 theme-blue';
+        injectTemplate('ipad2');
+        fetchWeather(34.0522, -118.2437, 'Los Angeles, USA'); // Hardcoded coordinates for iPad2
+      } else {
+        // Handle auto layout on re-set
+        const autoLayout = isLegacyBrowser() ? 'ipad2' : 'se';
+        setLayout(autoLayout);
       }
 
       try {
-        var paramLayout = getQueryParam('layout');
+        if (layoutId !== 'auto') {
+          localStorage.setItem(LAYOUT_KEY, layoutId);
+        }
+      } catch (e) { console.warn('Could not save layout preference to localStorage', e); }
+    }
+
+    // --- INITIALIZATION ---
+    window.onload = function () {
+      try {
+        var select = document.getElementById('layout-select');
+        var urlParams = new URLSearchParams(window.location.search);
+        var paramLayout = urlParams.get('layout');
 
         if (paramLayout) {
           try {
@@ -881,8 +495,13 @@ var WeatherDashboard=function(){var e={version:"v. 2025.11.02 (Modular)",proxyUr
 
       try {
         window._wDashboard = { injectTemplate: injectTemplate, isLegacyBrowser: isLegacyBrowser };
+        // Ensure initial layout is set correctly again after full load/setup
+        const currentLayout = window._wDashboard.currentLayout;
+        if (currentLayout) {
+            setLayout(currentLayout);
+        }
       } catch (e) {}
-    })();
+    };
   </script>
 </body>
 </html>

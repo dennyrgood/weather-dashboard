@@ -1,0 +1,46 @@
+[opt] git checkout feature/combine-refactor
+
+vi m.html
+
+[opt] python3 -m http.server 8000
+
+git status git diff -- m.html
+
+On branch feature/combine-refactor
+Your branch is up to date with 'origin/feature/combine-refactor'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   m.html
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+git add m.html 
+
+git commit -m "Update m.html: [short description of change]"
+
+[feature/combine-refactor 614bf76] Update m.html: [short description of change]
+ 1 file changed, 616 insertions(+), 741 deletions(-)
+
+git push origin feature/combine-refactor
+
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 2.92 KiB | 1.46 MiB/s, done.
+Total 3 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To https://github.com/dennyrgood/weather-dashboard.git
+   bb2b0ba..614bf76  feature/combine-refactor -> feature/combine-refactor
+
+python3 -m http.server 8000
+
+Serving HTTP on :: port 8000 (http://[::]:8000/) ...
+::ffff:127.0.0.1 - - [02/Nov/2025 00:41:29] "GET /url-parameter-guide.html HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [02/Nov/2025 00:41:35] "GET /m.html HTTP/1.1" 200 -
+::ffff:127.0.0.1 - - [02/Nov/2025 00:43:08] "GET /m.html HTTP/1.1" 304 -
+::ffff:127.0.0.1 - - [02/Nov/2025 00:47:35] "GET /m.html HTTP/1.1" 304 -
+^C
+Keyboard interrupt received, exiting.

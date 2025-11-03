@@ -91,23 +91,22 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // All 'const' and 'let' replaced with 'var'
-            var form = document.getElementById('config-form');
-            var urlOutput = document.getElementById('url-output');
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('config-form');
+            const urlOutput = document.getElementById('url-output');
 
             // --- Option Definitions ---
-            var layoutContainer = document.getElementById('layout-options');
-            var themeContainer = document.getElementById('theme-options');
+            const layoutContainer = document.getElementById('layout-options');
+            const themeContainer = document.getElementById('theme-options');
 
-            var layoutOptions = [
+            const layoutOptions = [
                 { label: 'Standard SE', value: 'index.html' },
                 { label: 'Old iPad2', value: 'index_old_ipad.html' },
                 { label: 'New Galaxy Tabet', value: 'index_galaxy.html' },
                 { label: 'Experimental Old iPad2', value: 'index_old_ipad_shared.html' }
             ];
 
-            var themeOptions = [
+            const themeOptions = [
                 { label: 'Amber (Default)', value: 'amber' },
                 { label: 'Blue', value: 'blue' },
                 { label: 'Green', value: 'green' },
@@ -115,21 +114,17 @@
             ];
 
             // --- Helper Function to Render Options ---
-            // Arrow function replaced with traditional function syntax
-            var renderOptions = function (container, options, name, defaultValue) {
-                container.innerHTML = ''; // Clear existing options
-                // Arrow function replaced with traditional function syntax
-                options.forEach(function (option) {
-                    // Template literal replaced with string concatenation
-                    var inputId = name + '-' + option.value.replace(/[^a-zA-Z0-9]/g, '_');
+            const renderOptions = (container, options, name, defaultValue) => {
+                container.innerHTML = '';
+                options.forEach(option => {
+                    const inputId = `${name}-${option.value.replace(/[^a-zA-Z0-9]/g, '_')}`;
 
-                    // Template literal replaced with string concatenation
-                    var optionHtml = 
-                        '<div class="flex items-center space-x-2 p-2 rounded-lg transition-colors duration-150 cursor-pointer hover:bg-gray-100">' +
-                            '<input type="radio" id="' + inputId + '" name="' + name + '" value="' + option.value + '" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out" ' + (option.value === defaultValue ? 'checked' : '') + ' required>' +
-                            '<label for="' + inputId + '" class="text-sm font-medium text-gray-700">' + option.label + '</label>' +
-                        '</div>';
-
+                    const optionHtml = `
+                        <div class="flex items-center space-x-2 p-2 rounded-lg transition-colors duration-150 cursor-pointer hover:bg-gray-100">
+                            <input type="radio" id="${inputId}" name="${name}" value="${option.value}" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out" ${option.value === defaultValue ? 'checked' : ''} required>
+                            <label for="${inputId}" class="text-sm font-medium text-gray-700">${option.label}</label>
+                        </div>
+                    `;
                     container.innerHTML += optionHtml;
                 });
             };
@@ -140,55 +135,45 @@
 
 
             // ----------------------------------------------------------------
-            // Function to generate and display the URL
-            // Arrow function replaced with traditional function syntax
+            // 🆕 New: Function to generate and display the URL
             // ----------------------------------------------------------------
-            var generateUrlAndDisplay = function () {
-                var formData = new FormData(form);
-                var params = [];
-                var layoutFile = 'index.html'; // Default value in case of error
+            const generateUrlAndDisplay = () => {
+                const formData = new FormData(form);
+                const params = [];
+                let layoutFile = 'index.html'; // Default value in case of error
 
                 // 1. Layout (use the selected layout file as the base for the URL)
                 layoutFile = formData.get('layout') || layoutFile;
-                // Template literal replaced with string concatenation
-                params.push('layout=' + layoutFile);
+                params.push(`layout=${layoutFile}`);
 
                 // 2. Theme (always included)
-                // Template literal replaced with string concatenation
-                params.push('theme=' + formData.get('theme'));
+                params.push(`theme=${formData.get('theme')}`);
 
                 // 3. Low Threshold (only include if different from default 1.1)
-                var low = parseFloat(formData.get('low')).toFixed(2);
+                const low = parseFloat(formData.get('low')).toFixed(2);
                 if (low !== '1.10') {
-                    // Template literal replaced with string concatenation
-                    params.push('low=' + low);
+                    params.push(`low=${low}`);
                 }
 
                 // 4. High Threshold (only include if different from default 1.2)
-                var high = parseFloat(formData.get('high')).toFixed(2);
+                const high = parseFloat(formData.get('high')).toFixed(2);
                 if (high !== '1.20') {
-                    // Template literal replaced with string concatenation
-                    params.push('high=' + high);
+                    params.push(`high=${high}`);
                 }
 
                 // Remove the layout parameter from the query string since it's the base file
-                // Arrow function and startsWith replaced with traditional function and indexOf
-                var queryStringParams = params.filter(function (p) {
-                    return p.indexOf('layout=') !== 0; // Check if the string starts with 'layout='
-                });
-                var queryString = queryStringParams.join('&');
+                const queryStringParams = params.filter(p => !p.startsWith('layout='));
+                const queryString = queryStringParams.join('&');
                 
-                // Template literal replaced with string concatenation
-                var finalUrl = layoutFile + '?' + queryString;
+                const finalUrl = `${layoutFile}?${queryString}`;
 
                 // Update the output element
-                // Template literal replaced with string concatenation
-                urlOutput.textContent = 'Generated URL: ' + finalUrl;
+                urlOutput.textContent = `Generated URL: ${finalUrl}`;
                 return finalUrl;
             };
 
             // ----------------------------------------------------------------
-            // Event listeners for live updates
+            // 🆕 New: Event listeners for live updates
             // ----------------------------------------------------------------
             // Call the function once to show the initial, default URL
             generateUrlAndDisplay();
@@ -200,14 +185,13 @@
 
 
             // ----------------------------------------------------------------
-            // Form Submission Handler
-            // Arrow function replaced with traditional function syntax
+            // 🔄 Updated: Form Submission Handler
             // ----------------------------------------------------------------
-            form.addEventListener('submit', function (e) {
+            form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 
                 // Get the final URL from the function and redirect
-                var finalUrl = generateUrlAndDisplay();
+                const finalUrl = generateUrlAndDisplay();
                 window.location.href = finalUrl;
             });
         });

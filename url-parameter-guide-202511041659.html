@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Customizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Styles for better visual appeal */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            padding: 32px;
+        }
+        .form-section {
+            margin-bottom: 24px;
+            padding: 16px;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+        }
+        .input-group label {
+            font-weight: 500;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .input-group input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+        .input-group input[type="number"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6">Dashboard Customizer</h1>
+        <form id="config-form">
+
+            <div class="form-section">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">1. Select Layout</h2>
+                <div id="layout-options" class="option-grid">
+                    </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">2. Select Theme</h2>
+                <div id="theme-options" class="option-grid">
+                    </div>
+            </div>
+
+            <div class="form-section grid grid-cols-2 gap-4">
+                <div class="input-group">
+                    <label for="low">Low Threshold (Favorable Rate: `low`)</label>
+                    <input type="number" id="low" name="low" value="1.10" step="0.01" min="0.5" required>
+                    <p class="text-sm text-gray-500 mt-1">Green checkmark below this value (Default: 1.10)</p>
+                </div>
+                
+                <div class="input-group">
+                    <label for="high">High Threshold (Unfavorable Rate: `high`)</label>
+                    <input type="number" id="high" name="high" value="1.20" step="0.01" min="0.5" required>
+                    <p class="text-sm text-gray-500 mt-1">Red 'X' above this value (Default: 1.20)</p>
+                </div>
+            </div>
+            
+            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition duration-150">Generate URL & Redirect</button>
+            <p id="url-output" class="text-sm text-gray-600 mt-4 break-all"></p>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // All 'const' and 'let' replaced with 'var'
+            var form = document.getElementById('config-form');
+            var urlOutput = document.getElementById('url-output');
+
+            // --- Option Definitions ---
+            var layoutContainer = document.getElementById('layout-options');
+            var themeContainer = document.getElementById('theme-options');
+
+            var layoutOptions = [
+                { label: 'Standard SE', value: 'index.html' },
+                { label: 'Old iPad2', value: 'index_old_ipad.html' },
+                { label: 'New Galaxy Tabet', value: 'index_galaxy.html' },
+                { label: 'Experimental Old iPad2', value: 'index_old_ipad_shared.html' }
+            ];
+
+            var themeOptions = [
+                { label: 'Amber (Default)', value: 'amber' },
+                { label: 'Blue', value: 'blue' },
+                { label: 'Green on Black', value: 'green' },
+                { label: 'Red (Does not work)', value: 'red' }
+            ];
+
+            // --- Helper Function to Render Options ---
+            // Arrow function replaced with traditional function syntax
+            var renderOptions = function (container, options, name, defaultValue) {
+                container.innerHTML = ''; // Clear existing options
+                // Arrow function replaced with traditional function syntax
+                options.forEach(function (option) {
+                    // Template literal replaced with string concatenation
+                    var inputId = name + '-' + option.value.replace(/[^a-zA-Z0-9]/g, '_');
+
+                    // Template literal replaced with string concatenation
+                    var optionHtml = 
+                        '<div class="flex items-center space-x-2 p-2 rounded-lg transition-colors duration-150 cursor-pointer hover:bg-gray-100">' +
+                            '<input type="radio" id="' + inputId + '" name="' + name + '" value="' + option.value + '" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out" ' + (option.value === defaultValue ? 'checked' : '') + ' required>' +
+                            '<label for="' + inputId + '" class="text-sm font-medium text-gray-700">' + option.label + '</label>' +
+                        '</div>';
+
+                    container.innerHTML += optionHtml;
+                });
+            };
+
+            // Render the options
+            renderOptions(layoutContainer, layoutOptions, 'layout', 'index.html');
+            renderOptions(themeContainer, themeOptions, 'theme', 'amber');
+
+
+            // ----------------------------------------------------------------
+            // Function to generate and display the URL
+            // Arrow function replaced with traditional function syntax
+            // ----------------------------------------------------------------
+            var generateUrlAndDisplay = function () {
+                var formData = new FormData(form);
+                var params = [];
+                var layoutFile = 'index.html'; // Default value in case of error
+
+                // 1. Layout (use the selected layout file as the base for the URL)
+                layoutFile = formData.get('layout') || layoutFile;
+                // Template literal replaced with string concatenation
+                params.push('layout=' + layoutFile);
+
+                // 2. Theme (always included)
+                // Template literal replaced with string concatenation
+                params.push('theme=' + formData.get('theme'));
+
+                // 3. Low Threshold (only include if different from default 1.1)
+                var low = parseFloat(formData.get('low')).toFixed(2);
+                if (low !== '1.10') {
+                    // Template literal replaced with string concatenation
+                    params.push('low=' + low);
+                }
+
+                // 4. High Threshold (only include if different from default 1.2)
+                var high = parseFloat(formData.get('high')).toFixed(2);
+                if (high !== '1.20') {
+                    // Template literal replaced with string concatenation
+                    params.push('high=' + high);
+                }
+
+                // Remove the layout parameter from the query string since it's the base file
+                // Arrow function and startsWith replaced with traditional function and indexOf
+                var queryStringParams = params.filter(function (p) {
+                    return p.indexOf('layout=') !== 0; // Check if the string starts with 'layout='
+                });
+                var queryString = queryStringParams.join('&');
+                
+                // Template literal replaced with string concatenation
+                var finalUrl = layoutFile + '?' + queryString;
+
+                // Update the output element
+                // Template literal replaced with string concatenation
+                urlOutput.textContent = 'Generated URL: ' + finalUrl;
+                return finalUrl;
+            };
+
+            // ----------------------------------------------------------------
+            // Event listeners for live updates
+            // ----------------------------------------------------------------
+            // Call the function once to show the initial, default URL
+            generateUrlAndDisplay();
+            
+            // Listen for changes on the form (radio buttons, number inputs)
+            form.addEventListener('change', generateUrlAndDisplay);
+            // Listen for input events on number fields for real-time typing updates
+            form.addEventListener('input', generateUrlAndDisplay);
+
+
+            // ----------------------------------------------------------------
+            // Form Submission Handler
+            // Arrow function replaced with traditional function syntax
+            // ----------------------------------------------------------------
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                
+                // Get the final URL from the function and redirect
+                var finalUrl = generateUrlAndDisplay();
+                window.location.href = finalUrl;
+            });
+        });
+    </script>
+</body>
+</html>

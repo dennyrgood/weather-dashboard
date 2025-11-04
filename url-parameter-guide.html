@@ -150,32 +150,47 @@
 
 
             // ----------------------------------------------------------------
+            // Helper function to get selected radio button value (ES5 compatible)
+            // ----------------------------------------------------------------
+            var getRadioValue = function (name) {
+                var radios = document.getElementsByName(name);
+                for (var i = 0; i < radios.length; i++) {
+                    if (radios[i].checked) {
+                        return radios[i].value;
+                    }
+                }
+                return null;
+            };
+
+            // ----------------------------------------------------------------
             // Function to generate and display the URL
             // Arrow function replaced with traditional function syntax
             // ----------------------------------------------------------------
             var generateUrlAndDisplay = function () {
-                var formData = new FormData(form);
                 var params = [];
                 var layoutFile = 'index.html'; // Default value in case of error
 
                 // 1. Layout (use the selected layout file as the base for the URL)
-                layoutFile = formData.get('layout') || layoutFile;
+                layoutFile = getRadioValue('layout') || layoutFile;
                 // Template literal replaced with string concatenation
                 params.push('layout=' + layoutFile);
 
                 // 2. Theme (always included)
                 // Template literal replaced with string concatenation
-                params.push('theme=' + formData.get('theme'));
+                var theme = getRadioValue('theme') || 'amber';
+                params.push('theme=' + theme);
 
                 // 3. Low Threshold (only include if different from default 1.1)
-                var low = parseFloat(formData.get('low')).toFixed(2);
+                var lowInput = document.getElementById('low');
+                var low = parseFloat(lowInput.value).toFixed(2);
                 if (low !== '1.10') {
                     // Template literal replaced with string concatenation
                     params.push('low=' + low);
                 }
 
                 // 4. High Threshold (only include if different from default 1.2)
-                var high = parseFloat(formData.get('high')).toFixed(2);
+                var highInput = document.getElementById('high');
+                var high = parseFloat(highInput.value).toFixed(2);
                 if (high !== '1.20') {
                     // Template literal replaced with string concatenation
                     params.push('high=' + high);

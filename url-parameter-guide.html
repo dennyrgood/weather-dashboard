@@ -107,25 +107,16 @@
                 { label: 'Experimental Old iPad2', value: 'index_old_ipad_shared.html' }
             ];
 
-            /*
             var themeOptions = [
-                { label: 'Amber (Default)', value: 'amber' },
-                { label: 'Blue', value: 'blue' },
-                { label: 'Green on Black', value: 'green' },
-                { label: 'Red (Does not work)', value: 'red' }
+                { label: 'Amber (Default)', value: 'amber', swatch: '#fde68a' },
+                { label: 'Blue', value: 'blue', swatch: '#bfdbfe' },
+                { label: 'Gray', value: 'gray', swatch: '#e5e7eb' },
+                { label: 'Cream', value: 'cream', swatch: '#fef9c3' },
+                { label: 'Green Terminal', value: 'green', swatch: '#33ff33', swatchBg: '#0d1b0d' },
+                { label: 'Black on Green', value: 'blackgreen', swatch: '#4ade80' },
+                { label: 'Amber Terminal', value: 'amberblack', swatch: '#fbbf24', swatchBg: '#000000' }
             ];
-            */
-            
-            var themeOptions = [
-                { label: 'Amber (Default)', value: 'amber' },
-                { label: 'Blue', value: 'blue' },
-                { label: 'Gray', value: 'gray' },
-                { label: 'Cream', value: 'cream' },
-                { label: 'Green on Black', value: 'green' },
-                { label: 'Black on Green', value: 'blackgreen' },
-                { label: 'Amber on Black', value: 'amberblack' }
-            ];
-            
+
             // --- Helper Function to Render Options ---
             // Arrow function replaced with traditional function syntax
             var renderOptions = function (container, options, name, defaultValue) {
@@ -135,11 +126,18 @@
                     // Template literal replaced with string concatenation
                     var inputId = name + '-' + option.value.replace(/[^a-zA-Z0-9]/g, '_');
 
+                    // Create color swatch HTML if swatch property exists
+                    var swatchHtml = '';
+                    if (option.swatch) {
+                        var swatchBg = option.swatchBg || option.swatch;
+                        swatchHtml = '<span style="display: inline-block; width: 16px; height: 16px; border-radius: 3px; background-color: ' + swatchBg + '; border: 1px solid #d1d5db; margin-right: 4px; vertical-align: middle;"></span>';
+                    }
+
                     // Template literal replaced with string concatenation
                     var optionHtml = 
                         '<div class="flex items-center space-x-2 p-2 rounded-lg transition-colors duration-150 cursor-pointer hover:bg-gray-100">' +
                             '<input type="radio" id="' + inputId + '" name="' + name + '" value="' + option.value + '" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out" ' + (option.value === defaultValue ? 'checked' : '') + ' required>' +
-                            '<label for="' + inputId + '" class="text-sm font-medium text-gray-700">' + option.label + '</label>' +
+                            '<label for="' + inputId + '" class="text-sm font-medium text-gray-700">' + swatchHtml + option.label + '</label>' +
                         '</div>';
 
                     container.innerHTML += optionHtml;

@@ -36,7 +36,8 @@
             margin-bottom: 4px;
         }
         .input-group input[type="number"],
-        .input-group input[type="text"] {
+        .input-group input[type="text"],
+        .input-group select {
             padding: 8px 12px;
             border: 1px solid #d1d5db;
             border-radius: 0.5rem;
@@ -44,10 +45,15 @@
             transition: border-color 0.2s;
         }
         .input-group input[type="number"]:focus,
-        .input-group input[type="text"]:focus {
+        .input-group input[type="text"]:focus,
+        .input-group select:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        select {
+            background-color: white;
+            cursor: pointer;
         }
         .option-grid {
             display: grid;
@@ -81,8 +87,23 @@
                         <select id="city1_preset" name="city1_preset" class="w-full p-2 border border-gray-300 rounded-md">
                             <option value="amsterdam">Amsterdam, Netherlands</option>
                             <option value="maspalomas">Maspalomas, Spain</option>
-                            <option value="shippensburg">Shippensburg, PA, USA</option>
-                            <option value="marina">Marina, CA, USA</option>
+                            <option value="shippensburg">Shippensburg, PA</option>
+                            <option value="marina">Marina, CA</option>
+                            <option value="newyork">New York, NY</option>
+                            <option value="losangeles">Los Angeles, CA</option>
+                            <option value="sanfrancisco">San Francisco, CA</option>
+                            <option value="chicago">Chicago, IL</option>
+                            <option value="miami">Miami, FL</option>
+                            <option value="honolulu">Honolulu, HI</option>
+                            <option value="neworleans">New Orleans, LA</option>
+                            <option value="london">London, UK</option>
+                            <option value="paris">Paris, France</option>
+                            <option value="berlin">Berlin, Germany</option>
+                            <option value="madrid">Madrid, Spain</option>
+                            <option value="barcelona">Barcelona, Spain</option>
+                            <option value="tokyo">Tokyo, Japan</option>
+                            <option value="sydney">Sydney, Australia</option>
+                            <option value="dubai">Dubai, UAE</option>
                             <option value="custom">Custom...</option>
                         </select>
                     </div>
@@ -113,8 +134,23 @@
                         <select id="city2_preset" name="city2_preset" class="w-full p-2 border border-gray-300 rounded-md">
                             <option value="amsterdam">Amsterdam, Netherlands</option>
                             <option value="maspalomas" selected>Maspalomas, Spain</option>
-                            <option value="shippensburg">Shippensburg, PA, USA</option>
-                            <option value="marina">Marina, CA, USA</option>
+                            <option value="shippensburg">Shippensburg, PA</option>
+                            <option value="marina">Marina, CA</option>
+                            <option value="newyork">New York, NY</option>
+                            <option value="losangeles">Los Angeles, CA</option>
+                            <option value="sanfrancisco">San Francisco, CA</option>
+                            <option value="chicago">Chicago, IL</option>
+                            <option value="miami">Miami, FL</option>
+                            <option value="honolulu">Honolulu, HI</option>
+                            <option value="neworleans">New Orleans, LA</option>
+                            <option value="london">London, UK</option>
+                            <option value="paris">Paris, France</option>
+                            <option value="berlin">Berlin, Germany</option>
+                            <option value="madrid">Madrid, Spain</option>
+                            <option value="barcelona">Barcelona, Spain</option>
+                            <option value="tokyo">Tokyo, Japan</option>
+                            <option value="sydney">Sydney, Australia</option>
+                            <option value="dubai">Dubai, UAE</option>
                             <option value="custom">Custom...</option>
                         </select>
                     </div>
@@ -136,21 +172,21 @@
                     </div>
                 </div>
             </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="form-section grid grid-cols-2 gap-4">
-                <div class="input-group">
-                    <label for="low">Low Threshold (Favorable Rate: `low`)</label>
-                    <input type="number" id="low" name="low" value="1.10" step="0.01" min="0.5" required>
-                    <p class="text-sm text-gray-500 mt-1">Green checkmark below this value (Default: 1.10)</p>
-                </div>
-                
-                <div class="input-group">
-                    <label for="high">High Threshold (Unfavorable Rate: `high`)</label>
-                    <input type="number" id="high" name="high" value="1.20" step="0.01" min="0.5" required>
-                    <p class="text-sm text-gray-500 mt-1">Red 'X' above this value (Default: 1.20)</p>
+            <div class="form-section">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">5. Currency Thresholds</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="input-group">
+                        <label for="low">Low Threshold (Favorable Rate: `low`)</label>
+                        <input type="number" id="low" name="low" value="1.10" step="0.01" min="0.5" required>
+                        <p class="text-sm text-gray-500 mt-1">Green checkmark below this value (Default: 1.10)</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="high">High Threshold (Unfavorable Rate: `high`)</label>
+                        <input type="number" id="high" name="high" value="1.20" step="0.01" min="0.5" required>
+                        <p class="text-sm text-gray-500 mt-1">Red 'X' above this value (Default: 1.20)</p>
+                    </div>
                 </div>
             </div>
             
@@ -170,11 +206,11 @@
             var themeContainer = document.getElementById('theme-options');
 
             var layoutOptions = [
-                { label: 'Standard SE', value: 'index_old_SE.html' },
-                { label: 'Shared SE', value: 'index_SE_shared.html' },
-                { label: 'Old iPad2', value: 'index_old_ipad.html' },
-                { label: 'Galaxy Tablet (Shared)', value: 'index_galaxy_shared.html' },
-                { label: 'Old iPad2 (Shared)', value: 'index_old_ipad_shared.html' }
+                { label: 'iPhone SE (Shared)', value: 'index_SE_shared.html' },
+                { label: 'iPhone SE (Legacy)', value: 'index_old_SE.html' },
+                { label: 'iPad2 (Shared)', value: 'index_old_ipad_shared.html' },
+                { label: 'iPad2 (Legacy)', value: 'index_old_ipad.html' },
+                { label: 'Galaxy Tablet', value: 'index_galaxy_shared.html' }
             ];
 
             var themeOptions = [
@@ -184,8 +220,46 @@
                 { label: 'Cream', value: 'cream', swatch: '#fef9c3' },
                 { label: 'Green Terminal', value: 'green', swatch: '#33ff33', swatchBg: '#0d1b0d' },
                 { label: 'Black on Green', value: 'blackgreen', swatch: '#4ade80' },
-                { label: 'Amber Terminal', value: 'amberblack', swatch: '#fbbf24', swatchBg: '#000000' }
+                { label: 'Amber Terminal', value: 'amberblack', swatch: '#fbbf24', swatchBg: '#000000' },
+                { label: 'Sunset 🌅', value: 'sunset', swatch: '#fb923c' },
+                { label: 'Ocean 🌊', value: 'ocean', swatch: '#38bdf8' },
+                { label: 'Forest 🌲', value: 'forest', swatch: '#86efac' },
+                { label: 'Lavender 💜', value: 'lavender', swatch: '#c4b5fd' },
+                { label: 'Rose 🌸', value: 'rose', swatch: '#fda4af' },
+                { label: 'Dark Mode 🌙', value: 'dark', swatch: '#1f2937', swatchBg: '#111827' },
+                { label: 'Arctic ❄️', value: 'arctic', swatch: '#e0f2fe' },
+                { label: 'Sepia 📜', value: 'sepia', swatch: '#d6bcab' }
             ];
+
+            // City presets (ES5 compatible)
+            var cityPresets = {
+                // Current presets
+                amsterdam: { name: 'Amsterdam, Netherlands', lat: 52.3676, lon: 4.9041 },
+                maspalomas: { name: 'Maspalomas, Spain', lat: 27.7609, lon: -15.5863 },
+                shippensburg: { name: 'Shippensburg, PA', lat: 40.0507, lon: -77.5200 },
+                marina: { name: 'Marina, CA', lat: 36.6844, lon: -121.8022 },
+                
+                // US Cities
+                newyork: { name: 'New York, NY', lat: 40.7128, lon: -74.0060 },
+                losangeles: { name: 'Los Angeles, CA', lat: 34.0522, lon: -118.2437 },
+                sanfrancisco: { name: 'San Francisco, CA', lat: 37.7749, lon: -122.4194 },
+                chicago: { name: 'Chicago, IL', lat: 41.8781, lon: -87.6298 },
+                miami: { name: 'Miami, FL', lat: 25.7617, lon: -80.1918 },
+                honolulu: { name: 'Honolulu, HI', lat: 21.31, lon: -157.86 },
+                neworleans: { name: 'New Orleans, LA', lat: 29.95, lon: -90.08 },
+                
+                // European Cities
+                london: { name: 'London, UK', lat: 51.5074, lon: -0.1278 },
+                paris: { name: 'Paris, France', lat: 48.8566, lon: 2.3522 },
+                berlin: { name: 'Berlin, Germany', lat: 52.5200, lon: 13.4050 },
+                madrid: { name: 'Madrid, Spain', lat: 40.42, lon: -3.70 },
+                barcelona: { name: 'Barcelona, Spain', lat: 41.39, lon: 2.17 },
+                
+                // International Cities
+                tokyo: { name: 'Tokyo, Japan', lat: 35.6762, lon: 139.6503 },
+                sydney: { name: 'Sydney, Australia', lat: -33.8688, lon: 151.2093 },
+                dubai: { name: 'Dubai, UAE', lat: 25.20, lon: 55.27 }
+            };
 
             // --- Helper Function to Render Options ---
             // Arrow function replaced with traditional function syntax
@@ -218,6 +292,44 @@
             renderOptions(layoutContainer, layoutOptions, 'layout', 'index_SE_shared.html');
             renderOptions(themeContainer, themeOptions, 'theme', 'amber');
 
+            // ----------------------------------------------------------------
+            // City Preset Handlers (ES5 compatible)
+            // ----------------------------------------------------------------
+            var handleCityPresetChange = function(cityNumber) {
+                var presetSelect = document.getElementById('city' + cityNumber + '_preset');
+                var customFields = document.getElementById('city' + cityNumber + '_custom_fields');
+                var nameInput = document.getElementById('city' + cityNumber + '_name');
+                var latInput = document.getElementById('city' + cityNumber + '_lat');
+                var lonInput = document.getElementById('city' + cityNumber + '_lon');
+                
+                var selectedValue = presetSelect.value;
+                
+                if (selectedValue === 'custom') {
+                    customFields.style.display = 'block';
+                } else {
+                    customFields.style.display = 'none';
+                    var preset = cityPresets[selectedValue];
+                    if (preset) {
+                        nameInput.value = preset.name;
+                        latInput.value = preset.lat;
+                        lonInput.value = preset.lon;
+                    }
+                }
+            };
+            
+            // Initialize city dropdowns
+            document.getElementById('city1_preset').addEventListener('change', function() {
+                handleCityPresetChange(1);
+                generateUrlAndDisplay();
+            });
+            document.getElementById('city2_preset').addEventListener('change', function() {
+                handleCityPresetChange(2);
+                generateUrlAndDisplay();
+            });
+            
+            // Set initial values (don't call generateUrl yet, it's not defined)
+            handleCityPresetChange(1);
+            handleCityPresetChange(2);
 
             // ----------------------------------------------------------------
             // Helper function to get selected radio button value (ES5 compatible)
@@ -255,13 +367,13 @@
                 var city1Lat = document.getElementById('city1_lat').value;
                 var city1Lon = document.getElementById('city1_lon').value;
                 
-                if (city1Name !== 'Amsterdam') {
+                if (city1Name && city1Name !== 'Amsterdam') {
                     params.push('city1_name=' + encodeURIComponent(city1Name));
                 }
-                if (parseFloat(city1Lat) !== 52.3676) {
+                if (city1Lat && parseFloat(city1Lat) !== 52.3676) {
                     params.push('city1_lat=' + city1Lat);
                 }
-                if (parseFloat(city1Lon) !== 4.9041) {
+                if (city1Lon && parseFloat(city1Lon) !== 4.9041) {
                     params.push('city1_lon=' + city1Lon);
                 }
 
@@ -270,13 +382,13 @@
                 var city2Lat = document.getElementById('city2_lat').value;
                 var city2Lon = document.getElementById('city2_lon').value;
                 
-                if (city2Name !== 'Maspalomas') {
+                if (city2Name && city2Name !== 'Maspalomas') {
                     params.push('city2_name=' + encodeURIComponent(city2Name));
                 }
-                if (parseFloat(city2Lat) !== 27.7609) {
+                if (city2Lat && parseFloat(city2Lat) !== 27.7609) {
                     params.push('city2_lat=' + city2Lat);
                 }
-                if (parseFloat(city2Lon) !== -15.5863) {
+                if (city2Lon && parseFloat(city2Lon) !== -15.5863) {
                     params.push('city2_lon=' + city2Lon);
                 }
 

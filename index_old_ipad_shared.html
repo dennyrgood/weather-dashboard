@@ -430,13 +430,13 @@
         
         <div id="content-area" class="weather-row">
             <div class="card weather-card">
-                <div class="card-title">Amsterdam</div>
-                <div id="weather-amsterdam" class="loading">Loading...</div>
+                <div class="card-title">City 1</div>
+                <div id="weather-city1" class="loading">Loading...</div>
             </div>
             
             <div class="card weather-card">
-                <div class="card-title">Maspalomas</div>
-                <div id="weather-maspalomas" class="loading">Loading...</div>
+                <div class="card-title">City 2</div>
+                <div id="weather-city2" class="loading">Loading...</div>
             </div>
             
             <div class="card currency-card">
@@ -594,14 +594,30 @@
         updateTime();
         setInterval(updateTime, 1000);
         
-        fetchWeatherForLocation('weather-amsterdam', 52.3676, 4.9041);
-        fetchWeatherForLocation('weather-maspalomas', 27.7609, -15.5863);
+        var city1Lat = parseFloat(getUrlParameter('city1_lat')) || 52.3676;
+        var city1Lon = parseFloat(getUrlParameter('city1_lon')) || 4.9041;
+        var city1Name = getUrlParameter('city1_name') || 'Amsterdam';
+        
+        var city2Lat = parseFloat(getUrlParameter('city2_lat')) || 27.7609;
+        var city2Lon = parseFloat(getUrlParameter('city2_lon')) || -15.5863;
+        var city2Name = getUrlParameter('city2_name') || 'Maspalomas';
+        
+        var city1Card = document.getElementById('weather-city1').parentNode;
+        var city1Title = city1Card.getElementsByClassName('card-title')[0];
+        if (city1Title) city1Title.textContent = city1Name;
+        
+        var city2Card = document.getElementById('weather-city2').parentNode;
+        var city2Title = city2Card.getElementsByClassName('card-title')[0];
+        if (city2Title) city2Title.textContent = city2Name;
+        
+        fetchWeatherForLocation('weather-city1', city1Lat, city1Lon);
+        fetchWeatherForLocation('weather-city2', city2Lat, city2Lon);
         fetchCurrency();
         
         // Refresh intervals
         setInterval(function() {
-            fetchWeatherForLocation('weather-amsterdam', 52.3676, 4.9041);
-            fetchWeatherForLocation('weather-maspalomas', 27.7609, -15.5863);
+            fetchWeatherForLocation('weather-city1', city1Lat, city1Lon);
+            fetchWeatherForLocation('weather-city2', city2Lat, city2Lon);
         }, 600000); // 10 minutes
         
         setInterval(function() {

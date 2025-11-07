@@ -176,7 +176,13 @@
             </div>
 
             <div class="form-section">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4">5. Currency Thresholds</h2>
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">5. Temperature Unit</h2>
+                <div id="temp-unit-options" class="option-grid">
+                    </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">6. Currency Thresholds</h2>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="input-group">
                         <label for="low">Low Threshold (Favorable Rate: `low`)</label>
@@ -231,6 +237,11 @@
                 { label: 'Dark Mode 🌙', value: 'dark', swatch: '#1f2937', swatchBg: '#111827' },
                 { label: 'Arctic ❄️', value: 'arctic', swatch: '#e0f2fe' },
                 { label: 'Sepia 📜', value: 'sepia', swatch: '#d6bcab' }
+            ];
+
+            var tempUnitOptions = [
+                { label: 'Fahrenheit (°F)', value: 'F' },
+                { label: 'Celsius (°C)', value: 'C' }
             ];
 
             // City presets (ES5 compatible)
@@ -294,6 +305,7 @@
             // Render the options
             renderOptions(layoutContainer, layoutOptions, 'layout', 'index_SE_shared.html');
             renderOptions(themeContainer, themeOptions, 'theme', 'amber');
+            renderOptions(document.getElementById('temp-unit-options'), tempUnitOptions, 'temp_unit', 'F');
 
             // ----------------------------------------------------------------
             // City Preset Handlers (ES5 compatible)
@@ -395,7 +407,13 @@
                     params.push('city2_lon=' + city2Lon);
                 }
 
-                // 5. Low Threshold (only include if different from default 1.1)
+                // 5. Temperature Unit (only include if different from default 'F')
+                var tempUnit = getRadioValue('temp_unit') || 'F';
+                if (tempUnit !== 'F') {
+                    params.push('temp_unit=' + tempUnit);
+                }
+
+                // 6. Low Threshold (only include if different from default 1.1)
                 var lowInput = document.getElementById('low');
                 var low = parseFloat(lowInput.value).toFixed(2);
                 if (low !== '1.10') {
@@ -403,7 +421,7 @@
                     params.push('low=' + low);
                 }
 
-                // 6. High Threshold (only include if different from default 1.2)
+                // 7. High Threshold (only include if different from default 1.2)
                 var highInput = document.getElementById('high');
                 var high = parseFloat(highInput.value).toFixed(2);
                 if (high !== '1.20') {

@@ -365,6 +365,8 @@
         var theme = getUrlParameter('theme') || 'blue';
         document.body.className = 'theme-' + theme;
         
+        var tempUnit = getUrlParameter('temp_unit') || 'F';
+        
         function updateTime() {
             var now = new Date();
             var timeStr = SharedData.padZero(now.getHours()) + ':' + SharedData.padZero(now.getMinutes());
@@ -383,23 +385,50 @@
             var riseTime = SharedData.padZero(data.today.sunrise.getHours()) + ':' + SharedData.padZero(data.today.sunrise.getMinutes());
             var setTime = SharedData.padZero(data.today.sunset.getHours()) + ':' + SharedData.padZero(data.today.sunset.getMinutes());
             
-            var tomorrowLowF = data.forecast[0].lowF;
-            var tomorrowHighF = data.forecast[0].highF;
+            var primaryTemp, secondaryTemp, primaryUnit, secondaryUnit;
+            var feelsLikeTemp, feelsLikeUnit;
+            var todayLow, todayHigh, tomorrowLow, tomorrowHigh, tempUnitSymbol;
+            
+            if (tempUnit === 'C') {
+                primaryTemp = data.current.tempC;
+                secondaryTemp = data.current.tempF;
+                primaryUnit = '°C';
+                secondaryUnit = '°F';
+                feelsLikeTemp = data.current.feelsLikeC;
+                feelsLikeUnit = '°C';
+                todayLow = data.today.lowC;
+                todayHigh = data.today.highC;
+                tomorrowLow = data.forecast[0].lowC;
+                tomorrowHigh = data.forecast[0].highC;
+                tempUnitSymbol = '°C';
+            } else {
+                primaryTemp = data.current.tempF;
+                secondaryTemp = data.current.tempC;
+                primaryUnit = '°F';
+                secondaryUnit = '°C';
+                feelsLikeTemp = data.current.feelsLikeF;
+                feelsLikeUnit = '°F';
+                todayLow = data.today.lowF;
+                todayHigh = data.today.highF;
+                tomorrowLow = data.forecast[0].lowF;
+                tomorrowHigh = data.forecast[0].highF;
+                tempUnitSymbol = '°F';
+            }
             
             var html = 
                 '<div class="weather-main">' +
                 '<div class="main-left">' +
-                '<div class="temperature">' + data.current.tempF + '<span class="temp-unit">°F</span></div>' +
-                '<div class="temperature-secondary">' + data.current.tempC + '<span class="temp-unit">°C</span></div>' +
-                '<div class="feels-like">Feels ' + data.current.feelsLikeF + '<span class="temp-unit">°F</span></div>' +
+                '<div class="temperature">' + primaryTemp + '<span class="temp-unit">' + primaryUnit + '</span></div>' +
+                '<div class="temperature-secondary">' + secondaryTemp + '<span class="temp-unit">' + secondaryUnit + '</span></div>' +
+                '<div class="feels-like">Feels ' + feelsLikeTemp + '<span class="temp-unit">' + feelsLikeUnit + '</span></div>' +
                 '</div>' +
                 '<div class="main-right">' +
                 '<div class="weather-icon">' + data.current.icon + '</div>' +
                 '</div>' +
                 '</div>' +
                 '<div class="weather-details">' +
-                '<div>Low/Tom:<br>' + data.today.lowF + '°F / ' + tomorrowLowF + '°F</div>' +
-                '<div>High/Tom:<br>' + data.today.highF + '°F / ' + tomorrowHighF + '°F</div>' +
+                '<div>Low/Tom:<br>' + todayLow + tempUnitSymbol + ' / ' + tomorrowLow + tempUnitSymbol + '</div>' +
+                '<div>High/Tom:<br>' + todayHigh + tempUnitSymbol + ' / ' + tomorrowHigh + tempUnitSymbol + '</div>' +
                 '<div>Rise/Set:<br>' + riseTime + ' / ' + setTime + '</div>' +
                 '<div>Humidity/Wind:<br>' + data.current.humidity + '% / ' + data.current.windSpeed + ' mph</div>' +
                 '</div>';

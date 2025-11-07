@@ -459,6 +459,9 @@
         const theme = getUrlParameter('theme') || 'blue';
         document.body.className = `theme-${theme}`;
         
+        // Get temperature unit preference
+        const tempUnit = getUrlParameter('temp_unit') || 'F';
+        
         // Display version
         document.getElementById('version-display').textContent = APP_VERSION;
         
@@ -482,12 +485,21 @@
             const riseTime = `${SharedData.padZero(data.today.sunrise.getHours())}:${SharedData.padZero(data.today.sunrise.getMinutes())}`;
             const setTime = `${SharedData.padZero(data.today.sunset.getHours())}:${SharedData.padZero(data.today.sunset.getMinutes())}`;
             
+            // Determine which temperature values to use based on user preference
+            const primaryTemp = tempUnit === 'C' ? data.current.tempC : data.current.tempF;
+            const secondaryTemp = tempUnit === 'C' ? data.current.tempF : data.current.tempC;
+            const primaryUnit = tempUnit === 'C' ? '°C' : '°F';
+            const secondaryUnit = tempUnit === 'C' ? '°F' : '°C';
+            const feelsLikeTemp = tempUnit === 'C' ? data.current.feelsLikeC : data.current.feelsLikeF;
+            const todayLow = tempUnit === 'C' ? data.today.lowC : data.today.lowF;
+            const todayHigh = tempUnit === 'C' ? data.today.highC : data.today.highF;
+            
             const html = `
                 <div class="weather-main">
                     <div class="main-left">
-                        <div class="temperature">${data.current.tempF}<span class="temp-unit">°F</span></div>
-                        <div class="temperature-secondary">${data.current.tempC}<span class="temp-unit">°C</span></div>
-                        <div class="feels-like">Feels ${data.current.feelsLikeF}<span class="temp-unit">°F</span></div>
+                        <div class="temperature">${primaryTemp}<span class="temp-unit">${primaryUnit}</span></div>
+                        <div class="temperature-secondary">${secondaryTemp}<span class="temp-unit">${secondaryUnit}</span></div>
+                        <div class="feels-like">Feels ${feelsLikeTemp}<span class="temp-unit">${primaryUnit}</span></div>
                     </div>
                     <div class="main-right">
                         <div class="weather-icon">${data.current.icon}</div>
@@ -501,26 +513,30 @@
                 </div>
                 
                 <div class="current-details">
-                    <div><strong>Low/High:</strong> ${data.today.lowF}<span class="temp-unit">°F</span> / ${data.today.highF}<span class="temp-unit">°F</span></div>
+                    <div><strong>Low/High:</strong> ${todayLow}<span class="temp-unit">${primaryUnit}</span> / ${todayHigh}<span class="temp-unit">${primaryUnit}</span></div>
                     <div><strong>Humidity/Wind:</strong> ${data.current.humidity}% / ${data.current.windSpeed} mph</div>
                 </div>
                 
                 <div class="forecast-days">
-                    ${data.forecast.map(day => `
+                    ${data.forecast.map(day => {
+                        const dayHigh = tempUnit === 'C' ? day.highC : day.highF;
+                        const dayLow = tempUnit === 'C' ? day.lowC : day.lowF;
+                        return `
                         <div class="forecast-day">
                             <div class="forecast-day-name">${day.day}</div>
                             <div class="forecast-day-inner">
                                 <div class="forecast-icon">${day.icon}</div>
                                 <div class="forecast-info">
                                     <div class="forecast-temps">
-                                        <div class="forecast-high">${day.highF}<span class="temp-unit">°F</span></div>
-                                        <div class="forecast-low">${day.lowF}<span class="temp-unit">°F</span></div>
+                                        <div class="forecast-high">${dayHigh}<span class="temp-unit">${primaryUnit}</span></div>
+                                        <div class="forecast-low">${dayLow}<span class="temp-unit">${primaryUnit}</span></div>
                                     </div>
                                     <div class="forecast-rain">💧 ${day.rainChance}%</div>
                                 </div>
                             </div>
                         </div>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </div>
             `;
             

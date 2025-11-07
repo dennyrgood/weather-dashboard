@@ -573,6 +573,9 @@
         var theme = getUrlParameter('theme') || 'blue';
         document.body.className = 'theme-' + theme;
         
+        // Get temperature unit preference
+        var tempUnit = getUrlParameter('temp_unit') || 'F';
+        
         // Time/Date updates
         function updateTime() {
             var now = new Date();
@@ -595,12 +598,33 @@
             var riseTime = SharedData.padZero(data.today.sunrise.getHours()) + ':' + SharedData.padZero(data.today.sunrise.getMinutes());
             var setTime = SharedData.padZero(data.today.sunset.getHours()) + ':' + SharedData.padZero(data.today.sunset.getMinutes());
             
+            var primaryTemp, secondaryTemp, primaryUnit, secondaryUnit;
+            var feelsLikeTemp, todayLow, todayHigh;
+            
+            if (tempUnit === 'C') {
+                primaryTemp = data.current.tempC;
+                secondaryTemp = data.current.tempF;
+                primaryUnit = '°C';
+                secondaryUnit = '°F';
+                feelsLikeTemp = data.current.feelsLikeC;
+                todayLow = data.today.lowC;
+                todayHigh = data.today.highC;
+            } else {
+                primaryTemp = data.current.tempF;
+                secondaryTemp = data.current.tempC;
+                primaryUnit = '°F';
+                secondaryUnit = '°C';
+                feelsLikeTemp = data.current.feelsLikeF;
+                todayLow = data.today.lowF;
+                todayHigh = data.today.highF;
+            }
+            
             var html = 
                 '<div class="weather-main">' +
                 '<div class="main-left">' +
-                '<div class="temperature">' + data.current.tempF + '<span class="temp-unit">°F</span></div>' +
-                '<div class="temperature-secondary">' + data.current.tempC + '<span class="temp-unit">°C</span></div>' +
-                '<div class="feels-like">Feels ' + data.current.feelsLikeF + '<span class="temp-unit">°F</span></div>' +
+                '<div class="temperature">' + primaryTemp + '<span class="temp-unit">' + primaryUnit + '</span></div>' +
+                '<div class="temperature-secondary">' + secondaryTemp + '<span class="temp-unit">' + secondaryUnit + '</span></div>' +
+                '<div class="feels-like">Feels ' + feelsLikeTemp + '<span class="temp-unit">' + primaryUnit + '</span></div>' +
                 '</div>' +
                 '<div class="main-right">' +
                 '<div class="weather-icon">' + data.current.icon + '</div>' +
@@ -614,7 +638,7 @@
                 '</div>';
             
             html += '<div class="current-details">' +
-                '<div class="detail-left"><strong>Low/High:</strong> ' + data.today.lowF + '<span class="temp-unit">°F</span> / ' + data.today.highF + '<span class="temp-unit">°F</span></div>' +
+                '<div class="detail-left"><strong>Low/High:</strong> ' + todayLow + '<span class="temp-unit">' + primaryUnit + '</span> / ' + todayHigh + '<span class="temp-unit">' + primaryUnit + '</span></div>' +
                 '<div class="detail-right"><strong>Humidity/Wind:</strong> ' + data.current.humidity + '% / ' + data.current.windSpeed + ' mph</div>' +
                 '</div>';
             
@@ -622,6 +646,8 @@
             
             for (var i = 0; i < data.forecast.length; i++) {
                 var day = data.forecast[i];
+                var dayHigh = tempUnit === 'C' ? day.highC : day.highF;
+                var dayLow = tempUnit === 'C' ? day.lowC : day.lowF;
                 html += '<div class="forecast-day">' +
                     '<div class="forecast-day-name">' + day.day + '</div>' +
                     '<div class="forecast-day-inner">' +
@@ -630,8 +656,8 @@
                     '</div>' +
                     '<div class="forecast-info-col">' +
                     '<div class="forecast-temps">' +
-                    '<div class="forecast-high">' + day.highF + '<span class="temp-unit">°F</span></div>' +
-                    '<div class="forecast-low">' + day.lowF + '<span class="temp-unit">°F</span></div>' +
+                    '<div class="forecast-high">' + dayHigh + '<span class="temp-unit">' + primaryUnit + '</span></div>' +
+                    '<div class="forecast-low">' + dayLow + '<span class="temp-unit">' + primaryUnit + '</span></div>' +
                     '</div>' +
                     '<div class="forecast-rain">💧 ' + day.rainChance + '%</div>' +
                     '</div>' +

@@ -90,6 +90,7 @@
                             <option value="shippensburg">Shippensburg, PA</option>
                             <option value="marina">Marina, CA</option>
                             <option value="newyork">New York, NY</option>
+                            <option value="newark">Newark, NJ</option>
                             <option value="losangeles">Los Angeles, CA</option>
                             <option value="sanfrancisco">San Francisco, CA</option>
                             <option value="chicago">Chicago, IL</option>
@@ -138,6 +139,7 @@
                             <option value="shippensburg">Shippensburg, PA</option>
                             <option value="marina">Marina, CA</option>
                             <option value="newyork">New York, NY</option>
+                            <option value="newark">Newark, NJ</option>
                             <option value="losangeles">Los Angeles, CA</option>
                             <option value="sanfrancisco">San Francisco, CA</option>
                             <option value="chicago">Chicago, IL</option>
@@ -254,6 +256,7 @@
                 
                 // US Cities
                 newyork: { name: 'New York, NY', lat: 40.7128, lon: -74.0060 },
+                newark: { name: 'Newark, NJ', lat: 40.7357, lon: -74.1724 },
                 losangeles: { name: 'Los Angeles, CA', lat: 34.0522, lon: -118.2437 },
                 sanfrancisco: { name: 'San Francisco, CA', lat: 37.7749, lon: -122.4194 },
                 chicago: { name: 'Chicago, IL', lat: 41.8781, lon: -87.6298 },
@@ -288,13 +291,13 @@
                     var swatchHtml = '';
                     if (option.swatch) {
                         var swatchBg = option.swatchBg || option.swatch;
-                        swatchHtml = '<span style="display: inline-block; width: 16px; height: 16px; border-radius: 3px; background-color: ' + swatchBg + '; border: 1px solid #d1d5db; margin-right: 4px; vertical-align: middle;"></span>';
+                        swatchHtml = '<span style="display: inline-block; width: 16px; height: 16px; border-radius: 3px; background-color: ' + swatchBg + '; border: 1px solid #d1d5db; margin-right: 4p[...]"';
                     }
 
                     // Template literal replaced with string concatenation
                     var optionHtml = 
                         '<div class="flex items-center space-x-2 p-2 rounded-lg transition-colors duration-150 cursor-pointer hover:bg-gray-100">' +
-                            '<input type="radio" id="' + inputId + '" name="' + name + '" value="' + option.value + '" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out" ' + (option.value === defaultValue ? 'checked' : '') + ' required>' +
+                            '<input type="radio" id="' + inputId + '" name="' + name + '" value="' + option.value + '" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out" ' + (option.value === defaultValue ? 'checked' : '') + ' />' +
                             '<label for="' + inputId + '" class="text-sm font-medium text-gray-700">' + swatchHtml + option.label + '</label>' +
                         '</div>';
 
@@ -305,7 +308,7 @@
             // Render the options
             renderOptions(layoutContainer, layoutOptions, 'layout', 'index_SE_shared.html');
             renderOptions(themeContainer, themeOptions, 'theme', 'amber');
-            renderOptions(document.getElementById('temp-unit-options'), tempUnitOptions, 'temp_unit', 'F');
+            renderOptions(document.getElementById('temp-unit-options'), tempUnitOptions, 'temp_unit', 'C');
 
             // ----------------------------------------------------------------
             // City Preset Handlers (ES5 compatible)
@@ -407,9 +410,9 @@
                     params.push('city2_lon=' + city2Lon);
                 }
 
-                // 5. Temperature Unit (only include if different from default 'F')
-                var tempUnit = getRadioValue('temp_unit') || 'F';
-                if (tempUnit !== 'F') {
+                // 5. Temperature Unit (only include if different from default 'C')
+                var tempUnit = getRadioValue('temp_unit') || 'C';
+                if (tempUnit !== 'C') {
                     params.push('temp_unit=' + tempUnit);
                 }
 

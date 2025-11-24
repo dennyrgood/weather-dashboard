@@ -1,0 +1,93 @@
+{
+  "timestamp": "2025-11-25T00:30:54.332107",
+  "summaries": [
+    {
+      "file": {
+        "path": "./index.html",
+        "hash": "sha256:e9e03c632c48a8792c69246d9173a778f1e6cc1756258e941dc144d991112dbf",
+        "size": 12104
+      },
+      "summary": "This document is an HTML file serving as the index page for project documentation, featuring a styled layout with sidebar navigation and search functionality.",
+      "category": "Guides",
+      "is_new_category": false,
+      "title": "index",
+      "timestamp": "2025-11-25T00:30:36.982636"
+    },
+    {
+      "file": {
+        "path": "./iOS 9 iPad Weather Dashboard - Technical Documentation.pdf",
+        "hash": "sha256:6b78864db14b8a4835f00f27d604bc660b022fb015c132bbc3e8d69dcf1a4c26",
+        "size": 111205,
+        "readable_version": "./md_outputs/iOS 9 iPad Weather Dashboard - Technical Documentation.md"
+      },
+      "summary": "Technical document detailing issues and solutions for developing a weather dashboard on an iPad with iOS 9, focusing on TLS/SSL compatibility, JavaScript and CSS limitations, and emoji rendering.",
+      "category": "Guides",
+      "is_new_category": false,
+      "title": "iOS 9 iPad Weather Dashboard - Technical Documentation",
+      "timestamp": "2025-11-25T00:30:40.218470"
+    },
+    {
+      "file": {
+        "path": "./Weather Dashboard - URL Parameters Guide.pdf",
+        "hash": "sha256:e78938c52c5bf1adea4bfe2559dbd81e963cd4808be9f8cc5c7a149ef0ea9365",
+        "size": 101163,
+        "readable_version": "./md_outputs/Weather Dashboard - URL Parameters Guide.md"
+      },
+      "summary": "This document outlines the URL parameters for customizing a weather dashboard's layout, theme, and currency threshold settings.",
+      "category": "Guides",
+      "is_new_category": false,
+      "title": "Weather Dashboard - URL Parameters Guide",
+      "timestamp": "2025-11-25T00:30:43.080821"
+    },
+    {
+      "file": {
+        "path": "./GUIDELINES.md",
+        "hash": "sha256:532c423ca0394b81d62ce77e17d0b3f619a3e2537e28b3722e2b07cf03a17af3",
+        "size": 2444
+      },
+      "summary": "This document outlines guidelines for maintaining compatibility with legacy devices like iPad2 in the `weather-dashboard` project, focusing on ES5 compliance and specific layout rules.",
+      "category": "Guides",
+      "is_new_category": false,
+      "title": "GUIDELINES",
+      "timestamp": "2025-11-25T00:30:46.260961"
+    },
+    {
+      "file": {
+        "path": "./iOS 9 iPad Weather Dashboard - Technical Documentation V2.pdf",
+        "hash": "sha256:ab930906e75050c4085b5b8ca2434e256a214c22142d9710cdf9f60fd0ee7335",
+        "size": 125708,
+        "readable_version": "./md_outputs/iOS 9 iPad Weather Dashboard - Technical Documentation V2.md"
+      },
+      "summary": "This document outlines the technical challenges and solutions for supporting an iOS 9 iPad Weather Dashboard with outdated software limitations.",
+      "category": "Guides",
+      "is_new_category": false,
+      "title": "iOS 9 iPad Weather Dashboard - Technical Documentation V2",
+      "timestamp": "2025-11-25T00:30:49.101836"
+    },
+    {
+      "file": {
+        "path": "./Git Command Line Workflow Cheatsheet.pdf",
+        "hash": "sha256:641e3a358775f776077a1439301508ce9a6a9a85e6490fa42b79fe3aacf9166d",
+        "size": 107137,
+        "readable_version": "./md_outputs/Git Command Line Workflow Cheatsheet.md"
+      },
+      "summary": "This document provides a script for two-way synchronization between local and remote Git repositories and explains essential Git commands for maintaining project status.",
+      "category": "Workflows",
+      "is_new_category": false,
+      "title": "Git Command Line Workflow Cheatsheet",
+      "timestamp": "2025-11-25T00:30:52.320385"
+    },
+    {
+      "file": {
+        "path": "./GUIDELINES_edit_for_iPad2.md",
+        "hash": "sha256:527ac85861163e8ee4272a4e48104bb39d8aa7dbc823fada9120d54061ae1565",
+        "size": 63
+      },
+      "summary": "This document provides updated guidelines for the project tailored for iPad2 usage.",
+      "category": "Guides",
+      "is_new_category": false,
+      "title": "GUIDELINES_edit_for_iPad2",
+      "timestamp": "2025-11-25T00:30:54.331830"
+    }
+  ]
+}

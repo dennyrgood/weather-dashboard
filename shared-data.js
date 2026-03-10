@@ -7,6 +7,7 @@ var SharedData = (function() {
     // Configuration
     var CONFIG = {
         PROXY_URL: 'https://weatherproxy.ldmathes.cc/',
+        //PROXY_URL: 'http://192.168.178.27:5005/',
         USE_PROXY: false // Set to true for iPad2, false for modern devices
     };
     

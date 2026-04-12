@@ -380,35 +380,21 @@
                 var theme = getRadioValue('theme') || 'amber';
                 params.push('theme=' + theme);
 
-                // 3. City 1 parameters (only include if different from defaults)
+                // 3. City 1 parameters (always included)
                 var city1Name = document.getElementById('city1_name').value;
                 var city1Lat = document.getElementById('city1_lat').value;
                 var city1Lon = document.getElementById('city1_lon').value;
-                
-                if (city1Name && city1Name !== 'Amsterdam') {
-                    params.push('city1_name=' + encodeURIComponent(city1Name));
-                }
-                if (city1Lat && parseFloat(city1Lat) !== 52.3676) {
-                    params.push('city1_lat=' + city1Lat);
-                }
-                if (city1Lon && parseFloat(city1Lon) !== 4.9041) {
-                    params.push('city1_lon=' + city1Lon);
-                }
+                if (city1Name) params.push('city1_name=' + encodeURIComponent(city1Name));
+                if (city1Lat) params.push('city1_lat=' + city1Lat);
+                if (city1Lon) params.push('city1_lon=' + city1Lon);
 
-                // 4. City 2 parameters (only include if different from defaults)
+                // 4. City 2 parameters (always included)
                 var city2Name = document.getElementById('city2_name').value;
                 var city2Lat = document.getElementById('city2_lat').value;
                 var city2Lon = document.getElementById('city2_lon').value;
-                
-                if (city2Name && city2Name !== 'San Bartolomé de Tirajana, Spain') {
-                    params.push('city2_name=' + encodeURIComponent(city2Name));
-                }
-                if (city2Lat && parseFloat(city2Lat) !== 27.7625) {
-                    params.push('city2_lat=' + city2Lat);
-                }
-                if (city2Lon && parseFloat(city2Lon) !== -15.5781) {
-                    params.push('city2_lon=' + city2Lon);
-                }
+                if (city2Name) params.push('city2_name=' + encodeURIComponent(city2Name));
+                if (city2Lat) params.push('city2_lat=' + city2Lat);
+                if (city2Lon) params.push('city2_lon=' + city2Lon);
 
                 // 5. Temperature Unit (only include if different from default 'F')
                 var tempUnit = getRadioValue('temp_unit') || 'F';

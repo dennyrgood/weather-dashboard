@@ -250,7 +250,7 @@
             var cityPresets = {
                 // Current presets
                 amsterdam: { name: 'Amsterdam, Netherlands', lat: 52.3676, lon: 4.9041 },
-                sanBartolome: { name: 'San Bartolomé de Tirajana, Spain', lat: 27.7625, lon: -15.5781 },
+                sanbartolome: { name: 'San Bartolomé de Tirajana, Spain', lat: 27.7625, lon: -15.5781 },
                 shippensburg: { name: 'Shippensburg, PA', lat: 40.0507, lon: -77.5200 },
                 marina: { name: 'Marina, CA', lat: 36.6844, lon: -121.8022 },
                 
@@ -400,13 +400,13 @@
                 var city2Lat = document.getElementById('city2_lat').value;
                 var city2Lon = document.getElementById('city2_lon').value;
                 
-                if (city2Name && city2Name !== 'Maspalomas') {
+                if (city2Name && city2Name !== 'San Bartolomé de Tirajana, Spain') {
                     params.push('city2_name=' + encodeURIComponent(city2Name));
                 }
-                if (city2Lat && parseFloat(city2Lat) !== 27.7609) {
+                if (city2Lat && parseFloat(city2Lat) !== 27.7625) {
                     params.push('city2_lat=' + city2Lat);
                 }
-                if (city2Lon && parseFloat(city2Lon) !== -15.5863) {
+                if (city2Lon && parseFloat(city2Lon) !== -15.5781) {
                     params.push('city2_lon=' + city2Lon);
                 }
 
